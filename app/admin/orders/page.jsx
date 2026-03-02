@@ -21,6 +21,8 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
+
+
   // Filter Logic
   const filteredOrders = orders.filter(order => {
     // Map status name from orderStatus relationship
@@ -123,6 +125,9 @@ export default function OrdersPage() {
                 <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Payment</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Total</th>
+                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Product
+                </th> 
                 <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
@@ -174,6 +179,44 @@ export default function OrdersPage() {
                   </td>
                   <td className="px-5 py-3 text-right text-xs font-bold text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-5 py-3">
+                  <div className="flex items-center gap-3">
+                    {(() => {
+                      const line = order.order_lines?.[0];
+                      const product = line?.product_item_variant?.product_item?.product;
+
+                      const image =
+                        product?.images?.find(img => img.is_primary === 1)?.image ||
+                        product?.images?.[0]?.image ||
+                        '/placeholder.png';
+
+                      return (
+                        <>
+                          <img
+                            src={image}
+                            alt={product?.name || 'Product'}
+                            className="w-10 h-10 rounded-lg object-cover border border-slate-200 bg-slate-50"
+                          />
+
+                          <div className="flex flex-col max-w-[160px]">
+                            <span className="text-xs font-bold text-slate-900 truncate">
+                              {product?.name || 'Unknown Product'}
+                              {order.order_lines?.length > 1 && (
+                                <span className="text-slate-400 font-medium">
+                                  {' '}+{order.order_lines.length - 1} more
+                                </span>
+                              )}
+                            </span>
+
+                            <span className="text-[10px] text-slate-400">
+                              Qty: {line?.quantity || 1}
+                            </span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

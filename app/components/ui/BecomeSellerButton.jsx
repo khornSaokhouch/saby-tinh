@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Store, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
@@ -12,6 +13,12 @@ const BecomeSellerButton = () => {
   const isLoggedIn = !!token;
   const isStaff = user?.role === "admin" || user?.role === "owner";
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const handleClick = () => {
     if (!isLoggedIn) {
       router.push("/auth/login");
@@ -20,17 +27,26 @@ const BecomeSellerButton = () => {
     }
   };
 
-  if (isStaff) return null;
+  if (!isMounted) return null;
+  // if (isStaff) return null; // Disabled for testing - ensure the user can see it!
 
   return (
-    <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 1, duration: 0.4, type: "spring" }}
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2"
+    <div
+      style={{ 
+        position: 'fixed', 
+        bottom: '75px', 
+        right: '15px', 
+        zIndex: 999999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '4px'
+      }}
+      className="md:!bottom-6 md:!right-6 group"
     >
+      
       {/* 🐻 Bear Animation */}
-      <div className="w-[75px] h-[75px] -mb-3 z-10 pointer-events-none">
+      <div className="w-[75px] h-[75px] -mb-2 z-10 pointer-events-none">
         <DotLottieReact
           src="/animetion/Bear.lottie"
           loop
@@ -41,6 +57,7 @@ const BecomeSellerButton = () => {
 
       {/* 🔹 Button */}
       <motion.div
+        id="become-seller-button"
         onClick={handleClick}
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95 }}
@@ -68,7 +85,7 @@ const BecomeSellerButton = () => {
         {/* Shine */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

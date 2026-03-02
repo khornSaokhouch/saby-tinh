@@ -3,28 +3,59 @@ import { useEffect, useState, useRef } from 'react';
 import { Bell, Search, Menu, User, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useShopOrderStore } from '@/stores/useShopOrderStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
+import { useMemo } from 'react';
 
 export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
   const { user, fetchProfile } = useUserStore();
   const { logout } = useAuthStore();
+  const { orders, fetchOrders } = useShopOrderStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile]);
+    fetchOrders();
+
+    const interval = setInterval(() => {
+        fetchOrders();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [fetchProfile, fetchOrders]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setIsNotificationOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+
+  const notifications = useMemo(() => {
+    return orders.slice(0, 5).map(order => ({
+      title: ['Pending', 'Processing'].includes(order.order_status?.status) ? "New order received" : "Order Update",
+      description: `Order #ORD-${order.id} from ${order.user?.name || 'Customer'}`,
+      time: order.created_at ? formatDistanceToNow(new Date(order.created_at), { addSuffix: true }) : "recently",
+      danger: order.order_status?.status === 'Cancelled',
+    }));
+  }, [orders]);
+
+  const pendingCount = useMemo(() => {
+    return orders.filter(o => ['Pending', 'Processing'].includes(o.order_status?.status)).length;
+  }, [orders]);
+
 
   return (
     <header className="sticky top-0 z-40 flex h-20 w-full items-center bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 lg:px-10 font-sans">
@@ -57,12 +88,74 @@ export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
 
         {/* User Actions */}
         <div className="flex items-center gap-4">
-          <button className="relative p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all group">
-            <Bell size={20} />
-          </button>
-          
+
+          {/* 🔔 Notification */}
+          <div className="relative" ref={notificationRef}>
+            <button
+              onClick={() => {
+                setIsNotificationOpen(!isNotificationOpen);
+                setIsDropdownOpen(false);
+              }}
+              className={`relative p-2.5 rounded-xl transition-all ${
+                isNotificationOpen
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'
+              }`}
+            >
+              <Bell size={20} />
+              {pendingCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-sm animate-bounce group-hover:scale-110 transition-transform">
+                  {pendingCount > 9 ? '9+' : pendingCount}
+                </span>
+              )}
+            </button>
+
+            <AnimatePresence>
+              {isNotificationOpen && (
+             <motion.div
+  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+  transition={{ duration: 0.2, ease: 'easeOut' }}
+  className="absolute right-0 mt-3 w-96 bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden z-[100]"
+>
+  <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+    <span className="text-sm font-bold text-slate-900">Notifications</span>
+    <button className="text-xs font-semibold text-blue-600 hover:underline">Mark all as read</button>
+  </div>
+
+  <div className="max-h-80 overflow-y-auto">
+    {/* Map notifications dynamically */}
+    {notifications.length === 0 ? (
+      <div className="flex flex-col items-center justify-center py-6 text-slate-400">
+        <span className="mb-2 text-lg">🎉</span>
+        <p className="text-sm">You’re all caught up!</p>
+      </div>
+    ) : notifications.map((n, idx) => (
+      <NotificationItem
+        key={idx}
+        title={n.title}
+        description={n.description}
+        time={n.time}
+        danger={n.danger}
+        icon={n.icon}
+      />
+    ))}
+  </div>
+
+  <div className="px-4 py-3 border-t border-slate-100 text-center">
+    <Link href="/owner/notifications" className="text-xs font-bold text-blue-600 hover:underline">
+      View all notifications
+    </Link>
+  </div>
+</motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="h-8 w-[1px] bg-slate-200 mx-2" />
-          
+
+          {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -145,5 +238,31 @@ function DropdownItem({ href, icon: Icon, label, onClick }) {
       </div>
       <span className="text-sm font-semibold">{label}</span>
     </Link>
+  );
+}
+
+function NotificationItem({ title, description, time, danger, icon }) {
+  return (
+    <div className={`flex items-start gap-3 px-4 py-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-all
+      ${danger ? 'bg-rose-50' : ''}`}>
+      
+      {/* Optional icon */}
+      {icon ? (
+        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
+          ${danger ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'}`}>
+          {icon}
+        </div>
+      ) : (
+        <div className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500" />
+      )}
+
+      <div className="flex-1">
+        <div className="flex justify-between items-center">
+          <p className={`text-sm font-semibold ${danger ? 'text-rose-600' : 'text-slate-900'}`}>{title}</p>
+          <span className="text-[10px] text-slate-400 ml-2">{time}</span>
+        </div>
+        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+      </div>
+    </div>
   );
 }

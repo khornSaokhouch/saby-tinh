@@ -4,10 +4,11 @@
 import Navbar from '@/components/nabvar/Navbar';
 import UserSidebar from '@/components/UserSidebar';
 import Footer from '@/components/nabvar/Footer';
+// import BecomeSellerButton from '@/components/ui/BecomeSellerButton';
 
 export default function ProfileLayout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col px-12">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
 
       <div className="flex-1 w-full max-w-7xl pb-8 mx-auto pt-28 px-4 sm:px-6 lg:px-8">
@@ -29,6 +30,7 @@ export default function ProfileLayout({ children }) {
       </div>
 
       <Footer />
+      {/* <BecomeSellerButton /> */}
     </div>
   );
 }

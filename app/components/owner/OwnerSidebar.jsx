@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ShoppingBag, Settings, 
-  LogOut, Sparkles, ChevronRight, BarChart3, Package, Building2, LayoutGrid, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
+  LogOut, Sparkles, ChevronRight, BarChart3, Package, Building2, MapPin, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
   NotebookIcon, FileText
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
+import { useShopOrderStore } from '@/stores/useShopOrderStore';
+import { useMemo, useEffect } from 'react';
 
 const menuGroups = [
   {
@@ -31,6 +33,7 @@ const menuGroups = [
       { name: 'My Company', href: '/owner/company', icon: Building2 },
       { name: 'Products', href: '/owner/products', icon: Package },
       { name: 'Stock', href: '/owner/stocks', icon: Boxes },
+      { name: 'Addresses', href: '/owner/addresses', icon: MapPin },
     ]
   },
   {
@@ -50,6 +53,18 @@ const menuGroups = [
 export default function OwnerSidebar({ onClose }) {
   const pathname = usePathname();
   const { logout } = useAuthStore();
+  const { orders, fetchOrders } = useShopOrderStore();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const counts = useMemo(() => {
+    return {
+      all: orders.length,
+      pending: orders.filter(o => ['Pending', 'Processing'].includes(o.order_status?.status)).length
+    };
+  }, [orders]);
 
   return (
     <aside className="h-full bg-white flex flex-col border-r border-slate-200 w-72 font-sans overflow-hidden">
@@ -109,6 +124,12 @@ export default function OwnerSidebar({ onClose }) {
                         {link.name}
                       </span>
                     </div>
+
+                    {link.name === 'Orders' && counts.pending > 0 && (
+                      <span className="z-10 ml-auto min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm shadow-rose-100">
+                        {counts.pending > 9 ? '9+' : counts.pending}
+                      </span>
+                    )}
 
                     {isActive && (
                       <ChevronRight size={14} className="z-10 text-indigo-400" strokeWidth={2.5} />

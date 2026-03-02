@@ -14,28 +14,28 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-// 1️⃣ Fetch user on mount
-useEffect(() => {
-  fetchProfile();
-}, [fetchProfile]);
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
-// 2️⃣ Fetch pending count after user is loaded and is admin
-useEffect(() => {
-  if (!user || user.role !== 'admin') return;
-
-  // Fetch immediately
-  fetchPendingCount();
-
-  // Then set up auto-refresh every 30 seconds (30000 ms)
-  const interval = setInterval(() => {
+  useEffect(() => {
+    if (!user || user.role !== 'admin') return;
     fetchPendingCount();
-  }, 30000);
+    const interval = setInterval(() => {
+      fetchPendingCount();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [user, fetchPendingCount]);
 
-  // Clean up interval on unmount
-  return () => clearInterval(interval);
-
-}, [user, fetchPendingCount]);
-
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 flex h-20 w-full items-center bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 lg:px-10 font-sans">
@@ -47,7 +47,6 @@ useEffect(() => {
       </button>
 
       <div className="flex flex-1 items-center justify-between">
-        {/* Page Title */}
         <div className="flex flex-col">
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">{title}</h2>
           <div className="flex items-center gap-2 mt-0.5">
@@ -56,7 +55,6 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Desktop Search */}
         <div className="hidden md:flex relative w-72">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input 
@@ -66,7 +64,6 @@ useEffect(() => {
           />
         </div>
 
-        {/* User Actions */}
         <div className="flex items-center gap-4">
           <button className="relative p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all group">
             <Bell size={20} />

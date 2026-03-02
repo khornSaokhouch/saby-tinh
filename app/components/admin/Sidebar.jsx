@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSellerStore } from '@/stores/useSellerStore';
+import { useShopOrderStore } from '@/stores/useShopOrderStore';
+import { useEffect } from 'react';
 // Defined menu structure
 const menuGroups = [
   {
@@ -54,6 +56,7 @@ const menuGroups = [
     items: [
       { name: 'Shipping Methods', href: '/admin/shipping-methods', icon: Truck },
       { name: 'Order Status', href: '/admin/order-status', icon: Boxes },
+      { name: 'Payment Status', href: '/admin/payment_statuses', icon: CreditCard },
     ]
   },
   {
@@ -81,6 +84,11 @@ const menuGroups = [
 export default function AdminSidebar({ onClose }) {
   const pathname = usePathname();
   const { pendingCount } = useSellerStore();
+  const { orders, fetchOrders } = useShopOrderStore();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   return (
     <aside className="h-full bg-white flex flex-col border-r border-slate-200 w-72 font-sans overflow-hidden">
@@ -145,6 +153,13 @@ export default function AdminSidebar({ onClose }) {
                     {link.name === 'Seller Requests' && pendingCount > 0 && (
                       <span className="z-10 ml-auto min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
                         {pendingCount > 9 ? '9+' : pendingCount}
+                      </span>
+                    )}
+
+                    {/* 📦 Orders count badge (Admin sees all) */}
+                    {link.name === 'Orders' && orders.length > 0 && (
+                      <span className="z-10 ml-auto min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm shadow-rose-100">
+                        {orders.length > 99 ? '99+' : orders.length}
                       </span>
                     )}
 

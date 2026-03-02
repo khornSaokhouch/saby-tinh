@@ -2,7 +2,7 @@
 
 import Footer from "@/components/nabvar/Footer";
 import Navbar from "@/components/nabvar/Navbar";
-import BecomeSellerButton from "@/components/ui/BecomeSellerButton";
+// import BecomeSellerButton from "@/components/ui/BecomeSellerButton";
 
 export default function UserLayout({ children }) {
   return (
@@ -16,10 +16,7 @@ export default function UserLayout({ children }) {
       <main>{children}</main>
 
       <Footer />
-
-      <BecomeSellerButton />
-
-      {/* Styles for the float and glow move to globals.css */}
+      {/* <BecomeSellerButton /> */}
     </div>
   );
 }

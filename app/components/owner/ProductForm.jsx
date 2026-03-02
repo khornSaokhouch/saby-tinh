@@ -405,7 +405,7 @@ function SelectField({ label, name, value, onChange, options, required = false, 
           required={required} name={name} value={value} onChange={onChange}
           className="w-full h-16 px-8 bg-slate-50 border border-slate-100 rounded-[22px] text-sm font-bold text-slate-900 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-100 transition-all outline-none appearance-none cursor-pointer"
         >
-          <option value="">Unassigned</option>
+          <option value="">Select</option>
           {options.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}

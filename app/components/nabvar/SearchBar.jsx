@@ -1,8 +1,8 @@
 import { Search } from 'lucide-react';
 
-export default function SearchBar({ isScrolled }) {
+export default function SearchBar({ isScrolled, showOnMobile = false }) {
   return (
-    <div className={`hidden md:flex items-center transition-all duration-500 ${isScrolled ? 'flex-1 max-w-xs' : 'flex-1 max-w-md'}`}>
+    <div className={`${showOnMobile ? 'flex' : 'hidden md:flex'} items-center transition-all duration-500 ${isScrolled ? 'flex-1 max-w-xs' : 'flex-1 max-w-md'}`}>
       <div className="relative w-full group">
         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
           <Search className="h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />

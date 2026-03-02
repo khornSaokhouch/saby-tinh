@@ -157,13 +157,7 @@ const GlassCard = ({ icon, title, desc }) => (
 const SocialPill = ({ href, icon }) => (
   <Link 
     href={href} target="_blank"
-    className="
-        w-10 h-10 flex items-center justify-center 
-        bg-slate-50 border border-slate-200 rounded-xl 
-        text-slate-400 transition-all duration-300 
-        hover:bg-blue-600 hover:text-white hover:border-blue-600 
-        active:scale-90
-    "
+    className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-200 rounded-xl text-slate-400 transition-all duration-300 hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-90"
   >
     {icon}
   </Link>
