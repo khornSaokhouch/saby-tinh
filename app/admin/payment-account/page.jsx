@@ -146,7 +146,7 @@ export default function PaymentAccountsPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
                          {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
-                           <img src="/img/khqr.png" alt="Bakong" className="w-8 h-8 object-contain" />
+                           <img src="/img/bakong.png" alt="Bakong" className="w-8 h-8 object-contain" />
                          ) : (
                            <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs italic">
                              {acc.type_value?.substring(0, 2).toUpperCase()}

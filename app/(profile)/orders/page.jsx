@@ -122,7 +122,7 @@ export default function OrdersPage() {
                     {order.order_lines?.slice(0, 3).map((line, i) => (
                       <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-slate-100 p-1 ring-1 ring-slate-200/50 relative overflow-hidden">
                         <img 
-                          src={line.product_item_variant?.product_item?.product?.images?.[0]?.image || "/placeholder.svg"} 
+                          src={line.product_item_variant?.product_item?.product?.images?.[0]?.image} 
                           alt="product" 
                           className="w-full h-full object-cover rounded-lg"
                         />

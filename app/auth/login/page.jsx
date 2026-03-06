@@ -23,13 +23,14 @@ export default function LoginPage() {
       const user = res?.user || res?.data?.user || res;
       const token = res?.token || res?.data?.token;
       if (!user || !token) throw new Error('Authentication failed.');
+      
+      // Store user/token temporarily
       useAuthStore.setState({ user, token });
 
-      switch (user.role) {
-        case 'admin': router.push('/admin/dashboard'); break;
-        case 'owner': router.push('/owner/dashboard'); break;
-        default: router.push('/');
-      }
+      // Trigger OTP sending
+      await useAuthStore.getState().sendOtp(email);
+
+      router.push('/auth/verify-otp');
     } catch (err) {
       setLocalError(err?.response?.data?.message || 'Invalid email or password.');
     }

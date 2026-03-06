@@ -44,3 +44,18 @@
     animation: active-float 4s ease-in-out infinite;
   }
 }
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { 
+  width: 4px; 
+}
+.custom-scrollbar::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb { 
+  background: #E2E8F0; 
+  border-radius: 10px; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #CBD5E1;
+}

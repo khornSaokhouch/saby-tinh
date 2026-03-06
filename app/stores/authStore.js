@@ -11,7 +11,7 @@ export const useAuthStore = create(
       loading: false,
       error: null,
       otpSent: false,
-      otpUserId: null, // store user_id after OTP is sent
+      otpUsername: null, // store identifier for OTP verification
 
       // -------------------------------
       // Login (email or phone) → sends OTP
@@ -51,21 +51,53 @@ export const useAuthStore = create(
       // -------------------------------
       // Verify OTP
       // -------------------------------
+      sendOtp: async (username) => {
+        set({ loading: true, error: null });
+        try {
+          await request('/otp/send', 'POST', { username });
+          set({ otpSent: true, otpUsername: username });
+          return true;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Failed to send OTP';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      resendOtp: async () => {
+        const username = get().otpUsername;
+        if (!username) throw new Error('No user identifier found for resending OTP');
+        set({ loading: true, error: null });
+        try {
+          await request('/otp/resend', 'POST', { username });
+          return true;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Failed to resend OTP';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       verifyOtp: async (otp) => {
         set({ loading: true, error: null });
 
         try {
-          const res = await request('/verify-otp', 'POST', {
-            user_id: get().otpUserId,
+          const res = await request('/otp/verify', 'POST', {
+            username: get().otpUsername,
             otp,
           });
 
-          const user = res?.user;
-          const token = res?.token;
-          if (!user || !token) throw new Error('OTP verification failed.');
-
-          set({ user, token, otpSent: false, otpUserId: null });
-          return { user, token };
+          // After verification, we might need to finalize or the user might already have a token
+          // If the verification returns a final token, use it.
+          // For now, let's assume the user already has the user/token from login page
+          // and we just clear the OTP state.
+          
+          set({ otpSent: false, otpUsername: null });
+          return res;
         } catch (err) {
           const msg = err?.response?.data?.error || err.message || 'OTP verification failed';
           set({ error: msg });
@@ -141,7 +173,7 @@ register: async ({ name, email, password, confirm_password, phone_number }) => {
           console.warn('Logout API failed, logging out client-side.', err);
         }
 
-        set({ user: null, token: null, otpSent: false, otpUserId: null });
+        set({ user: null, token: null, otpSent: false, otpUsername: null });
         useUserStore.getState().clearUser();
       },
 
