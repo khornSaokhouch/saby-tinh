@@ -144,12 +144,18 @@ export default function PaymentAccountsPage() {
                 >
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 font-bold text-[10px]">
-                        {acc.type_value?.substring(0, 3).toUpperCase()}
+                      <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
+                         {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
+                           <img src="/img/khqr.png" alt="Bakong" className="w-8 h-8 object-contain" />
+                         ) : (
+                           <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs italic">
+                             {acc.type_value?.substring(0, 2).toUpperCase()}
+                           </div>
+                         )}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-slate-900">{acc.account_name}</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Manager ID:{acc.user_id}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Node ID: {acc.account_id}</span>
                       </div>
                     </div>
                   </td>

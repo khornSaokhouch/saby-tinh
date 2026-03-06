@@ -219,14 +219,6 @@ export default function OrderStatusPage() {
         onSubmit={handleSave}
         isSubmitting={isActionLoading}
       />
-
-      <StatusFormModal 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
-        initialData={selectedItem} 
-        onSubmit={handleSave}
-        isSubmitting={isActionLoading}
-      />
     </div>
   );
 }

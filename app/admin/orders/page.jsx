@@ -26,7 +26,7 @@ export default function OrdersPage() {
   // Filter Logic
   const filteredOrders = orders.filter(order => {
     // Map status name from orderStatus relationship
-    const statusName = order.order_status?.status_name || 'Pending';
+    const statusName = order.order_status?.status || 'Pending';
     const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;
     
     const customerName = order.user?.name || 'Unknown';
@@ -40,7 +40,7 @@ export default function OrdersPage() {
   });
 
   const totalValue = orders.reduce((sum, order) => sum + parseFloat(order.order_total || 0), 0);
-  const pendingCount = orders.filter(o => o.order_status?.status_name === 'Pending' || o.order_status?.status_name === 'Processing').length;
+  const pendingCount = orders.filter(o => o.order_status?.status === 'Pending' || o.order_status?.status === 'Processing').length;
   const avgValue = orders.length > 0 ? totalValue / orders.length : 0;
 
   return (
@@ -172,10 +172,10 @@ export default function OrdersPage() {
                     {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
                   <td className="px-5 py-3">
-                    <StatusBadge status={order.order_status?.status_name || 'Pending'} />
+                    <StatusBadge status={order.order_status?.status || 'Pending'} />
                   </td>
                   <td className="px-5 py-3">
-                    <PaymentBadge status="Paid" /> {/* Assuming Paid for now, or you can check payment account status if available */}
+                    <PaymentBadge status={order.payment_status?.status || 'Pending'} />
                   </td>
                   <td className="px-5 py-3 text-right text-xs font-bold text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -281,10 +281,10 @@ function MetricCard({ label, value, color }) {
 
 function StatusBadge({ status }) {
   const config = {
-    Delivered: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-    Shipped: { icon: Truck, style: "bg-blue-50 text-blue-600 border-blue-100" },
-    Processing: { icon: Clock, style: "bg-indigo-50 text-indigo-600 border-indigo-100" },
     Pending: { icon: Clock, style: "bg-orange-50 text-orange-600 border-orange-100" },
+    Processing: { icon: Clock, style: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+    Shipped: { icon: Truck, style: "bg-blue-50 text-blue-600 border-blue-100" },
+    Delivered: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
     Cancelled: { icon: XCircle, style: "bg-slate-100 text-slate-500 border-slate-200" },
   };
 
@@ -300,7 +300,7 @@ function StatusBadge({ status }) {
 
 function PaymentBadge({ status }) {
   const styles = {
-    Paid: "text-emerald-600 bg-emerald-50",
+    Success: "text-emerald-600 bg-emerald-50",
     Pending: "text-orange-600 bg-orange-50",
     Failed: "text-rose-600 bg-rose-50",
     Refunded: "text-slate-500 bg-slate-100 line-through",

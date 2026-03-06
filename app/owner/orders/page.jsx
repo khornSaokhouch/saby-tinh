@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { 
   Search, Filter, Download, Eye, MoreHorizontal, 
   ArrowUpDown, CheckCircle2, Clock, Truck, XCircle, 
@@ -21,7 +22,7 @@ export default function OwnerOrdersPage() {
   // Filter Logic
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
-      const statusName = order.order_status?.status_name || 'Pending';
+      const statusName = order.order_status?.status || 'Pending';
       const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;
       
       const customerName = order.user?.name || 'Unknown';
@@ -38,7 +39,7 @@ export default function OwnerOrdersPage() {
   // KPI Calculations
   const metrics = useMemo(() => {
     const total = filteredOrders.reduce((sum, order) => sum + parseFloat(order.order_total || 0), 0);
-    const pending = filteredOrders.filter(o => ['Pending', 'Processing'].includes(o.order_status?.status)).length;
+    const pending = filteredOrders.filter(o => ['Pending', 'Processing'].includes(o.order_status?.status || 'Pending')).length;
     const avg = filteredOrders.length > 0 ? total / filteredOrders.length : 0;
     
     return {
@@ -125,6 +126,7 @@ export default function OwnerOrdersPage() {
                 <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Payment</th>
                 <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Total Amount</th>
                 <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
               </tr>
@@ -180,16 +182,23 @@ export default function OwnerOrdersPage() {
                     {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
                   <td className="px-6 py-5">
-                    <StatusBadge status={order.order_status?.status_name || 'Pending'} />
+                    <StatusBadge status={order.order_status?.status || 'Pending'} />
+                  </td>
+                  <td className="px-6 py-5">
+                    <PaymentBadge status={order.payment_status?.status || 'Pending'} />
                   </td>
                   <td className="px-6 py-5 text-right text-sm font-black text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </td>
                   <td className="px-8 py-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm" title="View Order Details">
+                      <Link 
+                        href={`/owner/orders/details-order?id=${order.id}`}
+                        className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm" 
+                        title="View Order Details"
+                      >
                         <Eye size={18} />
-                      </button>
+                      </Link>
                       <button className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all">
                         <MoreHorizontal size={18} />
                       </button>
@@ -258,6 +267,23 @@ function StatusBadge({ status }) {
   return (
     <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${style}`}>
       <Icon size={12} strokeWidth={2.5} />
+      {status}
+    </span>
+  );
+}
+
+function PaymentBadge({ status }) {
+  const styles = {
+    Success: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    Pending: "text-orange-600 bg-orange-50 border-orange-100",
+    Failed: "text-rose-600 bg-rose-50 border-rose-100",
+    Refunded: "text-slate-500 bg-slate-100 border-slate-200 line-through",
+  };
+
+  const style = styles[status] || styles.Pending;
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg border text-[10px] font-bold uppercase tracking-wider ${style}`}>
       {status}
     </span>
   );
