@@ -24,7 +24,7 @@ import {
 import { motion } from "framer-motion";
 import { useShopOrderStore } from "@/app/stores/useShopOrderStore";
 
-export default function OrderDetailsPage() {
+function OrderDetailsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("id");
@@ -337,6 +337,19 @@ export default function OrderDetailsPage() {
   );
 }
 
+export default function OrderDetailsPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
+        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Initializing Secure Connection...</p>
+      </div>
+    }>
+      <OrderDetailsContent />
+    </React.Suspense>
+  );
+}
+
 // --- HELPERS ---
 
 function StatusBadge({ status }) {
@@ -373,3 +386,4 @@ function PaymentBadge({ status }) {
     </span>
   );
 }
+
