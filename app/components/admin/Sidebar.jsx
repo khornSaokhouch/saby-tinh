@@ -35,8 +35,8 @@ const menuGroups = [
       { name: 'Events', href: '/admin/events', icon: Sparkles },
       { name: 'Product Promotions', href: '/admin/product-promotions', icon: Tag },
       { name: 'Promotions', href: '/admin/promotions', icon: Tag },
-      { name: 'Promo Codes', href: '/admin/promo-codes', icon: Tag },
-      { name: 'Promo Usages', href: '/admin/promo-code-usages', icon: Ticket },
+      { name: 'Promo Codes', href: '/admin/promo-codes', icon: Ticket },
+      { name: 'Promo Usages', href: '/admin/promo-code-usages', icon: FileText },
     ]
   },
   {

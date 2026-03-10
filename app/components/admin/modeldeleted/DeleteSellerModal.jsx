@@ -9,55 +9,51 @@ export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleti
         <AnimatePresence>
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-white rounded-[32px] shadow-2xl w-full max-w-md border border-slate-100 overflow-hidden"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-white rounded-[20px] shadow-2xl w-full max-w-sm border border-slate-100 overflow-hidden"
                 >
-                    <div className="p-8">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="p-3 bg-rose-50 rounded-2xl text-rose-600">
-                                <ShieldAlert size={28} />
+                    <div className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-rose-50 rounded-xl text-rose-600 border border-rose-100">
+                                <ShieldAlert size={20} strokeWidth={2.5} />
                             </div>
-                            <button 
-                                onClick={onClose}
-                                className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400"
-                            >
-                                <X size={20} />
+                            <button onClick={onClose} className="p-1 hover:bg-slate-50 rounded-lg transition-colors text-slate-400">
+                                <X size={18} />
                             </button>
                         </div>
 
-                        <div className="space-y-2 mb-8">
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">Reject Request?</h3>
-                            <p className="text-sm font-medium text-slate-500 leading-relaxed">
-                                You are about to reject the registration request from <span className="text-slate-900 font-bold">"{sellerName}"</span>. 
-                                This will remove their data and notify them via email.
+                        <div className="space-y-1 mb-6">
+                            <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase italic">Reject Partner?</h3>
+                            <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+                                Denying <span className="text-slate-900 font-black">"{sellerName}"</span> will remove their application and notify the merchant via email.
                             </p>
                         </div>
 
-                        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 mb-8">
-                            <AlertTriangle className="text-amber-600 shrink-0" size={18} />
-                            <p className="text-xs font-bold text-amber-700 uppercase tracking-wider leading-normal">
-                                This action is permanent and will remove all associated documents.
+                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex gap-2 mb-6">
+                            <AlertTriangle className="text-amber-600 shrink-0" size={14} />
+                            <p className="text-[9px] font-black text-amber-700 uppercase tracking-widest leading-normal">
+                                This action cannot be reversed.
                             </p>
                         </div>
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <button
                                 onClick={onClose}
-                                className="flex-1 py-4 text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest transition-all"
+                                className="flex-1 py-2 text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all"
                             >
-                                Cancel
+                                Back
                             </button>
                             <button
                                 onClick={onConfirm}
                                 disabled={isDeleting}
-                                className="flex-[2] py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-rose-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                                className="flex-[2] py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-black text-[9px] uppercase tracking-widest shadow-md shadow-rose-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                             >
                                 {isDeleting ? (
-                                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                                    <Loader2 className="w-3 h-3 animate-spin text-white" />
                                 ) : (
-                                    "Reject Request"
+                                    "Confirm Reject"
                                 )}
                             </button>
                         </div>

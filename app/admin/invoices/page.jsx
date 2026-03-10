@@ -1,19 +1,11 @@
-"use client";
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import useInvoiceStore from '../../stores/useInvoiceStore';
 import { 
-  Search, 
-  Filter, 
-  Download, 
-  ArrowUpRight, 
-  Store, 
-  CheckCircle2,
-  Clock,
-  ChevronDown,
-  DollarSign,
-  ChevronRight,
-  TrendingUp,
-  Activity
+  Search, Filter, Download, ArrowUpRight, Store, 
+  CheckCircle2, Clock, ChevronDown, DollarSign,
+  TrendingUp, RefreshCw
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -33,220 +25,215 @@ export default function AdminInvoices() {
   );
 
   return (
-    <div className="space-y-6 pb-10 font-sans p-4 sm:p-8 bg-slate-50/20 min-h-screen">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
-      {/* --- HEADER --- */}
+      {/* --- HEADER (Dashboard Style) --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Finance Overview</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Financial Registry</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
-            STORE<span className="text-indigo-600">.</span>PAYMENTS
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1 italic">
+            Overview of merchant earnings and transaction status.
+          </p>
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[11px] font-black hover:bg-slate-50 transition-all shadow-sm uppercase tracking-widest active:scale-95">
-            <Download size={15} strokeWidth={2.5} />
-            <span>Consolidated Export</span>
+          <button 
+            onClick={() => { fetchStats(); fetchStoreStats(); }}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 hover:border-indigo-300 transition-all shadow-sm active:scale-95 uppercase tracking-widest"
+          >
+            <RefreshCw size={13} className={`${loading ? 'animate-spin text-indigo-600' : 'text-slate-400'}`} strokeWidth={3} />
+            Sync
+          </button>
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
+            <Download size={14} strokeWidth={3} />
+            Export
           </button>
         </div>
       </div>
 
-      {/* --- KPI METRICS --- */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard 
-          label="Total Sales" 
+      {/* --- KPI GRID (Dashboard Style) --- */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard 
+          title="Total Sales" 
           value={`$${(stats?.total_gmv || 0).toLocaleString()}`} 
           icon={DollarSign} 
           color="indigo" 
-          trend="+12.5%" 
+          trend="+12%" 
         />
-        <MetricCard 
-          label="Paid Orders" 
+        <StatCard 
+          title="Paid Orders" 
           value={(stats?.paid_count || 0).toString()} 
           icon={CheckCircle2} 
           color="emerald" 
-          trend="Live"
+          trend="Active"
         />
-        <MetricCard 
-          label="Waiting" 
+        <StatCard 
+          title="Pending" 
           value={`$${(stats?.pending_amount || 0).toLocaleString()}`} 
           icon={Clock} 
-          color="orange" 
-          trend="Awaiting"
+          color="rose" 
+          trend="Waiting"
         />
-        <MetricCard 
-          label="Total Stores" 
+        <StatCard 
+          title="Merchants" 
           value={storeStats.length.toString()} 
           icon={Store} 
-          color="rose" 
+          color="blue" 
           trend="Online"
         />
       </div>
 
-      {/* --- MAIN CONTAINER --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      {/* --- MAIN REGISTRY TABLE --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
-        {/* Toolbar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/30">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+        {/* Search & Filter Bar */}
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white">
+          <div className="relative w-full sm:w-72 group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search merchant or store name..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Search store name..." 
+              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-transparent rounded-xl text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400 placeholder:font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-2">
-              <FilterSelect options={['All Merchants', 'Active', 'Top Earners']} value="All Merchants" onChange={() => {}} icon={Filter} />
-          </div>
+<div className="flex items-center gap-2">
+  <FilterSelect 
+    options={['All Merchants', 'Active', 'Top Earners']} 
+    value="All Merchants" 
+    onChange={(e) => console.log(e.target.value)}
+  />
+</div>
         </div>
 
-        {/* Table/List View */}
+        {/* Table View */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Store Details</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Earnings</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Paid Orders</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50/50">
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store Profile</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Net</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Paid Orders</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                Array(5).fill(0).map((_, i) => (
+                Array(3).fill(0).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan="5" className="px-6 py-6 h-16 bg-white"></td>
+                    <td colSpan="5" className="px-6 py-5 h-16 bg-white"></td>
                   </tr>
                 ))
               ) : filteredStores.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center">
-                    <Store className="mx-auto text-slate-200 mb-4" size={48} />
-                    <p className="text-slate-400 font-black uppercase tracking-widest text-[10px] italic">No merchants discovered</p>
+                  <td colSpan="5" className="py-16 text-center">
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">No merchants located in registry</p>
                   </td>
                 </tr>
               ) : filteredStores.map((store, idx) => (
-                <motion.tr
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.03 }}
-                  key={store.id}
-                  className="group hover:bg-slate-50/50 transition-colors"
-                >
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                <tr key={store.id} className="group hover:bg-slate-50/30 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm shrink-0">
                         <img 
                           src={store.store_image || 'https://via.placeholder.com/100'} 
                           alt={store.name} 
                           className="w-full h-full object-cover" 
                         />
                       </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none uppercase italic group-hover:text-indigo-600 transition-colors">{store.name}</h3>
-                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">Merchant ID: #{store.id}</p>
+                      <div className="flex flex-col min-w-0">
+                        <h3 className="text-xs font-black text-slate-900 tracking-tight uppercase truncate group-hover:text-indigo-600 transition-colors">{store.name}</h3>
+                        <p className="text-slate-400 text-[8px] font-black uppercase tracking-widest mt-0.5">ID: #{store.id}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <div className="flex flex-col">
-                      <p className="text-base font-[900] text-slate-900 italic tracking-tight">${parseFloat(store.total_earned || 0).toLocaleString()}</p>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Gross Revenue</p>
+                      <span className="text-xs font-black text-slate-900 tracking-tight">${parseFloat(store.total_earned || 0).toLocaleString()}</span>
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Accumulated Earnings</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2">
-                       <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
-                          <CheckCircle2 size={14} />
-                       </div>
-                       <div className="flex flex-col">
-                          <p className="text-sm font-black text-slate-900 leading-none">{store.paid_count}</p>
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Paid Orders</p>
-                       </div>
-                    </div>
+                  <td className="px-4 py-4 text-center">
+                    <span className="text-xs font-black text-slate-700">{store.paid_count}</span>
                   </td>
-                  <td className="px-6 py-5 text-center">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-lg shadow-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest italic">Active Store</span>
-                    </div>
+                  <td className="px-4 py-4 text-center">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-emerald-100 bg-emerald-50 text-emerald-600 text-[8px] font-black uppercase tracking-widest">
+                      <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                      Active
+                    </span>
                   </td>
-                  <td className="px-6 py-5 text-right">
+                  <td className="px-6 py-4 text-right">
                     <Link href={`/admin/invoices/stores?store_id=${store.id}`}>
-                      <button className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 group/btn">
-                        <span>See Payments</span>
-                        <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                      <button className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-sm active:scale-95 group/btn">
+                        <span>Details</span>
+                        <ArrowUpRight size={12} strokeWidth={3} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                       </button>
                     </Link>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-slate-50/30 border-t border-slate-100 text-center">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Authorized Financial Registry • {filteredStores.length} Active Merchants</p>
-        </div>
+       
       </div>
     </div>
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color, trend }) {
-  const styles = {
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100/50",
-    orange: "bg-orange-50 text-orange-600 border-orange-100/50",
-    rose: "bg-rose-50 text-rose-600 border-rose-100/50",
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100/50",
+// --- SHARED COMPONENT: StatCard ---
+
+function StatCard({ title, value, icon: Icon, color, trend }) {
+  const themes = {
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    rose: "bg-rose-500 shadow-rose-100",
+    blue: "bg-blue-600 shadow-blue-100",
   };
 
   return (
-    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
-      <div className="flex items-center justify-between mb-3 relative z-10">
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${styles[color]}`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+      <div className="flex justify-between items-start mb-4 relative z-10">
+        <div className={`p-2 rounded-xl ${themes[color]} text-white shadow-lg`}>
           <Icon size={16} strokeWidth={2.5} />
         </div>
         {trend && (
-           <div className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-widest italic ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'}`}>
-             {trend}
-           </div>
+          <div className="text-[8px] font-black px-1.5 py-0.5 rounded border bg-slate-50 text-slate-400 uppercase tracking-widest italic">
+            {trend}
+          </div>
         )}
       </div>
       <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-0.5">{title}</p>
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
       </div>
-      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }
 
-function FilterSelect({ options, value, onChange, icon: Icon }) {
+// --- Updated Sub-component ---
+function FilterSelect({ options, value, onChange }) {
   return (
-    <div className="relative group">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-indigo-600">
-        {Icon && <Icon size={14} />}
-      </div>
+    <div className="relative">
       <select 
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-white border border-slate-100 hover:border-indigo-200 rounded-xl pl-9 pr-9 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer shadow-sm"
+        onChange={onChange} // <--- Add this line
+        className="appearance-none bg-white border border-slate-100 hover:border-indigo-200 rounded-lg pl-3 pr-8 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-600 outline-none transition-all cursor-pointer shadow-sm"
       >
         {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-        <ChevronDown size={14} className="text-slate-400" />
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+        <ChevronDown size={12} strokeWidth={3} />
       </div>
     </div>
   );

@@ -1,29 +1,14 @@
-"use client";
+'use client';
+
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import useInvoiceStore from '@/stores/useInvoiceStore';
 import { useStore } from '@/stores/useStore';
 import { 
-  Search, 
-  Filter, 
-  Download, 
-  Eye, 
-  MoreHorizontal, 
-  ArrowUpDown, 
-  CheckCircle2, 
-  Clock, 
-  Truck, 
-  XCircle, 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar, 
-  ChevronDown,
-  ShoppingBag, 
-  DollarSign, 
-  Activity, 
-  TrendingUp,
-  Loader2,
-  AlertCircle
+  Search, Filter, Download, Eye, MoreHorizontal, 
+  CheckCircle2, Clock, Truck, XCircle, ChevronLeft, 
+  ChevronRight, Calendar, ChevronDown, ShoppingBag, 
+  DollarSign, Activity, Loader2, AlertCircle, RefreshCw
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -61,23 +46,13 @@ function StoreInvoicesContent() {
     fetchInvoices(params);
   };
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter') {
-      setCurrentPage(1);
-      loadInvoices();
-    }
-  };
-
   if (!storeId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
         <div className="text-center">
             <AlertCircle className="mx-auto text-rose-500 mb-4" size={48} />
-            <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter italic">Invalid Store ID</h2>
-            <p className="text-slate-500 text-xs font-medium mb-6">Please select a store from the master list.</p>
-            <Link href="/admin/invoices" className="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg hover:shadow-indigo-200 transition-all">
-                Back to Masters
-            </Link>
+            <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter italic">Invalid Access</h2>
+            <Link href="/admin/invoices" className="text-[10px] font-black uppercase text-indigo-600 border-b border-indigo-200 pb-0.5">Return to Registry</Link>
         </div>
       </div>
     );
@@ -88,251 +63,147 @@ function StoreInvoicesContent() {
     return s === 'paid' || s === 'success';
   });
   const totalValue = paidInvoices.reduce((sum, inv) => sum + parseFloat(inv.total_amount || 0), 0);
-  const paidCount = paidInvoices.length;
-  const avgValue = paidCount > 0 ? totalValue / paidCount : 0;
 
   return (
-    <div className="space-y-6 pb-10 font-sans p-4 sm:p-8 bg-slate-50/20 min-h-screen">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button 
               onClick={() => router.back()}
-              className="p-2 border border-slate-200 rounded-xl hover:bg-white text-slate-500 transition-all active:scale-95 shadow-sm"
+              className="p-2 border border-slate-200 rounded-lg hover:bg-white text-slate-500 transition-all active:scale-95 shadow-sm"
           >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={14} strokeWidth={3} />
           </button>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{store?.name || 'Store Details'} • Payments</span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{store?.name || 'Merchant'} Registry</span>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
-                {store?.name}<span className="text-indigo-600">.</span>Payments
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+                Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
             </h1>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[11px] font-black hover:bg-slate-50 transition-all shadow-sm uppercase tracking-widest active:scale-95">
-            <Download size={15} strokeWidth={2.5} />
-            <span>Export</span>
+          <button 
+            onClick={loadInvoices}
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
+          >
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 uppercase tracking-widest">
-            <Filter size={15} strokeWidth={2.5} />
-            <span>Filter</span>
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
+            <Download size={14} strokeWidth={3} />
+            Export
           </button>
         </div>
       </div>
 
-      {/* --- KPI METRICS --- */}
+      {/* --- KPI GRID --- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard label="Total Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" />
-        <MetricCard label="Paid Orders" value={paidCount.toString()} icon={CheckCircle2} color="emerald" />
-        <MetricCard label="Total Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="orange" />
-        <MetricCard label="Average Sale" value={`$${avgValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={Activity} color="rose" />
+        <StatCard label="Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" />
+        <StatCard label="Settled" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" />
+        <StatCard label="Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="rose" />
+        <StatCard label="Volume" value="Live" icon={Activity} color="blue" />
       </div>
 
-      {/* --- MAIN TABLE CONTAINER --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      {/* --- TABLE CONTAINER --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/30">
-          
-          {/* Search */}
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row gap-3 justify-between items-center">
+          <div className="relative w-full sm:w-64 group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search by Invoice Number..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Invoice #..." 
+              className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
+              onKeyDown={(e) => e.key === 'Enter' && loadInvoices()}
             />
           </div>
 
-          {/* Filters */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
              <FilterSelect 
-               options={['All', 'Paid', 'Pending', 'Cancelled', 'Failed']} 
-               value={statusFilter === '2' ? 'Paid' : statusFilter === '1' ? 'Pending' : statusFilter === '3' ? 'Cancelled' : statusFilter === '4' ? 'Failed' : 'All'} 
+               options={['All', 'Paid', 'Pending', 'Cancelled']} 
+               value={statusFilter === '2' ? 'Paid' : statusFilter === '1' ? 'Pending' : statusFilter === '3' ? 'Cancelled' : 'All'} 
                onChange={(val) => {
-                  const mapping = { 'All': '', 'Paid': '2', 'Pending': '1', 'Cancelled': '3', 'Failed': '4' };
+                  const mapping = { 'All': '', 'Paid': '2', 'Pending': '1', 'Cancelled': '3' };
                   setStatusFilter(mapping[val] || '');
                   setCurrentPage(1);
                }}
-               icon={Filter}
              />
-             <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
-             <FilterSelect 
-               options={['Last 7 Days', 'Last 30 Days', 'This Year']} 
-               value="Last 30 Days" 
-               onChange={() => {}}
-               icon={Calendar}
-             />
+             <div className="h-4 w-px bg-slate-200 mx-1"></div>
+             <FilterSelect options={['Last 30 Days', 'This Year']} value="Last 30 Days" onChange={() => {}} />
           </div>
         </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="px-5 py-3 w-10">
-                  <input type="checkbox" className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20" />
-                </th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Invoice No.</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Customer</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Payment Status</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Total</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Order Status</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Product</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50/50">
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Transaction ID</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Net Amount</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Info</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr>
-                   <td colSpan="9" className="py-20 text-center">
-                      <div className="flex flex-col items-center gap-3">
-                         <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                         <span className="text-xs font-bold text-slate-500 italic uppercase">Loading Payments...</span>
-                      </div>
-                   </td>
-                </tr>
-              ) : invoices.length === 0 ? (
-                <tr>
-                   <td colSpan="9" className="py-12 text-center text-slate-400 text-xs font-medium italic uppercase tracking-widest">
-                    No transactions found recorded for this store.
-                  </td>
-                </tr>
+                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Syncing Registry...</td></tr>
               ) : invoices.map((inv, idx) => (
-                <motion.tr 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.03 }}
-                  key={inv.id} 
-                  className="hover:bg-slate-50/50 transition-colors group"
-                >
-                  <td className="px-5 py-3">
-                    <input type="checkbox" className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20" />
-                  </td>
-                  <td className="px-5 py-3">
+                <tr key={inv.id} className="hover:bg-slate-50/30 transition-colors group">
+                  <td className="px-5 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-indigo-600">{inv.invoice_number}</span>
-                      <span className="text-[9px] font-mono font-black text-slate-400 uppercase tracking-tighter">ID: #{inv.id}</span>
+                      <span className="text-xs font-black text-indigo-600 tracking-tight">{inv.invoice_number}</span>
+                      <span className="text-[8px] font-black text-slate-300 uppercase">ID: {inv.id}</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200">
-                        {inv.order?.user?.name?.charAt(0) || 'G'}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-900">{inv.order?.user?.name || 'Guest User'}</span>
-                        <span className="text-[10px] text-slate-400">{inv.order?.user?.email}</span>
-                      </div>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-700">{inv.order?.user?.name || 'Guest'}</span>
+                      <span className="text-[9px] text-slate-400 font-medium truncate max-w-[120px]">{inv.order?.user?.email}</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-xs font-medium text-slate-500">
+                  <td className="px-4 py-4 text-[10px] font-black text-slate-400 uppercase">
                     {format(new Date(inv.created_at), 'MMM dd, yyyy')}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-4 py-4">
                     <PaymentBadge status={inv.payment_status?.status || 'Pending'} />
                   </td>
-                  <td className="px-5 py-3 text-right text-xs font-bold text-slate-900">
-                    ${parseFloat(inv.total_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  <td className="px-4 py-4 text-right text-xs font-black text-slate-900">
+                    ${parseFloat(inv.total_amount || 0).toLocaleString()}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2 max-w-[180px]">
+                      <div className="w-8 h-8 rounded-lg border border-slate-100 bg-slate-50 shrink-0 overflow-hidden">
+                        <img src={inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.images?.[0]?.image || '/placeholder.png'} className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-500 truncate">{inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.name || 'Item'}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 text-right">
                     <StatusBadge status={inv.order?.order_status?.status || 'Processing'} />
                   </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      {(() => {
-                        const line = inv.order?.order_lines?.[0];
-                        const product = line?.product_item_variant?.product_item?.product;
-
-                        const image =
-                          product?.images?.find(img => img.is_primary === 1)?.image ||
-                          product?.images?.[0]?.image ||
-                          '/placeholder.png';
-
-                        return (
-                          <>
-                            <img
-                              src={image}
-                              alt={product?.name || 'Product'}
-                              className="w-10 h-10 rounded-lg object-cover border border-slate-200 bg-slate-50"
-                            />
-
-                            <div className="flex flex-col max-w-[160px]">
-                              <span className="text-xs font-bold text-slate-900 truncate">
-                                {product?.name || 'Unknown Product'}
-                                {inv.order?.order_lines?.length > 1 && (
-                                  <span className="text-slate-400 font-medium">
-                                    {' '}+{inv.order.order_lines.length - 1} more
-                                  </span>
-                                )}
-                              </span>
-
-                              <span className="text-[10px] text-slate-400">
-                                Qty: {line?.quantity || 1}
-                              </span>
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
-                        <Eye size={14} />
-                      </button>
-                      <button className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all">
-                        <MoreHorizontal size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Footer / Pagination */}
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
-          <p className="text-xs font-medium text-slate-500 italic uppercase tracking-widest">
-            Showing <span className="font-bold text-slate-900">{invoices.length}</span> of <span className="font-bold text-slate-900">{meta.total}</span> results
-          </p>
-          
-          <div className="flex items-center gap-2">
-            <button 
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                className="p-2 border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all disabled:opacity-50 shadow-sm"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(meta.last_page || 1, 5) }).map((_, i) => (
-                    <button 
-                        key={i}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all italic ${currentPage === i + 1 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'hover:bg-slate-100 text-slate-600'}`}
-                    >
-                        {i + 1}
-                    </button>
-                ))}
-            </div>
-            <button 
-                disabled={currentPage === meta.last_page}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                className="p-2 border border-slate-200 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-white transition-all shadow-sm"
-            >
-              <ChevronRight size={14} />
-            </button>
+        {/* Pagination */}
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Page {currentPage} of {meta.last_page}</span>
+          <div className="flex gap-1">
+            <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronLeft size={12} /></button>
+            <button onClick={() => setCurrentPage(p => Math.min(meta.last_page, p+1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronRight size={12} /></button>
           </div>
         </div>
 
@@ -341,38 +212,30 @@ function StoreInvoicesContent() {
   );
 }
 
-export default function orderbystore() {
+export default function OrderByStore() {
     return (
-      <Suspense fallback={
-          <div className="min-h-screen flex items-center justify-center bg-slate-50">
-              <Loader2 className="animate-spin text-indigo-600" size={32} />
-          </div>
-      }>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-indigo-600" /></div>}>
         <StoreInvoicesContent />
       </Suspense>
     );
 }
 
-// --- SUB-COMPONENTS (Synced with Orders Page) ---
+// --- REFINED SUB-COMPONENTS ---
 
-function MetricCard({ label, value, icon: Icon, color }) {
-  const styles = {
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100/50",
-    orange: "bg-orange-50 text-orange-600 border-orange-100/50",
-    rose: "bg-rose-50 text-rose-600 border-rose-100/50",
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100/50",
+function StatCard({ label, value, icon: Icon, color }) {
+  const themes = {
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    rose: "bg-rose-500 shadow-rose-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    blue: "bg-blue-600 shadow-blue-100",
   };
-
   return (
-    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${styles[color]} relative z-10`}>
-        <Icon size={16} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group">
+      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
-      <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
-      </div>
-      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <h3 className="text-xl font-black text-slate-900 tracking-tighter italic">{value}</h3>
     </div>
   );
 }
@@ -380,20 +243,14 @@ function MetricCard({ label, value, icon: Icon, color }) {
 function StatusBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const config = {
-    pending: { label: 'Pending', icon: Clock, style: "bg-orange-50 text-orange-600 border-orange-100" },
-    processing: { label: 'Processing', icon: Clock, style: "bg-indigo-50 text-indigo-600 border-indigo-100" },
-    shipped: { label: 'Shipped', icon: Truck, style: "bg-blue-50 text-blue-600 border-blue-100" },
-    delivered: { label: 'Delivered', icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-    cancelled: { label: 'Cancelled', icon: XCircle, style: "bg-slate-100 text-slate-500 border-slate-200" },
+    delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    shipped: "bg-blue-50 text-blue-600 border-blue-100",
+    cancelled: "bg-slate-100 text-slate-400 border-slate-200",
   };
-
-  const current = config[norm] || config.pending;
-  const Icon = current.icon;
-
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest italic ${current.style}`}>
-      <Icon size={12} strokeWidth={2.5} />
-      {current.label}
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[norm] || "bg-orange-50 text-orange-600 border-orange-100"}`}>
+      <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
+      {status}
     </span>
   );
 }
@@ -401,39 +258,28 @@ function StatusBadge({ status }) {
 function PaymentBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const styles = {
-    success: { label: "Paid", style: "text-emerald-600 bg-emerald-50 border-emerald-100" },
-    paid: { label: "Paid", style: "text-emerald-600 bg-emerald-50 border-emerald-100" },
-    pending: { label: "Unpaid", style: "text-orange-600 bg-orange-50 border-orange-100" },
-    unpaid: { label: "Unpaid", style: "text-rose-600 bg-rose-50 border-rose-100" },
-    failed: { label: "Failed", style: "text-rose-600 bg-rose-50 border-rose-100" },
-    refunded: { label: "Refunded", style: "text-slate-500 bg-slate-100 border-slate-200 line-through" },
+    paid: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    success: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    failed: "text-rose-600 bg-rose-50 border-rose-100",
   };
-  
-  const config = styles[norm] || { label: status, style: "text-slate-500 bg-slate-50 border-slate-100" };
-  
   return (
-    <span className={`text-[9px] font-black tracking-widest px-2 py-0.5 rounded-md border uppercase italic ${config.style}`}>
-      {config.label}
+    <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${styles[norm] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
+      {status}
     </span>
   );
 }
 
-function FilterSelect({ options, value, onChange, icon: Icon }) {
+function FilterSelect({ options, value, onChange }) {
   return (
-    <div className="relative group">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-indigo-600">
-        {Icon && <Icon size={14} />}
-      </div>
+    <div className="relative">
       <select 
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-white border border-slate-100 hover:border-indigo-200 rounded-xl pl-9 pr-9 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer shadow-sm"
+        className="appearance-none bg-white border border-slate-100 rounded-lg pl-3 pr-8 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-600 outline-none transition-all cursor-pointer shadow-sm"
       >
         {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-        <ChevronDown size={14} className="text-slate-400" />
-      </div>
+      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
     </div>
   );
 }
