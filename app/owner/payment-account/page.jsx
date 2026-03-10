@@ -68,15 +68,15 @@ export default function PaymentAccountsPage() {
   };
 
   return (
-    <div className="space-y-10 pb-10 font-sans">
+    <div className="space-y-6 pb-10 font-sans">
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Financial Node Registry</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Financial Node Registry</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Payment Hubs</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Payment Hubs</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -90,9 +90,9 @@ export default function PaymentAccountsPage() {
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={18} strokeWidth={2.5} /> Register Account
+            <Plus size={16} strokeWidth={2.5} /> Register Account
           </button>
         </div>
       </div>
@@ -105,8 +105,8 @@ export default function PaymentAccountsPage() {
       </div>
 
       {/* --- REGISTRY TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative w-full sm:w-96 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
             <input 
@@ -123,11 +123,11 @@ export default function PaymentAccountsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Account Node</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Type / ID</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Zone / Currency</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Node</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Type / ID</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Zone / Currency</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -142,9 +142,9 @@ export default function PaymentAccountsPage() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
                   key={acc.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
                          {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
                            <img src="/img/bakong.png" alt="Bakong" className="w-8 h-8 object-contain" />
                          ) : (
@@ -154,37 +154,37 @@ export default function PaymentAccountsPage() {
                          )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900">{acc.account_name}</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Node ID: {acc.account_id}</span>
+                        <span className="text-[13px] font-bold text-slate-900">{acc.account_name}</span>
+                        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Node ID: {acc.account_id}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-700">{acc.type_value}</span>
-                        <span className="text-xs font-medium text-indigo-600/60 tracking-wider">{acc.account_id}</span>
+                        <span className="text-[13px] font-bold text-slate-700">{acc.type_value}</span>
+                        <span className="text-[11px] font-medium text-indigo-600/60 tracking-wider whitespace-nowrap">{acc.account_id}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-slate-500 uppercase">{acc.account_city}</span>
+                        <span className="text-[13px] font-bold text-slate-500 uppercase">{acc.account_city}</span>
                         <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[10px] font-bold text-slate-400">{acc.currency}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider
                       ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
                       <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
                       {acc.status ? 'Active' : 'Offline'}
                     </div>
                   </td>
-                  <td className="px-8 py-5 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => { setSelectedItem(acc); setIsFormOpen(true); }} 
-                        className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                        className="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
                       >
-                        <Edit3 size={15} strokeWidth={2.5} />
+                        <Edit3 size={14} strokeWidth={2.5} />
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>
@@ -201,13 +201,13 @@ export default function PaymentAccountsPage() {
                               disabled={isActionLoading}
                               className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
                             >
-                              {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={2.5} />}
+                              {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} strokeWidth={2.5} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
-                              className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
+                              className="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
                             >
-                              <X size={14} strokeWidth={2.5} />
+                              <X size={12} strokeWidth={2.5} />
                             </button>
                           </motion.div>
                         ) : (
@@ -217,9 +217,9 @@ export default function PaymentAccountsPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(acc.id)}
-                            className="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
+                            className="w-8 h-8 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
                           >
-                            <Trash2 size={15} strokeWidth={2.5} />
+                            <Trash2 size={14} strokeWidth={2.5} />
                           </motion.button>
                         )}
                       </AnimatePresence>
@@ -245,16 +245,16 @@ export default function PaymentAccountsPage() {
 }
 
 function MetricCard({ label, value, icon: Icon, color }) {
-  const colors = {
+  const themes = {
     indigo: "bg-indigo-50 text-indigo-600",
     emerald: "bg-emerald-50 text-emerald-600",
     purple: "bg-purple-50 text-purple-600"
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
-      <div className={`p-3 rounded-xl w-fit mb-4 ${colors[color]}`}><Icon size={20} /></div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-      <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{value}</h3>
+    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
+      <div className={`p-2.5 rounded-xl w-fit mb-4 ${themes[color]}`}><Icon size={18} /></div>
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+      <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{value}</h3>
       <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-all opacity-40" />
     </div>
   );

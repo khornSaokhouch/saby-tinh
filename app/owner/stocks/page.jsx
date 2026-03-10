@@ -44,16 +44,16 @@ export default function OwnerStocksPage() {
   }, [stocks]);
 
   return (
-    <div className="space-y-10 pb-10 font-sans">
+    <div className="space-y-6 pb-10 font-sans">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Package className="w-4 h-4 text-indigo-500" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Inventory Tracking</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Inventory Tracking</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Global Stock</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Global Stock</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export default function OwnerStocksPage() {
             <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
           </button>
           <div className="h-10 w-[1px] bg-slate-200 mx-1 hidden sm:block" />
-          <button className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all active:scale-95">
+          <button className="flex items-center gap-2 px-5 py-3 bg-slate-900 text-white rounded-xl text-[11px] font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all active:scale-95 uppercase tracking-widest">
              Generate Report
           </button>
         </div>
@@ -78,10 +78,10 @@ export default function OwnerStocksPage() {
       </div>
 
       {/* --- INVENTORY LIST --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
         
         {/* Toolbar */}
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative w-full sm:w-96 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
             <input 
@@ -113,11 +113,11 @@ export default function OwnerStocksPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Product & SKU</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Storage Location</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Attributes</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Stock Status</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Update</th>
+                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Product & SKU</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Storage Location</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Attributes</th>
+                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Stock Status</th>
+                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Update</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -135,9 +135,9 @@ export default function OwnerStocksPage() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
                   key={stock.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
                         {stock.product_item?.product?.images?.[0]?.image ? (
                           <img src={stock.product_item.product.images[0].image} alt="product" className="w-full h-full object-cover" />
                         ) : (
@@ -145,7 +145,7 @@ export default function OwnerStocksPage() {
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">{stock.product_item?.product?.name || 'Unknown Product'}</span>
+                        <span className="text-[13px] font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">{stock.product_item?.product?.name || 'Unknown Product'}</span>
                         <span className="text-[10px] font-black text-slate-400 mt-0.5 tracking-widest flex items-center gap-1.5 uppercase">
                             <ShieldCheck size={10} className="text-rose-500" />
                             SKU: {stock.product_item?.sku || 'NO-SKU'}
@@ -157,7 +157,7 @@ export default function OwnerStocksPage() {
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1.5 text-slate-700">
                         <ShoppingBag size={12} className="text-indigo-500" />
-                        <span className="text-sm font-bold uppercase tracking-tight">{stock.store?.name || 'Main Warehouse'}</span>
+                        <span className="text-[13px] font-bold uppercase tracking-tight">{stock.store?.name || 'Main Warehouse'}</span>
                       </div>
                       <span className="text-[10px] font-medium text-slate-400 mt-0.5 uppercase">Branch ID: {stock.store?.id || '---'}</span>
                     </div>
@@ -191,7 +191,7 @@ export default function OwnerStocksPage() {
                                     style={{ width: `${Math.min(stock.product_item?.quantity_in_stock || 0, 100)}%` }}
                                 />
                             </div>
-                            <span className={`text-sm font-black ${
+                            <span className={`text-[13px] font-black ${
                                 stock.product_item?.quantity_in_stock > 10 ? 'text-emerald-700' : 
                                 stock.product_item?.quantity_in_stock > 0 ? 'text-amber-700' : 'text-rose-700'
                             }`}>
@@ -204,9 +204,9 @@ export default function OwnerStocksPage() {
                         </span>
                     </div>
                   </td>
-                  <td className="px-8 py-5 text-right">
-                    <button className="p-3 bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50/30 rounded-2xl transition-all shadow-sm">
-                        <History size={16} />
+                  <td className="px-6 py-4 text-right">
+                    <button className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50/30 rounded-xl transition-all shadow-sm">
+                        <History size={14} />
                     </button>
                   </td>
                 </motion.tr>
@@ -239,14 +239,14 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
   };
   
   return (
-    <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.01)] relative overflow-hidden group hover:shadow-xl hover:shadow-slate-100/50 transition-all duration-500">
-      <div className={`p-4 rounded-2xl w-fit mb-6 shadow-sm border ${themes[color]}`}><Icon size={24} strokeWidth={2.5} /></div>
+    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.01)] relative overflow-hidden group hover:shadow-xl hover:shadow-slate-100/50 transition-all duration-500">
+      <div className={`p-2.5 rounded-xl w-fit mb-4 shadow-sm border ${themes[color]}`}><Icon size={20} strokeWidth={2.5} /></div>
       
       <div className="space-y-1">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{label}</p>
         <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-black text-slate-900 tracking-tighter">{value}</h3>
-            {subText && <span className="text-xs font-bold text-slate-400 tracking-tight">{subText}</span>}
+            <h3 className="text-2xl font-black text-slate-900 tracking-tighter">{value}</h3>
+            {subText && <span className="text-[10px] font-bold text-slate-400 tracking-tight">{subText}</span>}
         </div>
       </div>
 

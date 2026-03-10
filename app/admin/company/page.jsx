@@ -79,23 +79,24 @@ export default function CompanyPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Partner Directory</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Directory</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Partners</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Partners</h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchAllUsers()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
             title="Refresh Data"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
-            <Download size={16} /> Export
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
+            <Download size={14} className="group-hover:rotate-12 transition-transform" /> 
+            <span className="group-hover:text-indigo-600 transition-colors">Export Registry</span>
           </button>
         </div>
       </div>
@@ -123,22 +124,22 @@ export default function CompanyPage() {
       </div>
 
       {/* --- REGISTRY TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
         {/* Table Controls */}
-        <div className="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
-          <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
               placeholder="Search partners..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400 shadow-sm"
+              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 text-slate-500 hover:text-indigo-600 transition-colors">
-            <Filter size={18} />
-            <span className="text-sm font-bold">Filters</span>
+          <button className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-indigo-600 transition-colors group">
+            <Filter size={16} className="group-hover:rotate-180 transition-transform duration-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Advanced Filters</span>
           </button>
         </div>
 
@@ -147,10 +148,10 @@ export default function CompanyPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">Partner Name</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">Role</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">Last Update</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right border-b border-slate-100">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50">Partner Name</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50">Role Mapping</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50 text-center">Last Sync</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -160,10 +161,10 @@ export default function CompanyPage() {
                  <tr><td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">No partners found.</td></tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-5">
+                  <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-xs border border-white shadow-sm overflow-hidden relative transition-transform group-hover:scale-105">
+                        <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[11px] border border-white shadow-sm overflow-hidden relative transition-all group-hover:scale-105 active:scale-95 group-hover:rotate-3">
                            {getCleanImageUrl(user.profile?.image_profile) ? (
                               <Image 
                                 src={getCleanImageUrl(user.profile?.image_profile)} 
@@ -176,23 +177,23 @@ export default function CompanyPage() {
                            )}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-900">{user.name}</span>
-                          <span className="text-xs font-medium text-slate-500 mt-0.5">{user.email}</span>
+                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{user.name}</span>
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{user.email}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-4">
                       <select
                         value={user.role}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold uppercase tracking-wide focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer appearance-none"
+                        className="px-3 py-1.5 bg-slate-50/80 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 outline-none cursor-pointer appearance-none shadow-sm hover:bg-white transition-all min-w-[100px] text-center"
                       >
-                        <option value="user">User</option>
-                        <option value="owner">Owner</option>
+                        <option value="user">USER</option>
+                        <option value="owner">OWNER</option>
                       </select>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className="text-sm font-medium text-slate-500">
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-[11px] font-black text-slate-900 italic">
                         {new Date(user.updated_at).toLocaleDateString()}
                       </span>
                     </td>
@@ -256,12 +257,12 @@ export default function CompanyPage() {
 
         {/* Pagination */}
         <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
-           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-             Showing {filteredUsers.length} Partners
+           <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+             Total: {filteredUsers.length} Partners
            </span>
-           <div className="flex gap-2">
-              <button className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors">Prev</button>
-              <button className="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-md shadow-slate-200">Next</button>
+           <div className="flex gap-4">
+              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Prev</button>
+              <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-100 hover:bg-slate-800 transition-all active:scale-95">Next Segment</button>
            </div>
         </div>
       </div>
@@ -272,19 +273,21 @@ export default function CompanyPage() {
 // --- SUB COMPONENTS ---
 function MetricCard({ label, value, icon: Icon, color }) {
   const themes = {
-    indigo: 'bg-indigo-50 text-indigo-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
-    purple: 'bg-purple-50 text-purple-600',
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
+    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-indigo-100 transition-colors text-left">
-      <div className="absolute top-0 right-0 w-24 h-24 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-[0.03] group-hover:scale-150 transition-transform duration-700" />
-      <div className={`p-3 rounded-xl w-fit mb-4 ${themes[color] || themes.indigo}`}>
-        <Icon size={20} strokeWidth={2.5} />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
+      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
+      <div className={`p-2.5 rounded-xl w-fit mb-4 border-2 border-white shadow-sm relative z-10 ${themes[color] || themes.indigo}`}>
+        <Icon size={18} strokeWidth={2.5} />
       </div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-      <h3 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700" />
+      <div className="relative z-10">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

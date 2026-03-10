@@ -95,22 +95,22 @@ export default function SellerManagementPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Seller Requests</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Seller Requests</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Seller Requests</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Seller Requests</h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchSellers()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
             title="Refresh Data"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
 
-          <button className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black text-indigo-600 hover:text-indigo-700 transition-all shadow-sm uppercase tracking-widest">
+          <button className="flex items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest">
             <Download size={16} strokeWidth={2.5} /> Export Requests
           </button>
         </div>
@@ -128,7 +128,7 @@ export default function SellerManagementPage() {
         <MetricCard
           label="Pending Review"
           value={stats.pending}
-          trend="Action Required"
+          trend="Required"
           icon={Clock}
           color="amber"
           isWarning={stats.pending > 0}
@@ -143,30 +143,30 @@ export default function SellerManagementPage() {
       </div>
 
       {/* --- CONTENT SECTION --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
         
         {/* Table Controls */}
-        <div className="p-6 border-b border-slate-50 flex flex-col lg:flex-row items-center justify-between gap-6 bg-slate-50/30">
-          <div className="flex items-center gap-2 p-1 bg-white border border-slate-200 rounded-2xl self-start">
+        <div className="p-5 border-b border-slate-50 flex flex-col lg:flex-row items-center justify-between gap-6 bg-slate-50/20">
+          <div className="flex items-center gap-1.5 p-1 bg-white border border-slate-100 rounded-xl self-start shadow-sm">
             <TabBtn active={activeTab === 'all'} onClick={() => setActiveTab('all')}>All Requests</TabBtn>
             <TabBtn active={activeTab === 'pending'} onClick={() => setActiveTab('pending')}>Pending</TabBtn>
             <TabBtn active={activeTab === 'approved'} onClick={() => setActiveTab('approved')}>Approved</TabBtn>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="relative w-full sm:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
               <input 
                 type="text" 
                 placeholder="Search requests..." 
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="flex items-center gap-2 px-4 py-3 text-indigo-600 hover:text-indigo-700 transition-colors shrink-0">
-              <Filter size={18} />
-              <span className="text-sm font-bold">Filters</span>
+            <button className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all">
+              <Filter size={14} className="text-indigo-400" />
+              <span>Filters</span>
             </button>
           </div>
         </div>
@@ -176,11 +176,11 @@ export default function SellerManagementPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Company & Agent</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Contact Info</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Documents</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Company & Agent</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Info</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Documents</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -204,8 +204,8 @@ export default function SellerManagementPage() {
                 </tr>
               ) : (
                 filteredSellers.map((seller) => (
-                  <tr key={seller.id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-6">
+                  <tr key={seller.id} className="group hover:bg-slate-50/30 transition-colors">
+                    <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                           {seller.company_name}
@@ -217,34 +217,34 @@ export default function SellerManagementPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
+                        <div className="flex items-center gap-2 text-[12px] font-bold text-slate-600">
                           <Mail size={12} className="text-slate-400" /> {seller.email}
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
+                        <div className="flex items-center gap-2 text-[12px] font-bold text-slate-600">
                           <Phone size={12} className="text-slate-400" /> {seller.phone_number}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-4">
                       {seller.document_path ? (
                         <a 
                           href={seller.document_path} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all border border-indigo-100/50"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black hover:bg-indigo-100 transition-all border border-indigo-100/50 uppercase tracking-widest"
                         >
-                          <FileText size={14} /> License View <ExternalLink size={10} />
+                          <FileText size={12} /> View License <ExternalLink size={8} />
                         </a>
                       ) : (
-                        <span className="text-xs font-bold text-slate-300 uppercase italic">No Data</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest">No File</span>
                       )}
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-4">
                       <StatusBadge status={seller.status} />
                     </td>
-                    <td className="px-8 py-6 text-right">
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {seller.status === 'pending' && (
                           <button 
@@ -277,13 +277,13 @@ export default function SellerManagementPage() {
         </div>
 
         {/* Table Footer */}
-        <div className="p-6 border-t border-slate-50 bg-slate-50/20 flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            {filteredSellers.length} Requests
+        <div className="px-6 py-4 border-t border-slate-50 bg-slate-50/20 flex items-center justify-between">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            {filteredSellers.length} Requests Found
           </span>
-          <div className="flex gap-4">
-            <button className="px-6 py-3 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 transition-colors">Prev</button>
-            <button className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-slate-200 active:scale-95 transition-all">Next Page</button>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">Prev</button>
+            <button className="px-6 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-slate-200 active:scale-95 transition-all">Next Page</button>
           </div>
         </div>
       </div>
@@ -302,37 +302,40 @@ export default function SellerManagementPage() {
 // --- SUB COMPONENTS ---
 
 function MetricCard({ label, value, trend, icon: Icon, color, isWarning }) {
-  const colorMap = {
-    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100',
-    amber: 'bg-amber-50 text-amber-600 border-amber-100',
-    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+  const themes = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
+    amber: 'bg-amber-50 text-amber-600 border-amber-100/50',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
   };
 
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm transition-all hover:shadow-md">
-      <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-2xl ${colorMap[color] || colorMap.indigo} border`}>
-          <Icon size={20} />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className="flex items-start justify-between mb-4 relative z-10">
+        <div className={`p-2.5 rounded-xl border-2 border-white shadow-sm ${themes[color] || themes.indigo}`}>
+          <Icon size={18} strokeWidth={2.5} />
         </div>
-        <div className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2.5 py-1.5 rounded-lg ${isWarning ? 'bg-rose-50 text-rose-600 animate-pulse' : 'bg-slate-50 text-slate-400'}`}>
+        <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg ${isWarning ? 'bg-rose-50 text-rose-600 animate-pulse border border-rose-100/50' : 'bg-slate-50 text-slate-400 border border-slate-100/50'}`}>
           {trend}
         </div>
       </div>
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-      <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{value}</h3>
+      <div className="relative z-10 text-left">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }
 
 function StatusBadge({ status }) {
   const configs = {
-    pending: { label: 'Pending Review', color: 'bg-amber-50 text-amber-600 border-amber-100' },
-    approved: { label: 'Approved Seller', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    pending: { label: 'Pending Review', color: 'bg-amber-50 text-amber-600 border-amber-100/50' },
+    approved: { label: 'Approved Seller', color: 'bg-emerald-50 text-emerald-600 border-emerald-100/50' },
   };
   const config = configs[status] || configs.pending;
 
   return (
-    <span className={`px-2.5 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border ${config.color}`}>
+    <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm ${config.color}`}>
       {config.label}
     </span>
   );
@@ -342,10 +345,10 @@ function TabBtn({ children, active, onClick }) {
   return (
     <button 
       onClick={onClick}
-      className={`px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
+      className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
         active 
-          ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' 
-          : 'text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50'
+          ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' 
+          : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-50'
       }`}
     >
       {children}

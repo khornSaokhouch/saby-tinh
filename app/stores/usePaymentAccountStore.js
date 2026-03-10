@@ -10,10 +10,17 @@ export const usePaymentAccountStore = create((set, get) => ({
   /* =========================
      Fetch all payment accounts
      ========================= */
-  fetchPaymentAccounts: async () => {
+  fetchPaymentAccounts: async (params = {}) => {
     set({ loading: true, error: null });
     try {
-      const res = await request('/payment-accounts', 'GET', null, false);
+      // Build query string if params are provided
+      let url = '/payment-accounts';
+      if (Object.keys(params).length > 0) {
+        const query = new URLSearchParams(params).toString();
+        url += `?${query}`;
+      }
+
+      const res = await request(url, 'GET', null, false);
       const list = Array.isArray(res) ? res : res?.data || [];
       set({ paymentAccounts: list, loading: false });
     } catch (e) {

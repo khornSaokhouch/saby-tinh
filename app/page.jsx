@@ -22,8 +22,8 @@ export default function HomePage() {
 
     useEffect(() => {
         const loadData = async () => {
-            // Speed optimization: limit products on home page to 20
-            await Promise.all([fetchCategories(), fetchEvents(), fetchProducts(20)]);
+            // Fetch all products to ensure all promotional offers from all owners are visible
+            await Promise.all([fetchCategories(), fetchEvents(), fetchProducts()]);
         };
         loadData();
     }, [fetchCategories, fetchEvents, fetchProducts]);
@@ -34,7 +34,12 @@ export default function HomePage() {
     };
 
     const newArrivals = products?.filter(p => getIsNew(p.created_at)) || [];
-    const promotionalProducts = products?.filter(p => p.category?.promotions && p.category.promotions.length > 0) || [];
+    const promotionalProducts = products?.filter(p => {
+        const storeUserId = p.store?.user_id || p.store?.user?.id;
+        return (p.category?.promotions || []).some(promo => 
+            promo.user_id === storeUserId && promo.status === 1
+        );
+    }) || [];
     const popularProducts = products?.slice(0, 10).sort(() => 0.5 - Math.random()) || []; 
 
     return (
@@ -87,7 +92,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        {promotionalProducts.slice(0, 5).map((product) => (
+                        {promotionalProducts.map((product) => (
                             <ProductCard key={`promo-${product.id}`} product={product} />
                         ))}
                     </div>

@@ -84,13 +84,13 @@ export default function OwnerStoreFormModal({ isOpen, onClose, initialData }) {
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-white"
+            className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-white"
           >
-            <div className="p-8 md:p-10 font-sans">
+            <div className="p-6 md:p-8 font-sans">
               {/* Header */}
-              <div className="flex justify-between items-center mb-10">
+              <div className="flex justify-between items-center mb-6">
                 <div className="flex flex-col">
-                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
                     {initialData ? 'Update Store' : 'Register New Store'}
                   </h2>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-2">Retail Logistics Protocol</span>
@@ -101,7 +101,7 @@ export default function OwnerStoreFormModal({ isOpen, onClose, initialData }) {
               </div>
 
               {/* Form */}
-              <form className="space-y-6" onSubmit={handleSubmit}>
+              <form className="space-y-5" onSubmit={handleSubmit}>
                 
                 {/* Image Upload */}
                 <div className="relative group w-full h-32 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden hover:border-indigo-400 transition-all cursor-pointer">
@@ -124,11 +124,11 @@ export default function OwnerStoreFormModal({ isOpen, onClose, initialData }) {
                     onChange={(e) => setName(e.target.value)}
                     required
                     placeholder=" "
-                    className="peer w-full h-16 pt-6 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
+                    className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
                   />
-                  <label className="absolute left-5 top-5 text-slate-400 text-sm font-medium transition-all 
-                    peer-focus:top-2 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                    peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
+                  <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
+                    peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
+                    peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
                   >
                     Store Name
                   </label>
@@ -136,8 +136,8 @@ export default function OwnerStoreFormModal({ isOpen, onClose, initialData }) {
 
                 {/* Buttons */}
                 <div className="flex gap-4 pt-4">
-                  <button type="button" onClick={onClose} className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all">Cancel</button>
-                  <button type="submit" disabled={isSubmitting} className="flex-[2] py-5 bg-indigo-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700">
+                  <button type="button" onClick={onClose} className="flex-1 py-4 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all">Cancel</button>
+                  <button type="submit" disabled={isSubmitting} className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700">
                     {isSubmitting ? 'Saving...' : initialData ? 'Apply Changes' : 'Register Store'}
                   </button>
                 </div>

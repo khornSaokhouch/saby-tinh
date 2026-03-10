@@ -1,190 +1,253 @@
-'use client';
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+import React, { useState, useEffect } from 'react';
+import useInvoiceStore from '../../stores/useInvoiceStore';
 import { 
-  Search, Filter, UserPlus, ArrowUpRight , Mail, 
-  Phone, MapPin, ShieldCheck, Star, ArrowRight,
-  TrendingUp, Clock
+  Search, 
+  Filter, 
+  Download, 
+  ArrowUpRight, 
+  Store, 
+  CheckCircle2,
+  Clock,
+  ChevronDown,
+  DollarSign,
+  ChevronRight,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05, delayChildren: 0.1 }
-  }
-};
-
-const item = {
-  hidden: { y: 15, opacity: 0 },
-  show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
-
-const customers = [
-  { id: 1, name: "Sarah Jenkins", email: "sarah.j@design.io", ltv: "$12,400", status: "VIP", spent: 85, color: "bg-amber-100 text-amber-600" },
-  { id: 2, name: "Marcus Aurelius", email: "m.aurelius@rome.it", ltv: "$8,200", status: "Active", spent: 62, color: "bg-indigo-100 text-indigo-600" },
-  { id: 3, name: "Elena Rodriguez", email: "elena.rod@tech.com", ltv: "$3,150", status: "New", spent: 15, color: "bg-emerald-100 text-emerald-600" },
-  { id: 4, name: "Julian Thorne", email: "j.thorne@agency.net", ltv: "$950", status: "At Risk", spent: 40, color: "bg-rose-100 text-rose-600" },
-];
-
-export default function CRMPage() {
+export default function AdminInvoices() {
   const [search, setSearch] = useState('');
+  const { storeStats, stats, loading, fetchStoreStats, fetchStats } = useInvoiceStore();
+
+  useEffect(() => {
+    fetchStats();
+    fetchStoreStats();
+  }, []);
+
+  const filteredStores = storeStats.filter(store => 
+    store.name.toLowerCase().includes(search.toLowerCase()) &&
+    parseInt(store.paid_count || 0) > 0
+  );
 
   return (
-    <motion.div 
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="p-4 md:p-10 space-y-10 bg-[#fbfbfc] min-h-screen font-sans"
-    >
-      {/* --- HEADER & SEARCH --- */}
-      <motion.div variants={item} className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <div className="space-y-6 pb-10 font-sans p-4 sm:p-8 bg-slate-50/20 min-h-screen">
+      
+      {/* --- HEADER --- */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight italic uppercase">
-            Relationship <span className="text-indigo-600 font-sans not-italic">Manager</span>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Finance Overview</span>
+          </div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
+            STORE<span className="text-indigo-600">.</span>PAYMENTS
           </h1>
-          <p className="text-slate-500 font-medium mt-1">Nurture and track your global customer base.</p>
         </div>
+        
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[11px] font-black hover:bg-slate-50 transition-all shadow-sm uppercase tracking-widest active:scale-95">
+            <Download size={15} strokeWidth={2.5} />
+            <span>Consolidated Export</span>
+          </button>
+        </div>
+      </div>
 
-        <div className="flex items-center gap-3 w-full lg:w-auto">
-          <div className="relative flex-1 lg:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+      {/* --- KPI METRICS --- */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricCard 
+          label="Total Sales" 
+          value={`$${(stats?.total_gmv || 0).toLocaleString()}`} 
+          icon={DollarSign} 
+          color="indigo" 
+          trend="+12.5%" 
+        />
+        <MetricCard 
+          label="Paid Orders" 
+          value={(stats?.paid_count || 0).toString()} 
+          icon={CheckCircle2} 
+          color="emerald" 
+          trend="Live"
+        />
+        <MetricCard 
+          label="Waiting" 
+          value={`$${(stats?.pending_amount || 0).toLocaleString()}`} 
+          icon={Clock} 
+          color="orange" 
+          trend="Awaiting"
+        />
+        <MetricCard 
+          label="Total Stores" 
+          value={storeStats.length.toString()} 
+          icon={Store} 
+          color="rose" 
+          trend="Online"
+        />
+      </div>
+
+      {/* --- MAIN CONTAINER --- */}
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        
+        {/* Toolbar */}
+        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/30">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
             <input 
               type="text" 
-              placeholder="Search customers..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-[1.2rem] shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-sm font-semibold"
+              placeholder="Search merchant or store name..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none placeholder:text-slate-400"
+              value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <button className="p-3 bg-white border border-slate-100 rounded-[1.2rem] shadow-sm hover:bg-slate-50 transition-colors">
-            <Filter size={20} className="text-slate-600" />
-          </button>
-          <button className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-[1.2rem] font-bold text-sm shadow-xl hover:bg-indigo-600 transition-all">
-            <UserPlus size={18} /> Add User
-          </button>
-        </div>
-      </motion.div>
 
-      {/* --- KEY SEGMENTS (BENTO STATS) --- */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <SegmentCard title="Retention Rate" value="94.2%" trend="+2.4%" icon={ShieldCheck} color="indigo" />
-        <SegmentCard title="Average LTV" value="$4,820" trend="+12.1%" icon={TrendingUp} color="emerald" />
-        <SegmentCard title="Churn Probability" value="2.1%" trend="-0.5%" icon={Clock} color="rose" />
+          <div className="flex items-center gap-2">
+              <FilterSelect options={['All Merchants', 'Active', 'Top Earners']} value="All Merchants" onChange={() => {}} icon={Filter} />
+          </div>
+        </div>
+
+        {/* Table/List View */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Store Details</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Earnings</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Paid Orders</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {loading ? (
+                Array(5).fill(0).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan="5" className="px-6 py-6 h-16 bg-white"></td>
+                  </tr>
+                ))
+              ) : filteredStores.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="py-20 text-center">
+                    <Store className="mx-auto text-slate-200 mb-4" size={48} />
+                    <p className="text-slate-400 font-black uppercase tracking-widest text-[10px] italic">No merchants discovered</p>
+                  </td>
+                </tr>
+              ) : filteredStores.map((store, idx) => (
+                <motion.tr
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.03 }}
+                  key={store.id}
+                  className="group hover:bg-slate-50/50 transition-colors"
+                >
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                        <img 
+                          src={store.store_image || 'https://via.placeholder.com/100'} 
+                          alt={store.name} 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none uppercase italic group-hover:text-indigo-600 transition-colors">{store.name}</h3>
+                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">Merchant ID: #{store.id}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <div className="flex flex-col">
+                      <p className="text-base font-[900] text-slate-900 italic tracking-tight">${parseFloat(store.total_earned || 0).toLocaleString()}</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Gross Revenue</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2">
+                       <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+                          <CheckCircle2 size={14} />
+                       </div>
+                       <div className="flex flex-col">
+                          <p className="text-sm font-black text-slate-900 leading-none">{store.paid_count}</p>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Paid Orders</p>
+                       </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-center">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-lg shadow-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest italic">Active Store</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-right">
+                    <Link href={`/admin/invoices/stores?store_id=${store.id}`}>
+                      <button className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 group/btn">
+                        <span>See Payments</span>
+                        <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                      </button>
+                    </Link>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 bg-slate-50/30 border-t border-slate-100 text-center">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Authorized Financial Registry • {filteredStores.length} Active Merchants</p>
+        </div>
       </div>
-
-      {/* --- CUSTOMER GRID --- */}
-<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-  <AnimatePresence>
-    {customers.map((user) => (
-      <motion.div
-        key={user.id}
-        variants={item}
-        whileHover={{ y: -5 }}
-        className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col md:flex-row gap-8 relative overflow-hidden group"
-      >
-        {/* User Identity */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4">
-          <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-3xl font-black shadow-lg">
-            {user.name.charAt(0)}
-          </div>
-          <div>
-            <h3 className="text-xl font-black text-slate-900">{user.name}</h3>
-            <div className={`mt-1 px-3 py-1 rounded-full inline-block text-[10px] font-black uppercase tracking-widest ${user.color}`}>
-              {user.status}
-            </div>
-          </div>
-        </div>
-
-        {/* Data & Actions */}
-        <div className="flex-1 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            {/* LINKED BOX: Clicking this value takes you to invoices */}
-            <Link 
-              href={'/admin/invoices/stores'} 
-              className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group/stat"
-            >
-              <div className="flex justify-between items-start">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lifetime Value</p>
-                <ArrowUpRight size={12} className="text-slate-300 group-hover/stat:text-indigo-500 transition-colors" />
-              </div>
-              <p className="text-lg font-black text-slate-900">{user.ltv}</p>
-            </Link>
-
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Engage Score</p>
-              <div className="flex items-center gap-2">
-                <p className="text-lg font-black text-slate-900">{user.spent}%</p>
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${user.spent}%` }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="bg-indigo-500 h-full"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
-              <button className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-indigo-600 transition-colors shadow-lg">
-                <Mail size={16} />
-              </button>
-              <button className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
-                <Phone size={16} />
-              </button>
-            </div>
-            
-            {/* MAIN LINK: Detailed Invoices Link */}
-            <Link 
-              href={'/admin/invoices/stores'} 
-              className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-400 transition-colors"
-            >
-              View Invoices <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-
-        {/* Decorative Corner Icon */}
-        <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-          <Star size={120} />
-        </div>
-      </motion.div>
-    ))}
-  </AnimatePresence>
-</div>
-    </motion.div>
+    </div>
   );
 }
 
-function SegmentCard({ title, value, trend, icon: Icon, color }) {
-  const colors = {
-    indigo: "text-indigo-600 bg-indigo-50 border-indigo-100",
-    emerald: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    rose: "text-rose-600 bg-rose-50 border-rose-100",
+function MetricCard({ label, value, icon: Icon, color, trend }) {
+  const styles = {
+    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100/50",
+    orange: "bg-orange-50 text-orange-600 border-orange-100/50",
+    rose: "bg-rose-50 text-rose-600 border-rose-100/50",
+    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100/50",
   };
 
   return (
-    <motion.div 
-      variants={item}
-      whileHover={{ scale: 1.02 }}
-      className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between"
-    >
-      <div className="flex justify-between items-start">
-        <div className={`p-4 rounded-2xl ${colors[color]} border`}>
-          <Icon size={24} />
+    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
+      <div className="flex items-center justify-between mb-3 relative z-10">
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${styles[color]}`}>
+          <Icon size={16} strokeWidth={2.5} />
         </div>
-        <span className={`text-xs font-black uppercase tracking-widest ${trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
-          {trend}
-        </span>
+        {trend && (
+           <div className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-widest italic ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'}`}>
+             {trend}
+           </div>
+        )}
       </div>
-      <div className="mt-6">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
-        <p className="text-3xl font-black text-slate-900 tracking-tighter mt-1">{value}</p>
+      <div className="relative z-10">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
       </div>
-    </motion.div>
+      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+    </div>
+  );
+}
+
+function FilterSelect({ options, value, onChange, icon: Icon }) {
+  return (
+    <div className="relative group">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-indigo-600">
+        {Icon && <Icon size={14} />}
+      </div>
+      <select 
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="appearance-none bg-white border border-slate-100 hover:border-indigo-200 rounded-xl pl-9 pr-9 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer shadow-sm"
+      >
+        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+      </select>
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+        <ChevronDown size={14} className="text-slate-400" />
+      </div>
+    </div>
   );
 }

@@ -40,24 +40,24 @@ export default function AdminAddressesPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Address Directory</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Address Directory</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Addresses</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Addresses</h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchAllAddresses()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
             title="Refresh Data"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm group">
-            <Download size={16} className="group-hover:text-indigo-600 transition-colors" /> 
-            <span className="group-hover:text-slate-900 transition-colors">Export Addresses</span>
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
+            <Download size={14} className="group-hover:text-indigo-600 transition-colors" /> 
+            <span className="group-hover:text-slate-900 transition-colors">Export Registry</span>
           </button>
         </div>
       </div>
@@ -85,23 +85,23 @@ export default function AdminAddressesPage() {
       </div>
 
       {/* --- ADDRESSES TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
         
         {/* Table Controls */}
-        <div className="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Filter addresses..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Filter by user or location..." 
+              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 text-slate-500 hover:text-indigo-600 transition-colors group">
-            <Filter size={18} className="group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-bold">Filters</span>
+          <button className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-indigo-600 transition-colors group">
+            <Filter size={16} className="group-hover:rotate-180 transition-transform duration-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Advanced Filters</span>
           </button>
         </div>
 
@@ -110,10 +110,10 @@ export default function AdminAddressesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">User</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Address Details</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Country</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Address Details</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Country</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -134,19 +134,19 @@ export default function AdminAddressesPage() {
                  <tr><td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">No addresses found.</td></tr>
               ) : (
                 filteredMappings.map((mapping, idx) => (
-                  <tr key={`${mapping.user_id}-${mapping.address_id}-${idx}`} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 text-xs border border-white shadow-sm uppercase group-hover:bg-white transition-colors">
+                  <tr key={`${mapping.user_id}-${mapping.address_id}-${idx}`} className="group hover:bg-slate-50/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center font-black text-slate-400 text-[11px] border border-white shadow-sm uppercase group-hover:bg-white transition-colors">
                            {mapping.user_name ? mapping.user_name.charAt(0) : '?'}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-900">{mapping.user_name}</span>
-                          <span className="text-xs font-medium text-slate-500 mt-0.5">{mapping.user_email}</span>
+                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{mapping.user_name}</span>
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{mapping.user_email}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-4">
                       <a 
                         href={`https://www.google.com/maps/search/?api=1&query=${mapping.latitude},${mapping.longitude}`}
                         target="_blank"
@@ -155,28 +155,28 @@ export default function AdminAddressesPage() {
                         title="Open in Google Maps"
                       >
                         <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-bold text-slate-700 leading-tight group-hover/address:text-indigo-600 transition-colors">
+                          <span className="text-[13px] font-black text-slate-700 leading-tight group-hover/address:text-indigo-600 transition-colors">
                             {mapping.house_number ? `#${mapping.house_number}, ` : ''}{mapping.street}
                           </span>
-                          <ExternalLink size={12} className="text-slate-300 opacity-0 group-hover/address:opacity-100 group-hover/address:text-indigo-400 transition-all" />
+                          <ExternalLink size={10} className="text-slate-300 opacity-0 group-hover/address:opacity-100 group-hover/address:text-indigo-400 transition-all" />
                         </div>
-                        <span className="text-[11px] font-medium text-slate-400 mt-0.5 uppercase tracking-wide group-hover/address:text-slate-500 transition-colors">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover/address:text-slate-500 transition-colors">
                           {mapping.commune}, {mapping.district}, {mapping.province}
                         </span>
                       </a>
                     </td>
-                    <td className="px-6 py-5 text-center">
-                      <span className="px-3 py-1.5 bg-slate-50 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                    <td className="px-6 py-4 text-center">
+                      <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100/50 transition-all shadow-sm">
                         {mapping.country_name || 'Unset'}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right">
+                    <td className="px-6 py-4 text-right">
                        <div className="flex flex-col items-end">
-                         <span className="text-xs font-bold text-slate-600">
+                         <span className="text-[11px] font-black text-slate-900 italic">
                            {new Date(mapping.linked_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                          </span>
-                         <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase mt-0.5 tracking-tighter">
-                            <ShieldCheck size={10} /> Active
+                         <div className="flex items-center gap-1 text-[9px] font-black text-emerald-500 uppercase mt-0.5 tracking-widest bg-emerald-50 px-1.5 rounded-md border border-emerald-100/50">
+                            <ShieldCheck size={10} /> Live
                          </div>
                        </div>
                     </td>
@@ -188,13 +188,13 @@ export default function AdminAddressesPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-8 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-           <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-             Total: {filteredMappings.length} Addresses
+        <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
+           <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+             Total: {filteredMappings.length} Endpoints
            </span>
-           <div className="flex gap-3">
-              <button className="px-5 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-widest" disabled>Prev</button>
-              <button className="px-6 py-2.5 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-100 transition-all active:scale-95">Next Page</button>
+           <div className="flex gap-4">
+              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-[0.2em]" disabled>Prev</button>
+              <button className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">Next Segment</button>
            </div>
         </div>
       </div>
@@ -205,22 +205,23 @@ export default function AdminAddressesPage() {
 
 function MetricCard({ label, value, trend, icon: Icon, isWarning }) {
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-indigo-100 transition-colors">
-      <div className={`absolute top-0 right-0 w-24 h-24 translate-x-8 -translate-y-8 rounded-full opacity-[0.03] group-hover:scale-150 transition-transform duration-700 ${isWarning ? 'bg-rose-600' : 'bg-indigo-600'}`} />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
       
       <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className={`p-3 rounded-2xl ${isWarning ? 'bg-rose-50 text-rose-600' : 'bg-indigo-50 text-indigo-600'} group-hover:scale-110 transition-transform duration-300`}>
-          <Icon size={20} strokeWidth={2.5} />
+        <div className={`p-2.5 rounded-xl border-2 border-white shadow-sm ${isWarning ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-indigo-50 text-indigo-600 border-indigo-100/50'} group-hover:scale-110 transition-transform duration-500`}>
+          <Icon size={18} strokeWidth={2.5} />
         </div>
-        <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+        <div className={`flex items-center gap-1 text-[9px] font-black tracking-widest px-1.5 py-0.5 rounded-md shadow-sm border ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
           {trend} <ArrowUpRight size={10} strokeWidth={3} />
         </div>
       </div>
       
       <div className="relative z-10">
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-        <h3 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
       </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700" />
     </div>
   );
 }

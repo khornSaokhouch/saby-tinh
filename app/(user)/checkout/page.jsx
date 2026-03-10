@@ -16,8 +16,10 @@ import {
   Package,
   Wallet,
   Lock,
+  X ,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { Ticket, Percent, Sparkles as SparklesIcon, X as CloseIcon } from "lucide-react";
 
 // Stores
 import { useShoppingCartStore } from "@/app/stores/useShoppingCart";
@@ -27,6 +29,7 @@ import { usePaymentAccountStore } from "@/app/stores/usePaymentAccountStore";
 import { useShopOrderStore } from "@/app/stores/useShopOrderStore";
 import { useUserStore } from "@/app/stores/userStore";
 import { usePaymentStore } from "@/app/stores/usePaymentStore";
+import { usePromoCodeStore } from "@/app/stores/usePromoCodeStore";
 import AddressFormModal from "@/app/components/user/AddressFormModal";
 import BakongQrModal from "@/app/components/payment/BakongQrModal";
 
@@ -40,6 +43,7 @@ export default function CheckoutPage() {
   const { paymentAccounts, fetchPaymentAccounts } = usePaymentAccountStore();
   const { createOrder, loading: orderLoading } = useShopOrderStore();
   const { generateBakongQr, qrData } = usePaymentStore();
+  const { validatePromoCode } = usePromoCodeStore();
 
   // ================= LOCAL STATE =================
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -48,13 +52,18 @@ export default function CheckoutPage() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
+  
+  // ================= PROMO CODE STATE =================
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null); // { id, code, discount_amount }
+  const [isValidating, setIsValidating] = useState(false);
 
   // ================= INITIAL FETCH =================
   useEffect(() => {
     fetchCart();
     fetchUserAddresses();
     fetchShippingMethods();
-    fetchPaymentAccounts();
+    fetchPaymentAccounts({ mode: 'platform' });
   }, []);
 
   useEffect(() => {
@@ -87,10 +96,40 @@ export default function CheckoutPage() {
       return sum + price * item.quantity;
     }, 0);
   }, [items]);
-
-  const total = subtotal + shippingCost;
+  
+  const discountAmount = appliedPromo?.discount_amount || 0;
+  const total = Math.max(0, subtotal + shippingCost - discountAmount);
 
   // ================= HANDLERS =================
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setIsValidating(true);
+    try {
+      const res = await validatePromoCode(promoInput, subtotal);
+      
+      if (res.success && res.data?.promo_code) {
+        setAppliedPromo({
+          id: res.data.promo_code.id,
+          code: res.data.promo_code.code,
+          discount_amount: Number(res.data.discount_amount)
+        });
+        toast.success("Promo code applied!");
+        setPromoInput("");
+      } else {
+        toast.error(res.message || "Invalid promo code");
+      }
+    } catch (err) {
+      toast.error(err.message || "Invalid promo code");
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    toast.success("Promo code removed");
+  };
+
   const handlePlaceOrder = async () => {
     if (!selectedAddressId || !selectedMethodId || !selectedPaymentId) {
       toast.error("Please complete all selection steps.");
@@ -107,7 +146,11 @@ export default function CheckoutPage() {
       payment_method_id: selectedPaymentId,
       shipping_address_id: selectedAddressId,
       shipping_method_id: selectedMethodId,
+      subtotal: subtotal,
+      discount_amount: discountAmount,
+      shipping_fee: shippingCost,
       order_total: total,
+      promo_code_id: appliedPromo?.id,
       order_status_id: 1,
       order_lines: orderLines,
     };
@@ -325,9 +368,59 @@ export default function CheckoutPage() {
                   <span>Logistics</span>
                   <span className="text-emerald-600 font-bold">{shippingCost === 0 ? "FREE" : `+$${shippingCost.toFixed(2)}`}</span>
                 </div>
+
+                {appliedPromo && (
+                  <div className="flex justify-between text-[11px] font-medium text-rose-500">
+                    <div className="flex items-center gap-1.5">
+                      <Ticket size={12} />
+                      <span>Discount ({appliedPromo.code})</span>
+                    </div>
+                    <span className="font-bold">-${discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-end pt-4 border-t border-slate-50 mt-2">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Amount</span>
-                  <span className="text-2xl font-black text-slate-900 leading-none">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <span className="text-2xl font-black text-slate-900 leading-none">${(total < 0 ? 0 : total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                </div>
+
+                {/* PROMO CODE INPUT */}
+                <div className="mt-6 pt-6 border-t border-slate-50">
+                   {!appliedPromo ? (
+                     <div className="relative group">
+                        <input 
+                          type="text" 
+                          placeholder="PROMO CODE"
+                          value={promoInput}
+                          onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                          className="w-full h-12 bg-slate-50 border border-slate-100 rounded-xl px-4 pr-20 text-[11px] font-black uppercase tracking-widest focus:bg-white focus:border-indigo-600 outline-none transition-all shadow-sm"
+                        />
+                        <button 
+                          onClick={handleApplyPromo}
+                          disabled={isValidating || !promoInput}
+                          className="absolute right-1 top-1 bottom-1 px-4 bg-slate-900 hover:bg-black text-white rounded-lg text-[9px] font-black uppercase tracking-widest disabled:bg-slate-200 transition-all active:scale-95"
+                        >
+                          {isValidating ? <Loader2 size={12} className="animate-spin" /> : "Apply"}
+                        </button>
+                     </div>
+                   ) : (
+                     <div className="flex items-center justify-between p-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
+                        <div className="flex items-center gap-2.5">
+                           <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
+                              <Ticket size={14} />
+                           </div>
+                           <div>
+                              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{appliedPromo.code}</p>
+                              <p className="text-[8px] font-bold text-indigo-400 uppercase">Saving ${discountAmount.toFixed(2)}</p>
+                           </div>
+                        </div>
+                        <button 
+                          onClick={handleRemovePromo}
+                          className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                        >
+                           <X size={14} />
+                        </button>
+                     </div>
+                   )}
                 </div>
 
                 <button

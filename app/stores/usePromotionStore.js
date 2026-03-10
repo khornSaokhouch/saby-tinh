@@ -49,6 +49,7 @@ export const usePromotionStore = create((set, get) => ({
         discount_percentage: promotion.discount_percentage,
         start_date: promotion.start_date,
         end_date: promotion.end_date,
+        status: promotion.status ?? 1,
         category_ids: promotion.category_ids || [],
       };
 

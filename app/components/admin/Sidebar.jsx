@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ShoppingBag, Settings, 
   LogOut, Sparkles, ChevronRight, BarChart3, Package, ShieldCheck, LayoutGrid, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
-  NotebookIcon, FileText, MapPin
+  Ticket , FileText, MapPin
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSellerStore } from '@/stores/useSellerStore';
@@ -17,9 +17,9 @@ const menuGroups = [
   title: "Main",
   items: [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Stats', href: '/admin/analytics', icon: BarChart3 },
+    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
     { name: 'Reports', href: '/admin/reports', icon: FileText },
-    { name: 'Billing', href: '/admin/invoices', icon: CreditCard }
+    { name: 'Invoices', href: '/admin/invoices', icon: CreditCard }
   ]
 },
   {
@@ -35,6 +35,8 @@ const menuGroups = [
       { name: 'Events', href: '/admin/events', icon: Sparkles },
       { name: 'Product Promotions', href: '/admin/product-promotions', icon: Tag },
       { name: 'Promotions', href: '/admin/promotions', icon: Tag },
+      { name: 'Promo Codes', href: '/admin/promo-codes', icon: Tag },
+      { name: 'Promo Usages', href: '/admin/promo-code-usages', icon: Ticket },
     ]
   },
   {
@@ -91,18 +93,18 @@ export default function AdminSidebar({ onClose }) {
   }, [fetchOrders]);
 
   return (
-    <aside className="h-full bg-white flex flex-col border-r border-slate-200 w-72 font-sans overflow-hidden">
+    <aside className="h-full bg-white flex flex-col border-r border-slate-100 w-56 font-sans overflow-hidden">
       {/* --- BRANDING --- */}
-      <div className="p-8 pb-6">
-        <Link href="/admin/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-            <Sparkles size={20} className="text-white" fill="currentColor" />
+      <div className="px-5 py-5 border-b border-slate-50">
+        <Link href="/admin/dashboard" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+            <Sparkles size={16} className="text-white" fill="currentColor" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-black text-slate-900 tracking-tighter uppercase leading-none">
+            <span className="text-[13px] font-black text-slate-900 tracking-tighter uppercase leading-none">
               Saby-Tinh
             </span>
-            <span className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] mt-1">
+            <span className="text-[8px] font-black text-indigo-600 uppercase tracking-[0.2em] mt-0.5">
               Admin Panel
             </span>
           </div>
@@ -110,10 +112,10 @@ export default function AdminSidebar({ onClose }) {
       </div>
 
       {/* --- NAVIGATION --- */}
-      <nav className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar pb-6">
+      <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto custom-scrollbar pb-6">
         {menuGroups.map((group, idx) => (
           <div key={idx}>
-            <h3 className="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+            <h3 className="px-3 text-[9px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1.5">
               {group.title}
             </h3>
 
@@ -126,8 +128,8 @@ export default function AdminSidebar({ onClose }) {
                     key={link.href}
                     href={link.href}
                     onClick={onClose}
-                    className={`relative flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 group
-                      ${isActive ? "text-indigo-600" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+                    className={`relative flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-200 group
+                      ${isActive ? "text-indigo-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}
                   >
                     {/* Active background */}
                     {isActive && (
@@ -138,13 +140,13 @@ export default function AdminSidebar({ onClose }) {
                       />
                     )}
 
-                    <div className="flex items-center gap-3 z-10 relative">
+                    <div className="flex items-center gap-2.5 z-10 relative">
                       <link.icon
-                        size={18}
+                        size={15}
                         strokeWidth={isActive ? 2.5 : 2}
                         className={isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"}
                       />
-                      <span className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}>
+                      <span className={`text-[12px] ${isActive ? "font-bold" : "font-medium"}`}>
                         {link.name}
                       </span>
                     </div>
@@ -164,7 +166,7 @@ export default function AdminSidebar({ onClose }) {
                     )}
 
                     {isActive && (
-                      <ChevronRight size={14} className="z-10 text-indigo-400" strokeWidth={2.5} />
+                      <ChevronRight size={12} className="z-10 text-indigo-400" strokeWidth={2.5} />
                     )}
                   </Link>
                 );
@@ -175,10 +177,10 @@ export default function AdminSidebar({ onClose }) {
       </nav>
 
       {/* --- FOOTER --- */}
-      <div className="p-4 border-t border-slate-100 bg-slate-50/30">
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group">
-          <LogOut size={18} className="group-hover:text-red-500 transition-colors" />
-          <span className="text-sm font-semibold">Sign Out</span>
+      <div className="p-3 border-t border-slate-100 bg-slate-50/30">
+        <button className="w-full flex items-center gap-2.5 px-3 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group">
+          <LogOut size={15} className="group-hover:text-red-500 transition-colors" />
+          <span className="text-[12px] font-semibold">Sign Out</span>
         </button>
       </div>
     </aside>

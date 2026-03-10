@@ -54,10 +54,10 @@ export default function StoresPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Business Units</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Business Units</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Stores</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Stores</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -79,15 +79,15 @@ export default function StoresPage() {
       </div>
 
       {/* --- TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
         
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center gap-3">
+        <div className="p-5 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center gap-3">
           <div className="relative flex-1 sm:max-w-sm group text-left">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search stores or owners..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Search stores..." 
+              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -98,7 +98,7 @@ export default function StoresPage() {
             <select
               value={filterLocation}
               onChange={e => setFilterLocation(e.target.value)}
-              className="h-[50px] pl-9 pr-10 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all"
+              className="h-[44px] pl-9 pr-10 bg-white border border-slate-100 rounded-xl text-[11px] font-black text-slate-600 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all uppercase tracking-widest shadow-sm"
             >
               <option value="">All Locations</option>
               {locations.map(loc => (
@@ -108,18 +108,18 @@ export default function StoresPage() {
             <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
           </div>
           <div className="sm:flex-1" />
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">{filteredStores.length} Results</span>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">{filteredStores.length} Results</span>
         </div>
 
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Store Info</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Owner</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Created At</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Details</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Store Info</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Owner</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Created At</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -135,9 +135,9 @@ export default function StoresPage() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
                   key={store.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-white shadow-sm flex items-center justify-center shrink-0">
                         {store.store_image ? (
                           <img src={store.store_image} alt={store.name} className="w-full h-full object-cover" />
                         ) : (
@@ -150,35 +150,35 @@ export default function StoresPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-slate-700">{store.user?.name || 'Loading...'}</span>
-                      <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">UID: {store.user_id}</span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">UID: {store.user_id}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col text-left">
                       <div className="flex items-center gap-1.5 text-slate-700">
-                        <MapPin size={12} className="text-rose-500" />
-                        <span className="text-sm font-bold">
+                        <MapPin size={12} className="text-indigo-400" />
+                        <span className="text-sm font-black">
                           {store.user?.company_info?.address?.province || 'No Location'}
                         </span>
                       </div>
-                      <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">{store.user?.company_info?.address?.city || 'City Not Set'}</span>
+                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-0.5">{store.user?.company_info?.address?.city || 'City Not Set'}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <span className="text-sm font-medium text-slate-500">
+                  <td className="px-6 py-4">
+                    <span className="text-xs font-bold text-slate-500">
                       {new Date(store.created_at).toLocaleDateString()}
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-right">
+                  <td className="px-6 py-4 text-right">
                     <Link 
                       href={`/admin/stores/details?storeId=${store.id}`}
-                      className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                      className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white hover:bg-black transition-all shadow-lg shadow-slate-100"
                       title="View Details"
                     >
-                      <ArrowUpRight size={18} strokeWidth={2.5} />
+                      <ArrowUpRight size={16} strokeWidth={2.5} />
                     </Link>
                   </td>
                 </motion.tr>
@@ -192,18 +192,21 @@ export default function StoresPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color }) {
-  const colors = {
-    indigo: "bg-indigo-50 text-indigo-600",
-    purple: "bg-purple-50 text-purple-600",
-    emerald: "bg-emerald-50 text-emerald-600"
+function MetricCard({ label, value, icon: Icon, color, subText }) {
+  const themes = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
+    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
-      <div className={`p-3 rounded-xl w-fit mb-4 ${colors[color]}`}><Icon size={20} /></div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 text-left">{label}</p>
-      <h3 className="text-3xl font-bold text-slate-900 tracking-tight text-left">{value}</h3>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-all opacity-40" />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2.5 rounded-xl w-fit mb-4 border ${themes[color]}`}><Icon size={18} strokeWidth={2.5} /></div>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[10px] font-bold text-slate-400">{subText}</span>}
+      </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

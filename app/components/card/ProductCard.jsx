@@ -23,7 +23,10 @@ export default function ProductCard({ product }) {
   }, []);
 
   // --- LOGIC ---
-  const promotions = product.category?.promotions || [];
+  const storeUserId = product.store?.user_id || product.store?.user?.id;
+  const promotions = (product.category?.promotions || []).filter(
+    (p) => p.user_id === storeUserId && p.status === 1
+  );
   const activePromotion = promotions[0];
   const hasPromotion = activePromotion && (activePromotion.discount_percentage > 0);
   const discount = hasPromotion ? activePromotion.discount_percentage : 0;

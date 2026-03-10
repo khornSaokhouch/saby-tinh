@@ -64,23 +64,23 @@ export default function ReportsPage() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="p-4 md:p-8 space-y-8 bg-[#fcfcfd] min-h-screen font-sans"
+      className="p-4 md:p-7 space-y-7 bg-[#fcfcfd]/50 min-h-screen font-sans"
     >
       
       {/* --- SECTION: HEADER --- */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight italic">REPORTS</h1>
-          <p className="text-slate-500 font-medium text-sm">Real-time store metrics & predictive analytics.</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight italic">REPORTS</h1>
+          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-0.5">Real-time store metrics & predictive analytics</p>
         </div>
         
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
-            <Calendar size={14} className="text-indigo-600" />
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-700 shadow-sm hover:bg-slate-50 transition-all uppercase tracking-widest">
+            <Calendar size={12} className="text-indigo-600" strokeWidth={3} />
             {dateRange}
           </button>
-          <button className="p-2.5 bg-slate-900 text-white rounded-2xl shadow-xl hover:bg-indigo-600 transition-all">
-            <Download size={18} />
+          <button className="p-2 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-indigo-600 transition-all">
+            <Download size={16} />
           </button>
         </div>
       </motion.div>
@@ -97,11 +97,11 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Main Area Chart */}
-        <motion.div variants={itemVariants} className="lg:col-span-2 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/30">
+        <motion.div variants={itemVariants} className="lg:col-span-2 bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden">
           <div className="flex justify-between items-center mb-8 px-2">
             <div>
-              <h3 className="text-lg font-bold text-slate-900 tracking-tight">Financial Velocity</h3>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Revenue Flow (7D)</p>
+              <h3 className="text-base font-black text-slate-900 tracking-tight">Financial Velocity</h3>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Revenue Flow (7D)</p>
             </div>
             <button className="text-slate-300 hover:text-slate-600 transition-colors"><MoreHorizontal size={20} /></button>
           </div>
@@ -127,10 +127,10 @@ export default function ReportsPage() {
         </motion.div>
 
         {/* Pie Chart Card */}
-        <motion.div variants={itemVariants} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/30 flex flex-col">
+        <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm flex flex-col relative overflow-hidden">
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">Market Split</h3>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category Distribution</p>
+            <h3 className="text-base font-black text-slate-900 tracking-tight">Market Split</h3>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Category Distribution</p>
           </div>
           <div className="flex-1 relative min-h-[250px]">
             {isMounted && (
@@ -163,8 +163,8 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Table Card */}
-        <motion.div variants={itemVariants} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-900 mb-6 tracking-tight">High Velocity Products</h3>
+        <motion.div variants={itemVariants} className="bg-white p-7 rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+          <h3 className="text-base font-black text-slate-900 mb-6 tracking-tight">High Velocity Products</h3>
           <div className="space-y-4">
             {topProducts.map((p) => (
               <div key={p.id} className="flex items-center justify-between p-4 bg-white hover:bg-slate-50 rounded-2xl border border-transparent hover:border-slate-100 transition-all group">
@@ -190,7 +190,7 @@ export default function ReportsPage() {
         <motion.div 
           variants={itemVariants}
           whileHover={{ y: -5 }}
-          className="bg-indigo-600 p-10 rounded-[2.5rem] text-white relative overflow-hidden flex flex-col justify-between group shadow-2xl shadow-indigo-200"
+          className="bg-indigo-600 p-8 rounded-[24px] text-white relative overflow-hidden flex flex-col justify-between group shadow-xl shadow-indigo-100"
         >
           <div className="relative z-10">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-8 border border-white/20">
@@ -227,20 +227,23 @@ function StatCard({ title, value, trend, isPositive, icon: Icon, color }) {
   return (
     <motion.div 
       variants={itemVariants}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-start justify-between relative group"
+      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+      className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm flex items-start justify-between relative group overflow-hidden"
     >
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{title}</p>
-        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{value}</h3>
-        <div className={`flex items-center gap-1.5 mt-4 px-2.5 py-1 rounded-xl w-fit ${isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[11px] font-black`}>
-          {isPositive ? <ArrowUpRight size={14} strokeWidth={3} /> : <ArrowDownRight size={14} strokeWidth={3} />}
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          <div className={`p-2 rounded-xl border shadow-inner transition-all duration-500 group-hover:rotate-12 ${themes[color]}`}>
+            <Icon size={18} strokeWidth={2.5} />
+          </div>
+        </div>
+        <div className={`flex items-center gap-1.5 mt-4 px-2 py-0.5 rounded-lg w-fit ${isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[9px] font-black uppercase tracking-widest`}>
+          {isPositive ? <ArrowUpRight size={12} strokeWidth={3} /> : <ArrowDownRight size={12} strokeWidth={3} />}
           <span>{trend}</span>
         </div>
       </div>
-      <div className={`p-4 rounded-2xl border shadow-inner transition-all duration-500 group-hover:rotate-12 ${themes[color]}`}>
-        <Icon size={22} strokeWidth={2.5} />
-      </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </motion.div>
   );
 }

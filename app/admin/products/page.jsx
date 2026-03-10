@@ -83,21 +83,21 @@ function AdminProductsContent() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Package className="w-4 h-4 text-indigo-500" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Inventory</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Inventory</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">All Products</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Global Products Catalog</h1>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => fetchProducts()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
+            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
           </button>
-          <div className="px-4 py-3 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center gap-2">
-            <ShieldCheck size={16} className="text-indigo-500" />
-            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">View Only</span>
+          <div className="px-4 py-3 bg-white border border-slate-100 rounded-2xl flex items-center gap-2 shadow-sm">
+            <ShieldCheck size={16} className="text-emerald-500" />
+            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest leading-none">Admin View Only</span>
           </div>
         </div>
       </div>
@@ -110,19 +110,19 @@ function AdminProductsContent() {
       </div>
 
       {/* --- TABLE AREA --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
 
         {/* Toolbar */}
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20 space-y-4">
+        <div className="p-5 border-b border-slate-50 bg-slate-50/20 space-y-4">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
 
             {/* Search */}
             <div className="relative flex-1 sm:max-w-sm group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
               <input
                 type="text"
-                placeholder="Search by name or brand..."
-                className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+                placeholder="Search products..."
+                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400 shadow-sm"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
@@ -131,12 +131,12 @@ function AdminProductsContent() {
             {/* Filter Toggle */}
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl border bg-white border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-bold transition-all"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl border bg-white border-slate-100 text-slate-600 hover:bg-slate-50 text-[11px] font-black uppercase tracking-widest transition-all shadow-sm"
             >
-              <SlidersHorizontal size={18} />
+              <SlidersHorizontal size={16} />
               Filters
               {hasActiveFilters && (
-                <span className="bg-indigo-100 text-indigo-600 text-[10px] font-black rounded-full px-2 py-0.5">ON</span>
+                <span className="bg-indigo-600 text-white text-[9px] font-black rounded-full px-1.5 py-0.5">ON</span>
               )}
             </button>
 
@@ -144,16 +144,16 @@ function AdminProductsContent() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-1.5 px-4 py-3.5 rounded-2xl border border-rose-200 bg-rose-50 text-rose-600 text-sm font-bold hover:bg-rose-100 transition-all"
+                className="flex items-center gap-1.5 px-4 py-3 rounded-xl border border-rose-100 bg-rose-50 text-rose-600 text-[11px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 shadow-sm shadow-rose-50"
               >
-                <X size={16} /> Clear
+                <X size={15} /> Clear
               </button>
             )}
 
             <div className="hidden sm:block sm:flex-1" />
 
             {/* Results Count */}
-            <div className="px-4 py-3.5 bg-slate-100 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">
+            <div className="px-4 py-3 bg-slate-100/50 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">
               {filteredProducts.length} Results
             </div>
           </div>
@@ -226,11 +226,11 @@ function AdminProductsContent() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Product</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Brand & Category</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Store</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Price</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Product</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand & Category</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Store</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -252,7 +252,7 @@ function AdminProductsContent() {
                   className="group hover:bg-slate-50/30 transition-colors"
                 >
                   {/* Product */}
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
                         {product.images?.[0]?.image ? (
@@ -282,7 +282,7 @@ function AdminProductsContent() {
                   </td>
 
                   {/* Store */}
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-1.5 text-slate-600">
                       <Store size={12} className="text-indigo-400 shrink-0" />
                       <span className="text-xs font-bold truncate max-w-[120px]">{product.store?.name || '—'}</span>
@@ -290,7 +290,7 @@ function AdminProductsContent() {
                   </td>
 
                   {/* Price */}
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="text-sm font-black text-slate-900 tracking-tight">${parseFloat(product.price || 0).toLocaleString()}</span>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Base SRP</span>
@@ -298,7 +298,7 @@ function AdminProductsContent() {
                   </td>
 
                   {/* Status */}
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4 text-right">
                     <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${product.status ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                       {product.status ? 'Active' : 'Inactive'}
                     </span>
@@ -362,14 +362,14 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     rose: 'bg-rose-50 text-rose-600 border-rose-100/50',
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-      <div className={`p-3 rounded-xl w-fit mb-4 shadow-sm border ${themes[color]}`}><Icon size={20} strokeWidth={2.5} /></div>
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2.5 rounded-xl w-fit mb-4 border ${themes[color]}`}><Icon size={18} strokeWidth={2.5} /></div>
       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-      <div className="flex items-baseline gap-2">
-        <h3 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
-        {subText && <span className="text-xs font-bold text-slate-400">{subText}</span>}
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[10px] font-bold text-slate-400">{subText}</span>}
       </div>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700" />
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

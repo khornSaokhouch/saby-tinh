@@ -9,10 +9,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
+import { useAuthStore } from '@/app/stores/authStore';
 
 export default function OwnerOrdersPage() {
+  const { user } = useAuthStore();
   const { orders, fetchOrders, loading, error } = useShopOrderStore();
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedDate, setSelectedDate] = useState('All Time');
+  const [selectedPayment, setSelectedPayment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -22,19 +26,45 @@ export default function OwnerOrdersPage() {
   // Filter Logic
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
+      // Status Filter
       const statusName = order.order_status?.status || 'Pending';
       const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;
       
+      // Payment Filter
+      const paymentStatus = order.payment_status?.status || 'Pending';
+      let matchesPayment = selectedPayment === 'All';
+      if (!matchesPayment) {
+        if (selectedPayment === 'Paid') {
+          matchesPayment = paymentStatus === 'Success';
+        } else if (selectedPayment === 'Unpaid') {
+          matchesPayment = paymentStatus !== 'Success';
+        }
+      }
+
+      // Date Filter
+      const orderDate = new Date(order.created_at);
+      const now = new Date();
+      let matchesDate = true;
+      if (selectedDate === 'Last 7 Days') {
+        const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+        matchesDate = orderDate >= sevenDaysAgo;
+      } else if (selectedDate === 'Last 30 Days') {
+        const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+        matchesDate = orderDate >= thirtyDaysAgo;
+      } else if (selectedDate === 'This Year') {
+        matchesDate = orderDate.getFullYear() === now.getFullYear();
+      }
+
+      // Search Filter
       const customerName = order.user?.name || 'Unknown';
       const orderId = `#ORD-${order.id}`;
-      
       const matchesSearch = 
         orderId.toLowerCase().includes(searchQuery.toLowerCase()) || 
         customerName.toLowerCase().includes(searchQuery.toLowerCase());
         
-      return matchesStatus && matchesSearch;
+      return matchesStatus && matchesPayment && matchesDate && matchesSearch;
     });
-  }, [orders, selectedStatus, searchQuery]);
+  }, [orders, selectedStatus, selectedPayment, selectedDate, searchQuery]);
 
   // KPI Calculations
   const metrics = useMemo(() => {
@@ -51,23 +81,34 @@ export default function OwnerOrdersPage() {
   }, [filteredOrders]);
 
   return (
-    <div className="space-y-8 pb-10 font-sans">
+    <div className="space-y-6 pb-8 font-sans">
       
       {/* --- HEADER --- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="space-y-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Store Operations</span>
+            <ShoppingBag className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Store Operations</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Order Management</h1>
-          <p className="text-xs font-medium text-slate-500 mt-1">Manage and track your store's sales and performance.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Order Management</h1>
+          <p className="text-[11px] font-medium text-slate-500 mt-1">Manage and track your store's sales and performance.</p>
         </div>
         
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 text-slate-600 rounded-2xl text-sm font-bold hover:bg-slate-50 transition-all shadow-sm">
-            <Download size={16} />
-            Export Orders
+        <div className="flex items-center gap-2.5">
+          {!user?.social_accounts?.some(acc => acc.provider === 'telegram') && (
+            <button 
+              onClick={() => window.location.href = `https://t.me/saby_tinh_assistant_bot?start=${user?.id}`}
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#24A1DE] text-white rounded-xl text-[12px] font-bold hover:bg-[#1e87bb] transition-all shadow-lg shadow-blue-100/50"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M11.944 0C5.346 0 0 5.346 0 11.944C0 18.542 5.346 23.888 11.944 23.888C18.542 23.888 23.888 18.542 23.888 11.944C23.888 5.346 18.542 0 11.944 0ZM18.17 8.013L15.937 18.537C15.769 19.294 15.321 19.479 14.686 19.123L11.284 16.613L9.643 18.192C9.462 18.373 9.31 18.524 8.959 18.524L9.204 15.061L15.509 9.362C15.783 9.118 15.45 8.981 15.085 9.224L7.29 14.136L3.937 13.085C3.208 12.857 3.195 12.356 4.09 12.007L17.18 6.963C17.787 6.74 18.317 7.103 18.17 8.013Z" />
+              </svg>
+              Connect Telegram
+            </button>
+          )}
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[12px] font-bold hover:bg-slate-50 transition-all shadow-sm">
+            <Download size={14} />
+            Export
           </button>
         </div>
       </div>
@@ -81,54 +122,59 @@ export default function OwnerOrdersPage() {
       </div>
 
       {/* --- MAIN TABLE CONTAINER --- */}
-      <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col">
         
         {/* Toolbar */}
-       <div className="p-6 border-b border-slate-50 flex flex-col lg:flex-row lg:items-center gap-4 justify-between bg-slate-50/20">
+       <div className="p-4 border-b border-slate-50 flex flex-col lg:flex-row lg:items-center gap-3 justify-between bg-slate-50/20">
           
           {/* Search */}
-       <div className="relative w-full sm:w-72 lg:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+       <div className="relative w-full sm:w-64 lg:w-72 group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search by Order ID, Customer..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all outline-none"
+              placeholder="Search ID, Customer..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] font-medium focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           {/* Filters */}
-          <div className="flex items-center gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar pb-2 lg:pb-0">
+          <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
              <FilterSelect 
                options={['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled']} 
                value={selectedStatus} 
                onChange={setSelectedStatus}
                icon={Filter}
              />
-             <div className="h-8 w-px bg-slate-200 mx-1 hidden lg:block"></div>
              <FilterSelect 
-               options={['Last 7 Days', 'Last 30 Days', 'This Year']} 
-               value="Last 30 Days" 
-               onChange={() => {}}
+               options={['All', 'Paid', 'Unpaid']} 
+               value={selectedPayment} 
+               onChange={setSelectedPayment}
+               icon={Clock}
+             />
+             <FilterSelect 
+               options={['All Time', 'Last 7 Days', 'Last 30 Days', 'This Year']} 
+               value={selectedDate} 
+               onChange={setSelectedDate}
                icon={Calendar}
              />
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto no-scrollbar min-h-[400px]">
+        <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Order Details</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Products</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Payment</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Total Amount</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Order</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Products</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Customer</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Payment</th>
+                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Amount</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -158,49 +204,49 @@ export default function OwnerOrdersPage() {
                   key={order.id} 
                   className="hover:bg-slate-50/30 transition-colors group"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="text-sm font-bold text-indigo-600 hover:underline cursor-pointer">#ORD-{order.id}</span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">{order.order_lines?.length || 0} Items</span>
+                      <span className="text-[13px] font-bold text-indigo-600 hover:underline cursor-pointer">#ORD-{order.id}</span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{order.order_lines?.length || 0} Items</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <ProductPreview orderLines={order.order_lines || []} />
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 border border-white shadow-sm">
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-white shadow-sm">
                         {(order.user?.name || 'U').charAt(0).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900">{order.user?.name || 'Unknown User'}</span>
-                        <span className="text-xs font-medium text-slate-500">{order.user?.email}</span>
+                        <span className="text-[13px] font-bold text-slate-900 leading-tight">{order.user?.name || 'Unknown User'}</span>
+                        <span className="text-[11px] font-medium text-slate-400">{order.user?.email}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5 text-sm font-medium text-slate-500">
-                    {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  <td className="px-4 py-4 text-[12px] font-medium text-slate-500">
+                    {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4">
                     <StatusBadge status={order.order_status?.status || 'Pending'} />
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-4 text-center">
                     <PaymentBadge status={order.payment_status?.status || 'Pending'} />
                   </td>
-                  <td className="px-6 py-5 text-right text-sm font-black text-slate-900">
+                  <td className="px-4 py-4 text-right text-[13px] font-black text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="px-8 py-5 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <Link 
                         href={`/owner/orders/details-order?id=${order.id}`}
-                        className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm" 
-                        title="View Order Details"
+                        className="w-8 h-8 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm" 
+                        title="View Details"
                       >
-                        <Eye size={18} />
+                        <Eye size={15} />
                       </Link>
-                      <button className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all">
-                        <MoreHorizontal size={18} />
+                      <button className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:bg-slate-100 hover:text-slate-600 transition-all">
+                        <MoreHorizontal size={15} />
                       </button>
                     </div>
                   </td>
@@ -245,10 +291,10 @@ function MetricCard({ label, value, color }) {
   };
 
   return (
-    <div className={`p-7 rounded-[32px] border ${styles[color].split(' ')[2]} bg-white shadow-[0_20px_50px_rgba(0,0,0,0.02)] flex flex-col items-start relative overflow-hidden group hover:border-indigo-100 transition-colors`}>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 z-10">{label}</p>
-      <h3 className="text-3xl font-black text-slate-900 mt-1 z-10 tracking-tight italic">{value}</h3>
-      <div className={`absolute -right-4 -bottom-4 w-20 h-20 rounded-full opacity-10 blur-xl group-hover:scale-150 transition-transform ${styles[color].split(' ')[0]}`} />
+    <div className={`p-5 rounded-[20px] border ${styles[color].split(' ')[2]} bg-white shadow-[0_15px_40px_rgba(0,0,0,0.02)] flex flex-col items-start relative overflow-hidden group hover:border-indigo-100 transition-colors`}>
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 z-10">{label}</p>
+      <h3 className="text-2xl font-black text-slate-900 z-10 tracking-tight italic">{value}</h3>
+      <div className={`absolute -right-4 -bottom-4 w-16 h-16 rounded-full opacity-10 blur-xl group-hover:scale-150 transition-transform ${styles[color].split(' ')[0]}`} />
     </div>
   );
 }
@@ -265,26 +311,23 @@ function StatusBadge({ status }) {
   const { icon: Icon, style } = config[status] || config.Cancelled;
 
   return (
-    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${style}`}>
-      <Icon size={12} strokeWidth={2.5} />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest ${style}`}>
+      <Icon size={10} strokeWidth={2.5} />
       {status}
     </span>
   );
 }
 
 function PaymentBadge({ status }) {
-  const styles = {
-    Success: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    Pending: "text-orange-600 bg-orange-50 border-orange-100",
-    Failed: "text-rose-600 bg-rose-50 border-rose-100",
-    Refunded: "text-slate-500 bg-slate-100 border-slate-200 line-through",
-  };
-
-  const style = styles[status] || styles.Pending;
+  const isPaid = status === 'Success';
+  
+  const style = isPaid 
+    ? "text-emerald-600 bg-emerald-50 border-emerald-100" 
+    : "text-rose-600 bg-rose-50 border-rose-100";
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg border text-[10px] font-bold uppercase tracking-wider ${style}`}>
-      {status}
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${style}`}>
+      {isPaid ? 'Paid' : 'Unpaid'}
     </span>
   );
 }
@@ -298,7 +341,7 @@ function FilterSelect({ options, value, onChange, icon: Icon }) {
       <select 
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-white border border-slate-200 hover:border-indigo-300 rounded-2xl pl-11 pr-10 py-3 text-xs font-bold text-slate-600 outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all cursor-pointer min-w-[160px]"
+        className="appearance-none bg-white border border-slate-200 hover:border-indigo-300 rounded-xl pl-10 pr-9 py-2.5 text-[11px] font-bold text-slate-600 outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all cursor-pointer min-w-[140px]"
       >
         {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
@@ -328,26 +371,26 @@ function ProductPreview({ orderLines }) {
     '/placeholder.png';
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
       {/* Product Image */}
       <img
         src={image}
         alt={product?.name || 'Product'}
-        className="w-12 h-12 rounded-2xl object-cover border border-slate-200 bg-slate-50 shadow-sm"
+        className="w-10 h-10 rounded-xl object-cover border border-slate-200 bg-slate-50 shadow-sm"
       />
 
       {/* Product Info */}
-      <div className="flex flex-col max-w-[220px]">
-        <span className="text-sm font-bold text-slate-900 truncate">
+      <div className="flex flex-col max-w-[180px]">
+        <span className="text-[13px] font-bold text-slate-900 truncate leading-tight">
           {product?.name || 'Unknown Product'}
           {orderLines.length > 1 && (
-            <span className="text-slate-400 font-semibold">
-              {' '}+{orderLines.length - 1} more
+            <span className="text-slate-400 font-semibold text-[11px]">
+              {' '}+{orderLines.length - 1}
             </span>
           )}
         </span>
 
-        <span className="text-xs text-slate-400 font-medium">
+        <span className="text-[11px] text-slate-400 font-medium">
           Qty: {firstLine?.quantity || 1}
         </span>
       </div>

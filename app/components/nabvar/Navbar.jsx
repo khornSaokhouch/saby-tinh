@@ -55,9 +55,9 @@ export default function Navbar() {
             {/* BRAND */}
             <div className="flex items-center gap-4 lg:gap-10">
               <a href="/" className="group flex items-center gap-2 sm:gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:rotate-12 transition-transform duration-300 shrink-0">
+                {/* <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:rotate-12 transition-transform duration-300 shrink-0">
                   <Sparkles size={18} className="text-white sm:size-[20px]" fill="currentColor" />
-                </div>
+                </div> */}
                 <div className="flex flex-col">
                   <span className="text-base sm:text-lg font-black text-slate-900 tracking-tighter leading-none uppercase">
                     Saby-Tinh

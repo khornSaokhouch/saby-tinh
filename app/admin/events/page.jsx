@@ -78,26 +78,26 @@ export default function EventsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Event List</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Registry</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Events</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Events</h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchEvents()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
             title="Refresh Data"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-[0.2em]"
           >
-            <Plus size={18} strokeWidth={2.5} /> New Event
+            <Plus size={16} strokeWidth={3} /> Create Event
           </button>
         </div>
       </div>
@@ -110,22 +110,22 @@ export default function EventsPage() {
       </div>
 
       {/* --- EVENTS TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
         
         {/* Search Bar */}
-        <div className="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search events..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Search event registry..." 
+              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-            {filteredEvents.length} of {events.length} events
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            {filteredEvents.length} of {events.length} Records
           </span>
         </div>
 
@@ -134,10 +134,10 @@ export default function EventsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Event</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Duration</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Event Designation</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Description Meta</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Lifecycle</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -166,42 +166,42 @@ export default function EventsPage() {
                 </tr>
               ) : (
                 filteredEvents.map((event, idx) => (
-                  <tr key={event.id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-5">
+                  <tr key={event.id} className="group hover:bg-slate-50/30 transition-colors">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border border-white shadow-sm shrink-0 flex items-center justify-center">
-                          {event.event_image ? (
-                            <img src={event.event_image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <ImageIcon size={18} className="text-slate-300" />
-                          )}
+                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-white shadow-sm shrink-0 flex items-center justify-center group-hover:rotate-3 transition-transform">
+                           {event.event_image ? (
+                             <img src={event.event_image} alt="" className="w-full h-full object-cover" />
+                           ) : (
+                             <ImageIcon size={14} className="text-slate-300" />
+                           )}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-800">{event.name}</span>
-                          <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">ID: {event.id}</span>
+                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{event.name}</span>
+                          <span className="text-[9px] font-black text-indigo-500/60 uppercase tracking-widest">Segment: {event.id}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <p className="text-xs font-medium text-slate-500 max-w-[240px] line-clamp-2">
-                        {event.description || 'No description provided'}
+                    <td className="px-6 py-4">
+                      <p className="text-[11px] font-black text-slate-400 max-w-[200px] line-clamp-1 italic uppercase tracking-wider">
+                        {event.description || 'Null Content'}
                       </p>
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <div className="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold uppercase tracking-wide border border-emerald-100/50">
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[9px] font-black uppercase tracking-widest border border-emerald-100/50">
                           <Clock size={10} /> {event.start_date}
                         </div>
-                        <div className="flex items-center gap-2 px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wide border border-rose-100/50">
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-rose-50 text-rose-600 rounded-md text-[9px] font-black uppercase tracking-widest border border-rose-100/50">
                           <Clock size={10} /> {event.end_date}
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button 
                           onClick={() => { setSelectedItem(event); setIsFormOpen(true); }}
-                          className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                          className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100/50"
                         >
                           <Pencil size={14} strokeWidth={2.5} />
                         </button>
@@ -211,21 +211,21 @@ export default function EventsPage() {
                             <button
                               onClick={() => handleDelete(event.id)}
                               disabled={deletingId === event.id}
-                              className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
+                              className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
                             >
-                              {deletingId === event.id ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                              {deletingId === event.id ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} strokeWidth={3} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
-                              className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
+                              className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
                             >
-                              <X size={14} />
+                              <X size={12} strokeWidth={3} />
                             </button>
                           </div>
                         ) : (
                           <button
                             onClick={() => setConfirmDeleteId(event.id)}
-                            className="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
+                            className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm border border-rose-100/50"
                           >
                             <Trash2 size={14} strokeWidth={2.5} />
                           </button>
@@ -240,9 +240,9 @@ export default function EventsPage() {
         </div>
 
         {/* Footer */}
-        <div className="p-8 border-t border-slate-50 bg-slate-50/30">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-            Total: {filteredEvents.length} Events
+        <div className="p-6 border-t border-slate-50 bg-slate-50/10">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            Total: {filteredEvents.length} Active Records
           </span>
         </div>
       </div>

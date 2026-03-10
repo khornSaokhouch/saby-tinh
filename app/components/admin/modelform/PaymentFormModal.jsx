@@ -46,12 +46,12 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[40px] shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden border border-white"
+            className="bg-white rounded-[24px] shadow-2xl w-full max-w-xl relative z-10 overflow-hidden border border-white"
           >
-            <div className="p-8 md:p-10 font-sans">
-              <div className="flex justify-between items-center mb-10">
+            <div className="p-6 md:p-8 font-sans">
+              <div className="flex justify-between items-center mb-6">
                 <div className="flex flex-col">
-                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
                     {initialData ? 'Update Account' : 'Register Account'}
                   </h2>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-2">Payment Details</span>
@@ -65,7 +65,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                 </button>
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-6">
+              <form onSubmit={handleFormSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Account Name */}
                   <div className="relative">
@@ -74,12 +74,12 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                       value={formData.account_name}
                       onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
                       required
-                      className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
+                      className="peer w-full h-12 pt-4 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-[13px] font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
                       placeholder=" "
                     />
-                    <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
-                        peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
+                    <label className="absolute left-5 top-3.5 text-slate-400 text-xs font-medium transition-all 
+                        peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
+                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
                     >
                       Account Name
                     </label>
@@ -92,12 +92,12 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                       value={formData.account_id}
                       onChange={(e) => setFormData({ ...formData, account_id: e.target.value })}
                       required
-                      className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
+                      className="peer w-full h-12 pt-4 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-[13px] font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
                       placeholder=" "
                     />
-                    <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
-                        peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
+                    <label className="absolute left-5 top-3.5 text-slate-400 text-xs font-medium transition-all 
+                        peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
+                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
                     >
                       Account Number / ID
                     </label>
@@ -110,12 +110,12 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                       value={formData.type_value}
                       onChange={(e) => setFormData({ ...formData, type_value: e.target.value })}
                       required
-                      className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
+                      className="peer w-full h-12 pt-4 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-[13px] font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
                       placeholder=" "
                     />
-                    <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
-                        peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
+                    <label className="absolute left-5 top-3.5 text-slate-400 text-xs font-medium transition-all 
+                        peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
+                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
                     >
                       Provider Type (e.g. ABA)
                     </label>
@@ -128,12 +128,12 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                       value={formData.account_city}
                       onChange={(e) => setFormData({ ...formData, account_city: e.target.value })}
                       required
-                      className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
+                      className="peer w-full h-12 pt-4 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-[13px] font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
                       placeholder=" "
                     />
-                    <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
-                        peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
+                    <label className="absolute left-5 top-3.5 text-slate-400 text-xs font-medium transition-all 
+                        peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
+                        peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
                     >
                       Account City
                     </label>
@@ -144,7 +144,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                     <select
                       value={formData.currency}
                       onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                      className="w-full h-14 px-5 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/5 appearance-none"
+                      className="w-full h-12 px-5 bg-slate-50 border-none rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-indigo-500/5 appearance-none"
                     >
                       <option value="USD">USD - US Dollar</option>
                       <option value="KHR">KHR - Riel</option>
@@ -182,14 +182,14 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                     onClick={onClose}
                     disabled={isSubmitting}
                     type="button"
-                    className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all"
+                    className="flex-1 py-4 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-[2] py-5 bg-indigo-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700"
+                    className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700"
                   >
                     {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : initialData ? 'Update Account' : 'Save Account'}
                   </button>

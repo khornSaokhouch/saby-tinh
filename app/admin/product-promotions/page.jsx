@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { 
-  Percent, Search, Plus, Edit3, Trash2, Clock, 
+  TrendingUp , Search, Plus, Edit3, Trash2, Clock, 
   Loader2, CheckCircle2, Ticket, Zap, LayoutGrid, Filter,
   Package, Store as StoreIcon, Tag, RefreshCw
 } from 'lucide-react';
@@ -55,10 +55,10 @@ export default function ProductPromotionsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Tag className="w-4 h-4 text-rose-500" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Discounted Inventory</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Platform Offer Audit</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Product Discounts</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase italic">Discounted Catalog</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -67,30 +67,29 @@ export default function ProductPromotionsPage() {
               fetchProductsByFilters({ has_promotion: true });
               fetchCategories();
             }}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard label="Total Items" value={products.length} icon={Package} color="indigo" />
-        <MetricCard label="Active Offers" value="Live" icon={CheckCircle2} color="emerald" />
+        <MetricCard label="Total Discounted" value={products.length} icon={Package} color="indigo" />
+        <MetricCard label="Active Stores" value={new Set(products.map(p => p.store_id)).size} icon={StoreIcon} color="emerald" subText="With Offers" />
         <MetricCard label="Categories" value={new Set(products.map(p => p.category_id)).size} icon={LayoutGrid} color="purple" />
       </div>
 
       {/* --- FILTERS & PRODUCT TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row gap-4 justify-between">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search products..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+              placeholder="Search offer catalog..." 
+              className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700 font-sans"
               value={searchLocal}
               onChange={(e) => setSearchLocal(e.target.value)}
             />
@@ -98,19 +97,19 @@ export default function ProductPromotionsPage() {
 
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-11 pr-10 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none appearance-none cursor-pointer hover:border-indigo-200 min-w-[180px]"
+                className="pl-10 pr-10 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase text-slate-700 min-w-[180px] appearance-none cursor-pointer outline-none hover:border-indigo-200 transition-all tracking-widest shadow-sm"
               >
-                <option value="all">All Categories</option>
+                <option value="all">All Inventory </option>
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
                 ))}
               </select>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <LayoutGrid size={14} className="text-slate-400" />
+                <LayoutGrid size={12} className="text-slate-400" />
               </div>
             </div>
           </div>
@@ -120,23 +119,27 @@ export default function ProductPromotionsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Product Info</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Store & Category</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Price</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Active Promotions</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Discounted Item</th>
+                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Merchant / Scope</th>
+                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price Point</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Offers</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
+                  <td colSpan="4" className="py-24 text-center">
+                    <Loader2 className="w-10 h-10 animate-spin mx-auto text-indigo-600 opacity-20" />
+                    <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Analyzing Inventory...</p>
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center">
-                    <p className="text-sm font-medium text-slate-400">No products found with active promotions.</p>
+                  <td colSpan="4" className="py-24 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Package size={40} className="text-slate-100" />
+                      <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">No discounted items located</p>
+                    </div>
                   </td>
                 </tr>
               ) : filteredProducts.map((product, idx) => (
@@ -144,45 +147,53 @@ export default function ProductPromotionsPage() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
                   key={product.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+                      <div className="relative w-14 h-14 rounded-2xl bg-white overflow-hidden border border-slate-100 shadow-sm group-hover:shadow-md transition-all duration-300">
                         {product.images?.[0]?.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={product.images[0].image} alt={product.name} className="w-full h-full object-cover" />
+                          <img src={product.images[0].image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         ) : (
-                          <Package size={20} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300" />
+                          <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50 font-black text-[9px]">NO IMG</div>
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900 line-clamp-1">{product.name}</span>
-                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-tight">{product.brand?.name || 'Generic'}</span>
+                        <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tight line-clamp-1">{product.name}</span>
+                        <span className="text-[10px] font-bold text-slate-400 mt-0.5 tracking-wider">ID: #{product.id} • {product.brand?.name || 'GENERIC'}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
-                        <StoreIcon size={12} className="text-slate-400" />
-                        {product.store?.name}
+                  <td className="px-6 py-6">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 italic">
+                          <StoreIcon size={10} strokeWidth={3} />
+                        </div>
+                        <span className="text-[12px] font-black text-slate-700 uppercase tracking-tight">{product.store?.name}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        <LayoutGrid size={10} className="text-slate-300" />
-                        {product.category?.name}
+                      <div className="flex items-center gap-2">
+                         <div className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                            {product.category?.category_image ? (
+                              <img src={product.category.category_image} alt="" className="w-full h-full object-cover rounded-lg" />
+                            ) : (
+                              <LayoutGrid size={10} strokeWidth={3} />
+                            )}
+                         </div>
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{product.category?.name}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-6 font-black">
                     <div className="flex flex-col">
-                      <span className="text-sm font-black text-slate-900">${Number(product.price).toLocaleString()}</span>
+                      <span className="text-[15px] text-slate-900">${Number(product.price).toLocaleString()}</span>
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{product.type?.name || 'Retail'}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-8 py-6">
                     <div className="flex flex-wrap gap-2">
                        {product.category?.promotions?.map(promo => (
-                         <div key={promo.id} className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black uppercase border border-rose-100 italic transition-transform group-hover:scale-105">
-                           <Ticket size={10} />
-                           {promo.discount_percentage}% OFF - {promo.name}
+                         <div key={promo.id} className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-rose-100 ring-1 ring-rose-600/5 group-hover:scale-105 transition-transform shadow-sm">
+                           <TrendingUp size={10} strokeWidth={3} />
+                           {promo.discount_percentage}% OFF • {promo.name}
                          </div>
                        ))}
                     </div>
@@ -198,17 +209,22 @@ export default function ProductPromotionsPage() {
 }
 
 function MetricCard({ label, value, icon: Icon, color }) {
-  const colors = {
-    indigo: "bg-indigo-50 text-indigo-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    purple: "bg-purple-50 text-purple-600"
+  const themes = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
+    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
-      <div className={`p-3 rounded-xl w-fit mb-4 ${colors[color]}`}><Icon size={20} /></div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-      <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{value}</h3>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-all opacity-40" />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
+      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
+      <div className={`p-2.5 rounded-xl w-fit mb-4 border-2 border-white shadow-sm relative z-10 ${themes[color] || themes.indigo}`}>
+        <Icon size={18} strokeWidth={2.5} />
+      </div>
+      <div className="relative z-10">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

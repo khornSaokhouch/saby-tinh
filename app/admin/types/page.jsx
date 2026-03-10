@@ -86,10 +86,10 @@ export default function TypePage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Box className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Types</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Schema</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">Types</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Types</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -118,14 +118,14 @@ export default function TypePage() {
       </div>
 
       {/* --- TYPES TABLE --- */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="p-6 border-b border-slate-50 bg-slate-50/20">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-50 bg-slate-50/20">
           <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
             <input 
               type="text" 
               placeholder="Search types..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -136,10 +136,10 @@ export default function TypePage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Type Name</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Update</th>
-                <th className="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Type Name</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Update</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -158,29 +158,29 @@ export default function TypePage() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
                   key={type.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-8 py-5">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-100 shadow-sm transition-colors group-hover:bg-indigo-600 group-hover:text-white">
                         {type.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{type.name}</span>
-                        <span className="text-[10px] font-medium text-slate-400 mt-0.5 tracking-wider uppercase">ID: {type.id}</span>
+                        <span className="text-[10px] font-bold text-slate-400 mt-0.5 tracking-[0.2em] uppercase leading-none">ID: {type.id}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                      <Layers size={12} className="text-slate-400" />
+                  <td className="px-6 py-4">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                      <Layers size={10} className="text-slate-400" strokeWidth={3} />
                       {getCategoryName(type.category_id)}
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <span className="text-sm font-medium text-slate-500">
+                  <td className="px-6 py-4">
+                    <span className="text-xs font-bold text-slate-500">
                         {new Date(type.updated_at).toLocaleDateString()}
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => { setSelectedItem(type); setIsFormOpen(true); }} 
@@ -246,17 +246,17 @@ export default function TypePage() {
 }
 
 function MetricCard({ label, value, icon: Icon, color }) {
-  const colors = {
-    indigo: "bg-indigo-50 text-indigo-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    purple: "bg-purple-50 text-purple-600"
+  const themes = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
+    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
   };
   return (
-    <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-indigo-100 transition-colors">
-      <div className={`p-3 rounded-xl w-fit mb-4 ${colors[color]}`}><Icon size={20} /></div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-      <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{value}</h3>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-all opacity-40" />
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2.5 rounded-xl border-2 border-white shadow-sm w-fit mb-4 ${themes[color]}`}><Icon size={18} strokeWidth={2.5} /></div>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
+      <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

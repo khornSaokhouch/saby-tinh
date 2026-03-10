@@ -49,7 +49,7 @@ export default function BrandExplorerPage() {
   const filteredProducts = products || [];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pt-8 pb-16">
+    <div className="min-h-screen pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* ================= HEADER ================= */}

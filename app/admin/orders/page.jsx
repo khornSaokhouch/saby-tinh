@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { 
   Search, Filter, Download, Eye, MoreHorizontal, 
   ArrowUpDown, CheckCircle2, Clock, Truck, XCircle, 
-  ChevronLeft, ChevronRight, Calendar
+  ChevronLeft, ChevronRight, Calendar, ChevronDown,
+  ShoppingBag, DollarSign, Activity, TrendingUp
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -49,43 +50,46 @@ export default function OrdersPage() {
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Order Management</h1>
-          <p className="text-xs font-medium text-slate-500 mt-1">Track and manage customer orders.</p>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Order Management</span>
+          </div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Global Orders</h1>
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all shadow-sm">
-            <Download size={14} />
-            Export CSV
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[11px] font-black hover:bg-slate-50 transition-all shadow-sm uppercase tracking-widest active:scale-95">
+            <Download size={15} strokeWidth={2.5} />
+            <span>Export</span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
-            <Filter size={14} />
-            Advanced Filter
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 uppercase tracking-widest">
+            <Filter size={15} strokeWidth={2.5} />
+            <span>Filter</span>
           </button>
         </div>
       </div>
 
       {/* --- KPI METRICS --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <MetricCard label="Total Orders" value={orders.length.toLocaleString()} color="indigo" />
-        <MetricCard label="Pending" value={pendingCount.toString()} color="orange" />
-        <MetricCard label="Total Revenue" value={`$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} color="emerald" />
-        <MetricCard label="Avg. Order Value" value={`$${avgValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} color="rose" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricCard label="Total Orders" value={orders.length.toLocaleString()} icon={ShoppingBag} color="indigo" />
+        <MetricCard label="Pending" value={pendingCount.toString()} icon={Clock} color="orange" />
+        <MetricCard label="Total Revenue" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="emerald" />
+        <MetricCard label="Avg. Order Value" value={`$${avgValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={Activity} color="rose" />
       </div>
 
       {/* --- MAIN TABLE CONTAINER --- */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/30">
           
           {/* Search */}
           <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
             <input 
               type="text" 
-              placeholder="Search by Order ID, Customer..." 
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none"
+              placeholder="Search by ID, Customer..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -156,7 +160,16 @@ export default function OrdersPage() {
                   <td className="px-5 py-3">
                     <input type="checkbox" className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20" />
                   </td>
-                  <td className="px-5 py-3 text-xs font-bold text-indigo-600">#ORD-{order.id}</td>
+                  <td className="px-5 py-3">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-indigo-600">#ORD-{order.id}</span>
+                      {order.invoice && (
+                        <span className="text-[9px] font-mono font-black text-slate-400 uppercase tracking-tighter">
+                          {order.invoice.invoice_number}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200">
@@ -263,18 +276,24 @@ export default function OrdersPage() {
 
 // --- SUB-COMPONENTS ---
 
-function MetricCard({ label, value, color }) {
+function MetricCard({ label, value, icon: Icon, color }) {
   const styles = {
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
-    orange: "bg-orange-50 text-orange-600 border-orange-100",
-    rose: "bg-rose-50 text-rose-600 border-rose-100",
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100/50",
+    orange: "bg-orange-50 text-orange-600 border-orange-100/50",
+    rose: "bg-rose-50 text-rose-600 border-rose-100/50",
+    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100/50",
   };
 
   return (
-    <div className={`p-4 rounded-xl border ${styles[color].split(' ')[2]} bg-white shadow-sm flex flex-col items-start hover:border-slate-300 transition-all`}>
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-      <h3 className="text-2xl font-bold text-slate-900 mt-1">{value}</h3>
+    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${styles[color]} relative z-10`}>
+        <Icon size={16} strokeWidth={2.5} />
+      </div>
+      <div className="relative z-10">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      </div>
+      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }
@@ -291,8 +310,8 @@ function StatusBadge({ status }) {
   const { icon: Icon, style } = config[status] || config.Cancelled;
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wide ${style}`}>
-      <Icon size={10} strokeWidth={2.5} />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest ${style}`}>
+      <Icon size={12} strokeWidth={2.5} />
       {status}
     </span>
   );
@@ -300,14 +319,20 @@ function StatusBadge({ status }) {
 
 function PaymentBadge({ status }) {
   const styles = {
-    Success: "text-emerald-600 bg-emerald-50",
-    Pending: "text-orange-600 bg-orange-50",
-    Failed: "text-rose-600 bg-rose-50",
-    Refunded: "text-slate-500 bg-slate-100 line-through",
+    Success: { label: "Paid", style: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+    Pending: { label: "Unpaid", style: "text-orange-600 bg-orange-50 border-orange-100" },
+    Failed: { label: "Failed", style: "text-rose-600 bg-rose-50 border-rose-100" },
+    refunded: { label: "Refunded", style: "text-slate-500 bg-slate-100 border-slate-200 line-through" },
+    partially_paid: { label: "Partial", style: "text-amber-600 bg-amber-50 border-amber-100" },
+    Paid: { label: "Paid", style: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+    Unpaid: { label: "Unpaid", style: "text-rose-600 bg-rose-50 border-rose-100" },
   };
+  
+  const config = styles[status] || { label: status, style: "text-slate-500 bg-slate-50 border-slate-100" };
+  
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${styles[status]}`}>
-      {status}
+    <span className={`text-[9px] font-black tracking-widest px-2 py-0.5 rounded-md border uppercase ${config.style}`}>
+      {config.label}
     </span>
   );
 }
@@ -315,18 +340,18 @@ function PaymentBadge({ status }) {
 function FilterSelect({ options, value, onChange, icon: Icon }) {
   return (
     <div className="relative group">
-      <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
-        {Icon && <Icon size={12} />}
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-indigo-600">
+        {Icon && <Icon size={14} />}
       </div>
       <select 
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-white border border-slate-200 hover:border-indigo-300 rounded-lg pl-8 pr-8 py-1.5 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer"
+        className="appearance-none bg-white border border-slate-100 hover:border-indigo-200 rounded-xl pl-9 pr-9 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer shadow-sm"
       >
         {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
-      <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
-        <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+        <ChevronDown size={14} className="text-slate-400" />
       </div>
     </div>
   );

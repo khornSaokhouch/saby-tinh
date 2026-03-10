@@ -2,27 +2,28 @@ import { Palette, Layout, Moon } from 'lucide-react';
 
 export default function AppearanceSection() {
   return (
-    <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-       <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><Palette size={20} strokeWidth={2.5} /></div>
-        <h3 className="text-xl font-black text-slate-900 tracking-tight">Aesthetics</h3>
+    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
+       <div className="flex items-center gap-3 mb-6 relative z-10">
+        <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-white shadow-sm border-indigo-100/50"><Palette size={18} strokeWidth={2.5} /></div>
+        <h3 className="text-base font-black text-slate-900 tracking-tight italic uppercase">Aesthetics</h3>
       </div>
-      <div className="space-y-3">
-         <label className="flex items-center justify-between p-3 rounded-xl border border-indigo-600 bg-indigo-50 cursor-pointer">
+      <div className="space-y-2 relative z-10">
+         <label className="flex items-center justify-between p-3 rounded-xl border border-indigo-600 bg-indigo-50/50 cursor-pointer group/row transition-all shadow-sm">
            <div className="flex items-center gap-3">
-             <Layout size={16} className="text-indigo-600" />
-             <span className="text-xs font-bold text-indigo-900">Light Mode</span>
+             <Layout size={14} className="text-indigo-600" strokeWidth={2.5} />
+             <span className="text-[11px] font-black text-indigo-900 uppercase tracking-widest">Light Mode</span>
            </div>
-           <div className="w-4 h-4 rounded-full border-[5px] border-indigo-600" />
+           <div className="w-3.5 h-3.5 rounded-full border-[4px] border-indigo-600 bg-white" />
          </label>
-         <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
+         <label className="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all group/row">
            <div className="flex items-center gap-3">
-             <Moon size={16} className="text-slate-500" />
-             <span className="text-xs font-bold text-slate-600">Dark Mode</span>
+             <Moon size={14} className="text-slate-400" strokeWidth={2.5} />
+             <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest group-hover/row:text-slate-600 transition-colors">Dark Mode</span>
            </div>
-           <div className="w-4 h-4 rounded-full border border-slate-300" />
+           <div className="w-3.5 h-3.5 rounded-full border-2 border-slate-200 bg-white" />
          </label>
       </div>
+      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
     </div>
   );
 }

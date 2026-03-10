@@ -162,22 +162,22 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
           <motion.button 
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={() => router.back()}
-            className="p-4 bg-white border border-slate-100 text-slate-400 hover:text-slate-900 rounded-[24px] transition-all shadow-sm"
+            className="p-3 bg-white border border-slate-100 text-slate-400 hover:text-slate-900 rounded-xl transition-all shadow-sm"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={18} />
           </motion.button>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
               <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1 block">Product Setup</span>
             </div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
               {mode === 'edit' ? 'Edit Listing' : 'New Listing'}
             </h1>
           </div>
         </div>
         
-        <div className="flex items-center bg-slate-100/50 p-2 rounded-[24px] border border-slate-200/50">
+        <div className="flex items-center bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
           <label className="flex items-center gap-3 cursor-pointer px-4">
             <div className="relative">
               <input type="checkbox" name="status" checked={formData.status} onChange={handleInputChange} className="sr-only peer" />
@@ -193,8 +193,8 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         
         {/* Left: Media & Meta */}
-        <div className="lg:col-span-4 space-y-8">
-          <section className="bg-white border border-slate-100 rounded-[40px] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+        <div className="lg:col-span-4 space-y-6">
+          <section className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
             <div className="flex items-center gap-2 mb-6 ml-1">
                 <ImageIcon className="w-4 h-4 text-indigo-500" />
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Gallery Assets</span>
@@ -203,7 +203,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
             <div className="space-y-4">
               <motion.div 
                 whileHover={{ y: -4 }}
-                className="aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-[32px] overflow-hidden flex items-center justify-center relative group cursor-pointer" 
+                className="aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] overflow-hidden flex items-center justify-center relative group cursor-pointer" 
                 onClick={() => fileInputRef.current.click()}
               >
                 {previews[0] ? (
@@ -213,12 +213,12 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
                     <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-lg shadow-slate-100 mx-auto mb-4">
                         <UploadCloud className="text-indigo-400" size={32} />
                     </div>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Upload Key Visual</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Upload Key Visual</p>
                     <p className="text-[9px] font-bold text-slate-300 mt-2 uppercase">PNG, JPG, WEBP (Max 5MB)</p>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                    <div className="bg-white px-5 py-2.5 rounded-2xl text-[10px] font-black text-slate-900 uppercase tracking-widest shadow-2xl">Replace Hero Image</div>
+                    <div className="bg-white px-4 py-2 rounded-xl text-[9px] font-black text-slate-900 uppercase tracking-widest shadow-2xl">Replace Hero Image</div>
                 </div>
               </motion.div>
 
@@ -257,7 +257,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
             <input type="file" multiple hidden ref={fileInputRef} onChange={handleFileChange} accept="image/*" />
           </section>
 
-          <section className="bg-indigo-600 rounded-[40px] p-8 text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
+          <section className="bg-indigo-600 rounded-[24px] p-6 text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
             <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-4">
                     <Info size={16} className="text-indigo-200" />
@@ -276,25 +276,25 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
           {displayError && (
             <motion.div 
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-              className="p-6 bg-rose-50 border border-rose-100 rounded-[32px] flex items-center gap-4 text-rose-600 text-sm font-bold shadow-sm"
+              className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-4 text-rose-600 text-[13px] font-bold shadow-sm"
             >
-              <div className="w-10 h-10 bg-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-200 shrink-0">
-                <AlertCircle size={20} className="text-white" />
+              <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-200 shrink-0">
+                <AlertCircle size={18} className="text-white" />
               </div>
               <p>{displayError}</p>
             </motion.div>
           )}
 
-          <div className="bg-white border border-slate-100 rounded-[40px] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.02)] space-y-12">
+          <section className="bg-white border border-slate-100 rounded-[24px] p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.02)] space-y-10">
             
             {/* --- CORE DETAILS --- */}
             <div className="space-y-8">
-                <div className="flex items-center gap-3 border-b border-slate-50 pb-6">
-                    <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><Package size={20} strokeWidth={2.5} /></div>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight">Basic Info</h3>
+                <div className="flex items-center gap-2.5 border-b border-slate-50 pb-5">
+                    <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl"><Package size={18} strokeWidth={2.5} /></div>
+                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Basic Info</h3>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="md:col-span-3">
                     <InputField label="Product Name" name="name" value={formData.name} icon={Tag} onChange={handleInputChange} placeholder="Enter product name..." required />
                   </div>
@@ -303,12 +303,12 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SelectField label="Store" name="store_id" icon={Warehouse} value={formData.store_id} onChange={handleInputChange} options={filteredStores.map(s => ({ value: s.id, label: s.name }))} required />
                   <SelectField label="Category" name="category_id" icon={Layers} value={formData.category_id} onChange={handleInputChange} options={categories.map(c => ({ value: c.id, label: c.name }))} required />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SelectField label="Brand" name="brand_id" icon={ShoppingBag} value={formData.brand_id} onChange={handleInputChange} options={brands.map(b => ({ value: b.id, label: b.name }))} required />
                   <SelectField label="Product Type" name="type_id" icon={AppWindow} value={formData.type_id} onChange={handleInputChange} options={filteredTypes.map(t => ({ value: t.id, label: t.name }))} required />
                 </div>
@@ -316,19 +316,19 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
 
             {/* --- INVENTORY MATRIX --- */}
             <div className="space-y-8 pt-8">
-                <div className="flex items-center justify-between border-b border-slate-50 pb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl"><Settings size={20} strokeWidth={2.5} /></div>
-                        <h3 className="text-xl font-black text-slate-900 tracking-tight">Stock & Quantity</h3>
+                <div className="flex items-center justify-between border-b border-slate-50 pb-5">
+                    <div className="flex items-center gap-2.5">
+                        <div className="p-2.5 bg-rose-50 text-rose-600 rounded-xl"><Settings size={18} strokeWidth={2.5} /></div>
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight">Stock & Quantity</h3>
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InputField label="SKU Code" name="sku" value={formData.sku} icon={CheckCircle2} onChange={handleInputChange} placeholder="Enter SKU..." required />
                   <InputField label="Stock Quantity" name="quantity" type="number" value={formData.quantity} icon={Box} onChange={handleInputChange} placeholder="0" required />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SelectField label="Visual Variant (Color)" name="color_id" icon={Palette} value={formData.color_id} onChange={handleInputChange} options={colors.map(c => ({ value: c.id, label: c.name }))} />
                   <SelectField label="Standard Sizing" name="size_id" icon={Ruler} value={formData.size_id} onChange={handleInputChange} options={sizes.map(s => ({ value: s.id, label: s.name }))} />
                 </div>
@@ -336,17 +336,17 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
 
             {/* --- SPECIFICATIONS --- */}
             <div className="space-y-6 pt-8">
-              <div className="flex items-center gap-3 border-b border-slate-50 pb-6">
-                 <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl"><Info size={20} strokeWidth={2.5} /></div>
-                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Full Narrative</h3>
+              <div className="flex items-center gap-2.5 border-b border-slate-50 pb-5">
+                 <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl"><Info size={18} strokeWidth={2.5} /></div>
+                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Full Narrative</h3>
               </div>
               <textarea 
-                name="description" value={formData.description} onChange={handleInputChange} rows={8}
-                className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[32px] text-sm font-medium focus:bg-white focus:ring-8 focus:ring-indigo-500/5 transition-all outline-none resize-none placeholder:text-slate-300 leading-relaxed"
+                name="description" value={formData.description} onChange={handleInputChange} rows={6}
+                className="w-full p-6 bg-slate-50 border border-slate-100 rounded-[24px] text-sm font-medium focus:bg-white focus:ring-8 focus:ring-indigo-500/5 transition-all outline-none resize-none placeholder:text-slate-300 leading-relaxed"
                 placeholder="Enter product description and specifications..."
               />
             </div>
-          </div>
+          </section>
 
           {/* Form Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4 pb-10">
@@ -359,7 +359,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
             <motion.button 
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
               type="submit" disabled={isSubmitting}
-              className="w-full sm:w-auto px-12 py-5 bg-indigo-600 text-white rounded-[28px] text-[10px] font-black shadow-2xl shadow-indigo-100 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-3"
+              className="w-full sm:w-auto px-10 py-4 bg-indigo-600 text-white rounded-[22px] text-[10px] font-black shadow-2xl shadow-indigo-100 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-3"
             >
               {isSubmitting ? (
                 <>
@@ -387,7 +387,7 @@ function InputField({ label, name, type = "text", value, onChange, placeholder, 
       </div>
       <input 
         required={required} type={type} name={name} value={value} onChange={onChange} placeholder={placeholder}
-        className="w-full h-16 px-8 bg-slate-50 border border-slate-100 rounded-[22px] text-sm font-bold text-slate-900 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-100 transition-all outline-none placeholder:text-slate-300"
+        className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-900 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-100 transition-all outline-none placeholder:text-slate-300"
       />
     </div>
   );
@@ -403,7 +403,7 @@ function SelectField({ label, name, value, onChange, options, required = false, 
       <div className="relative group">
         <select 
           required={required} name={name} value={value} onChange={onChange}
-          className="w-full h-16 px-8 bg-slate-50 border border-slate-100 rounded-[22px] text-sm font-bold text-slate-900 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-100 transition-all outline-none appearance-none cursor-pointer"
+          className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-900 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-100 transition-all outline-none appearance-none cursor-pointer"
         >
           <option value="">Select</option>
           {options.map(opt => (

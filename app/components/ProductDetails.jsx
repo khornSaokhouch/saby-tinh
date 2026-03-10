@@ -94,7 +94,10 @@ export default function ProductDetails({ productSlug }) {
   }, [product]);
 
   // --- LOGIC ---
-  const promotions = product?.category?.promotions || [];
+  const storeUserId = product?.store?.user_id || product?.store?.user?.id;
+  const promotions = (product?.category?.promotions || []).filter(
+    (p) => p.user_id === storeUserId && p.status === 1
+  );
   const activePromotion = promotions[0];
   const hasPromotion = activePromotion && (activePromotion.discount_percentage > 0);
   const discount = activePromotion?.discount_percentage || 0;
@@ -161,7 +164,7 @@ export default function ProductDetails({ productSlug }) {
   if (error || !product) return <ErrorState error={error} />;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24">
+    <div className="min-h-screen pb-24">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
         {/* --- Top Navigation Bar --- */}

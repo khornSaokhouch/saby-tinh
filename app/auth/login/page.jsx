@@ -20,19 +20,27 @@ export default function LoginPage() {
     setLocalError(null);
     try {
       const res = await login(email, password);
+      // Backend might return user/token in different structures depending on the implementation
       const user = res?.user || res?.data?.user || res;
-      const token = res?.token || res?.data?.token;
+      const token = res?.token || res?.data?.token || res?.data?.access_token;
+      
       if (!user || !token) throw new Error('Authentication failed.');
       
-      // Store user/token temporarily
+      // Store user/token
       useAuthStore.setState({ user, token });
 
       // Trigger OTP sending
-      await useAuthStore.getState().sendOtp(email);
-
-      router.push('/auth/verify-otp');
+      try {
+          await useAuthStore.getState().sendOtp(email);
+          router.push('/auth/verify-otp');
+      } catch (otpErr) {
+          console.error("OTP send failed:", otpErr);
+          // If OTP fails but we have token, maybe we can proceed? 
+          // But usually we need verification.
+          setLocalError(otpErr.message || 'Failed to send verification code.');
+      }
     } catch (err) {
-      setLocalError(err?.response?.data?.message || 'Invalid email or password.');
+      setLocalError(err?.message || 'Invalid email or password.');
     }
   };
 

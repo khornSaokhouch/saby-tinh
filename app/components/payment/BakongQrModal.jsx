@@ -70,13 +70,26 @@ export default function BakongQrModal({ isOpen, onClose, qrData, orderId, onPaym
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
              Payment to Saby-tinh Store
           </p>
-          <div className="flex items-center justify-center gap-1.5">
-            <span className="text-3xl font-black text-slate-900 tabular-nums">
-                {Number(qrData?.amount).toLocaleString()}
-            </span>
-            <span className="text-sm font-bold text-slate-500 uppercase">
-                {qrData?.currency || 'USD'}
-            </span>
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center justify-center gap-1.5">
+              <span className="text-3xl font-black text-slate-900 tabular-nums">
+                  {Number(qrData?.amount).toLocaleString()}
+              </span>
+              <span className="text-sm font-bold text-slate-500 uppercase">
+                  {qrData?.currency || 'USD'}
+              </span>
+            </div>
+            
+            {(qrData?.discount_amount > 0) && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] font-bold text-slate-400 line-through">
+                  ${Number(qrData?.original_total).toLocaleString()}
+                </span>
+                <span className="px-2 py-0.5 bg-rose-50 text-rose-600 text-[9px] font-black rounded-md uppercase">
+                  -${Number(qrData?.discount_amount).toLocaleString()} OFF
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

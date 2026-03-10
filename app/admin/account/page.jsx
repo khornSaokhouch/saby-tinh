@@ -84,14 +84,13 @@ export default function AdminProfilePage() {
     >
       {/* --- HEADER SECTION --- */}
       <motion.div variants={itemVar} className="relative group">
-        {/* Background Banner */}
-        <div className="absolute inset-0 bg-white border border-slate-200 rounded-3xl shadow-sm" />
+        <div className="absolute inset-0 bg-white border border-slate-100 rounded-[24px] shadow-sm" />
         
-        <div className="relative p-8 sm:p-10 flex flex-col md:flex-row md:items-end justify-between gap-6 z-10">
+        <div className="relative p-7 flex flex-col md:flex-row md:items-end justify-between gap-6 z-10">
           <div className="flex items-start md:items-end gap-6">
             
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-2xl bg-slate-900 flex items-center justify-center text-3xl font-bold text-white shadow-xl shadow-slate-200 overflow-hidden">
+            <div className="w-20 h-20 rounded-2xl bg-slate-900 flex items-center justify-center text-3xl font-black text-white shadow-xl shadow-slate-200 overflow-hidden border-4 border-white group-hover:rotate-3 transition-transform">
               {user.profile?.image_profile ? (
                 <img src={user.profile.image_profile} alt="Profile" className="w-full h-full object-cover" />
               ) : (
@@ -101,33 +100,33 @@ export default function AdminProfilePage() {
             
             <div className="mb-1">
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                <h1 className="text-2xl font-black tracking-tight text-slate-900 italic uppercase">
                   {user.name}
                 </h1>
-                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck size={12} />
-                  Super Admin
+                <span className="px-2 py-0.5 rounded-lg bg-indigo-50 border border-indigo-100/50 text-indigo-700 text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-1.5 shadow-sm">
+                  <ShieldCheck size={10} strokeWidth={3} />
+                  Master Admin
                 </span>
               </div>
 
-              <p className="text-slate-500 font-medium flex items-center gap-2 text-sm">
-                <Mail className="w-4 h-4" /> {user.email}
+              <p className="text-slate-400 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
+                <Mail className="w-3.5 h-3.5" /> {user.email}
               </p>
             </div>
           </div>
 
           {/* Header Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link 
               href="/admin/settings"
-              className="px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-700 shadow-sm"
+              className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black transition-all flex items-center gap-2 text-slate-700 shadow-sm uppercase tracking-widest"
             >
-              <Settings className="w-4 h-4" />
-              <span>Settings</span>
+              <Settings className="w-3.5 h-3.5" />
+              <span>Configure</span>
             </Link>
 
-            <button className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 rounded-xl transition-all">
-              <LogOut className="w-5 h-5" />
+            <button className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100/50 rounded-xl transition-all shadow-sm">
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -168,22 +167,22 @@ export default function AdminProfilePage() {
           </motion.div>
 
           {/* Profile Information Panel */}
-          <motion.div variants={itemVar} className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+          <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[24px] p-7 shadow-sm">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <User className="w-5 h-5 text-slate-400" />
-                Administrator Details
+              <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                <User className="w-4 h-4 text-indigo-600" />
+                Identity Data
               </h3>
-              <button className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
-                <Edit3 size={12} /> Edit
+              <button className="text-[9px] font-black text-indigo-600 hover:text-indigo-700 flex items-center gap-1 uppercase tracking-widest italic group">
+                <Edit3 size={10} className="group-hover:rotate-12 transition-transform" /> Modify
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-              <DetailItem label="Full Name" value={user.name} icon={User} />
-              <DetailItem label="Email Address" value={user.email} icon={Mail} />
-              <DetailItem label="Work Phone" value={user.phone_number || "+1 (555) 000-0000"} icon={Phone} />
-              <DetailItem label="Primary Location" value="Headquarters - NY" icon={Globe} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-7 gap-x-10">
+              <DetailItem label="Full Designation" value={user.name} icon={User} />
+              <DetailItem label="Registry Email" value={user.email} icon={Mail} />
+              <DetailItem label="Secure Contact" value={user.phone_number || "+1 (555) 000-0000"} icon={Phone} />
+              <DetailItem label="Primary Node" value="HQ Mainframe" icon={Globe} />
             </div>
           </motion.div>
 
@@ -193,27 +192,28 @@ export default function AdminProfilePage() {
         <motion.div variants={itemVar} className="space-y-6">
           
           {/* Management Menu */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm h-full flex flex-col">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">
-              Management Console
+          <div className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm h-full flex flex-col">
+            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-5 px-1">
+              Admin Ops Center
             </h4>
             
-            <nav className="space-y-1 flex-1">
-              <SidebarLink icon={ShieldCheck} label="Security & Login" href="/admin/security" />
-              <SidebarLink icon={Users} label="Manage Staff" href="/admin/users" badge="2 Pending" />
-              <SidebarLink icon={Key} label="API Keys" href="/admin/api" />
-              <SidebarLink icon={FileText} label="Activity Logs" href="/admin/logs" />
-              <SidebarLink icon={Activity} label="System Health" href="/admin/system" />
+            <nav className="space-y-1.5 flex-1">
+              <SidebarLink icon={ShieldCheck} label="Firewall & Auth" href="/admin/security" />
+              <SidebarLink icon={Users} label="Personnel" href="/admin/users" badge="2 Pending" />
+              <SidebarLink icon={Key} label="Access Tokens" href="/admin/api" />
+              <SidebarLink icon={FileText} label="System Trace" href="/admin/logs" />
+              <SidebarLink icon={Activity} label="Kernel Health" href="/admin/system" />
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-slate-100">
-               <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-5 rounded-2xl shadow-lg text-white">
-                  <div className="flex items-start gap-3">
-                    <ShieldCheck className="w-5 h-5 text-emerald-400 mt-0.5" />
+            <div className="mt-8 pt-6 border-t border-slate-50">
+               <div className="bg-slate-900 p-5 rounded-2xl shadow-xl text-white relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-full translate-x-10 -translate-y-10 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                  <div className="flex items-start gap-3 relative z-10">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5" />
                     <div>
-                      <h5 className="text-sm font-bold text-white">Secure Session</h5>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                        Your session is encrypted (256-bit). IP logged for audit.
+                      <h5 className="text-[11px] font-black text-white uppercase tracking-wider">Secure Zone</h5>
+                      <p className="text-[9px] text-slate-400 mt-1 leading-relaxed font-black uppercase tracking-widest opacity-70">
+                        Symmetric 256-bit AES protection active.
                       </p>
                     </div>
                   </div>
@@ -232,17 +232,17 @@ export default function AdminProfilePage() {
 function DashboardCard({ title, value, icon: Icon, href, accentColor, subText }) {
   return (
     <Link href={href} className="block group">
-      <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 relative overflow-hidden h-full">
+      <div className="bg-white border border-slate-100 p-5 rounded-[24px] shadow-sm transition-all duration-500 hover:shadow-md hover:border-indigo-100/50 relative overflow-hidden h-full">
         <div className="flex justify-between items-start mb-4">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accentColor}`}>
-            <Icon className="w-5 h-5" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${accentColor}`}>
+            <Icon className="w-4 h-4" strokeWidth={3} />
           </div>
-          <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
+          <ArrowUpRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
         </div>
-        <div className="space-y-1">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">{title}</p>
-          <h3 className="text-xl font-bold text-slate-900">{value}</h3>
-          <p className="text-[10px] font-medium text-slate-500">{subText}</p>
+        <div className="space-y-0.5">
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none italic uppercase">{value}</h3>
+          <p className="text-[9px] font-black text-slate-400/60 uppercase tracking-widest">{subText}</p>
         </div>
       </div>
     </Link>
@@ -253,11 +253,11 @@ function DetailItem({ label, value, icon: Icon }) {
   return (
     <div className="group">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-2">
-          <Icon className="w-3.5 h-3.5" /> {label}
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-1.5 opacity-70">
+          <Icon className="w-3 h-3 text-indigo-500" strokeWidth={3} /> {label}
         </p>
       </div>
-      <p className="text-sm font-bold text-slate-800 border-b border-transparent group-hover:border-slate-100 transition-all pb-1 inline-block">
+      <p className="text-[13px] font-black text-slate-800 tracking-tight border-b-2 border-slate-50 group-hover:border-indigo-100 transition-all pb-1 inline-block uppercase italic">
         {value}
       </p>
     </div>
@@ -268,18 +268,18 @@ function SidebarLink({ icon: Icon, label, href, badge }) {
   return (
     <Link 
       href={href}
-      className="flex items-center justify-between p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group"
+      className="flex items-center justify-between p-3 rounded-xl text-slate-500 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all group border border-transparent hover:border-indigo-100/30"
     >
       <div className="flex items-center gap-3">
-        <Icon className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
-        <span className="font-bold text-sm">{label}</span>
+        <Icon className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} />
+        <span className="font-black text-[11px] uppercase tracking-widest leading-none">{label}</span>
       </div>
       {badge ? (
-        <span className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[9px] font-bold px-2 py-0.5 rounded-md">
+        <span className="bg-rose-50 text-rose-600 border border-rose-100/50 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">
           {badge}
         </span>
       ) : (
-        <ArrowUpRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       )}
     </Link>
   );
