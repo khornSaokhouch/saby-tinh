@@ -16,7 +16,7 @@ import { getCleanImageUrl } from '@/components/nabvar/utils';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function StoreDetails() {
+function StoreDetailsContent() {
   const searchParams = useSearchParams();
   const storeId = searchParams.get('storeId');
   const router = useRouter();
@@ -294,5 +294,21 @@ function InfoRow({ icon: Icon, label, value, highlight }) {
           <span className={`text-[11px] font-black truncate max-w-full ${highlight ? 'text-indigo-600' : 'text-slate-800'}`}>{value}</span>
        </div>
     </div>
+  );
+}
+
+export default function StoreDetails() {
+  return (
+    <Suspense fallback={
+      <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
+        <Loader2 className="animate-spin text-indigo-600" size={48} />
+        <div className="text-center">
+          <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading Store Details</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Accessing store information...</p>
+        </div>
+      </div>
+    }>
+      <StoreDetailsContent />
+    </Suspense>
   );
 }
