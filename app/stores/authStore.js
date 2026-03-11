@@ -185,7 +185,7 @@ register: async ({ name, email, password, confirm_password, phone_number }) => {
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ token: state.token, user: state.user }),
     }
   )
