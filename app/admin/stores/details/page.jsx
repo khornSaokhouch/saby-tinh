@@ -16,7 +16,7 @@ import { getCleanImageUrl } from '@/components/nabvar/utils';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function StoreDetailsContent() {
+export default function StoreDetails() {
   const searchParams = useSearchParams();
   const storeId = searchParams.get('storeId');
   const router = useRouter();
@@ -51,87 +51,91 @@ function StoreDetailsContent() {
   const company = owner?.company_info;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 pb-32 font-sans pt-6">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans pt-4 animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-        <div className="flex items-center gap-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-6">
           <motion.button 
             whileHover={{ scale: 1.05, x: -5 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => router.back()}
-            className="w-14 h-14 flex items-center justify-center bg-white border border-slate-200 rounded-[24px] text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-2xl transition-all group"
+            className="w-11 h-11 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={18} />
           </motion.button>
-          <div className="space-y-1.5 text-left">
+          <div className="space-y-1 text-left">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-indigo-600" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Store Profile</span>
+              <Activity className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Operational Asset Profile</span>
             </div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{store.name}</h1>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tighter leading-none">
+              {store.name.split(' ').map((word, i) => i === store.name.split(' ').length - 1 ? (
+                <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400"> {word}</span>
+              ) : <span key={i}>{word} </span>)}
+            </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 bg-white/50 backdrop-blur-xl p-2 pr-6 border border-white rounded-[28px] shadow-sm">
-           <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white">
-              <Tag size={18} />
+        <div className="flex items-center gap-3 bg-white p-1.5 pr-4 border border-slate-100 rounded-2xl shadow-sm">
+           <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+              <ShieldCheck size={14} />
            </div>
            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">Store Status</span>
-              <span className="text-xs font-black text-indigo-600 uppercase tracking-widest mt-0.5 font-sans">Active Store</span>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-tight">Registry Status</span>
+              <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-0.5">Verified Entity</span>
            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* --- SIDEBAR: ASSET CARD --- */}
-        <div className="lg:col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-6">
           
-          <div className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.02)] text-center relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-48 h-48 translate-x-16 -translate-y-16 rounded-full bg-indigo-600 opacity-[0.03] group-hover:scale-125 transition-transform duration-1000" />
+          <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm text-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-[0.03] group-hover:scale-125 transition-transform duration-1000" />
             
-            <div className="relative mb-8">
-              <div className="w-40 h-40 rounded-[48px] bg-slate-50 border-[6px] border-white shadow-2xl mx-auto flex items-center justify-center text-4xl font-black text-slate-200 relative z-10 overflow-hidden group-hover:rotate-3 transition-all duration-700 p-2">
+            <div className="relative mb-6">
+              <div className="w-32 h-32 rounded-[32px] bg-slate-50 border-[4px] border-white shadow-xl mx-auto flex items-center justify-center text-3xl font-black text-slate-200 relative z-10 overflow-hidden group-hover:rotate-2 transition-all duration-700 p-2">
                 {store.store_image ? (
-                  <Image src={getCleanImageUrl(store.store_image)} alt={store.name} fill sizes="(max-width: 768px) 100vw, 33vw" priority className="object-cover rounded-[40px] p-1" />
-                ) : <Store size={60} />}
+                  <Image src={getCleanImageUrl(store.store_image)} alt={store.name} fill sizes="(max-width: 768px) 100vw, 33vw" priority className="object-cover rounded-[24px]" />
+                ) : <Store size={48} />}
               </div>
             </div>
             
-            <h3 className="text-2xl font-black text-slate-900 relative z-10 mb-2">{store.name}</h3>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100">
-               Active
+            <h3 className="text-xl font-black text-slate-900 relative z-10 mb-2 truncate px-4">{store.name}</h3>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+               Operational
             </div>
 
-            <div className="grid grid-cols-1 gap-3 mt-10 relative z-10">
-               <InfoRow icon={Calendar} label="Since" value={new Date(store.created_at).toLocaleDateString()} />
-               <InfoRow icon={Layers} label="Type" value="Retail Store" highlight />
+            <div className="grid grid-cols-1 gap-2.5 mt-8 relative z-10">
+               <InfoRow icon={Calendar} label="Nodes Since" value={new Date(store.created_at).toLocaleDateString()} />
+               <InfoRow icon={Layers} label="Deployment" value="Standard Retail" highlight />
             </div>
           </div>
 
-          <div className="bg-slate-900 p-10 rounded-[48px] text-white shadow-2xl relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-               <Smartphone size={140} />
+          <div className="bg-slate-900 p-8 rounded-[32px] text-white shadow-xl relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
+               <Activity size={100} />
              </div>
              <div className="relative z-10 text-left">
-                <div className="flex items-center gap-2 mb-4 text-emerald-400">
-                  <Activity size={16} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.25em]">Inventory Status</span>
+                <div className="flex items-center gap-2 mb-3 text-indigo-400">
+                  <Activity size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em]">Asset Performance</span>
                 </div>
-                <h3 className="text-2xl font-black mb-4 leading-tight">Active Inventory</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium mb-10">
-                  Store stock is fully synchronized with the product directory.
+                <h3 className="text-xl font-black mb-3 leading-tight">Inventory Pulse</h3>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-medium mb-8">
+                  Active stock nodes are fully synchronized with the central directory.
                 </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                     <span className="block text-[9px] font-black text-slate-500 uppercase mb-1">Stock</span>
-                     <span className="text-xl font-black">---</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                     <span className="block text-[8px] font-black text-slate-500 uppercase mb-0.5 tracking-widest">Stock Nodes</span>
+                     <span className="text-lg font-black">{products.length}</span>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                     <span className="block text-[9px] font-black text-slate-500 uppercase mb-1">Sales</span>
-                     <span className="text-xl font-black">---</span>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                     <span className="block text-[8px] font-black text-slate-500 uppercase mb-0.5 tracking-widest">Value Shift</span>
+                     <span className="text-lg font-black">Stable</span>
                   </div>
                 </div>
              </div>
@@ -139,60 +143,60 @@ function StoreDetailsContent() {
         </div>
 
         {/* --- MAIN CONTENT: AUDIT DATA --- */}
-        <div className="lg:col-span-8 space-y-10 text-left">
+        <div className="lg:col-span-8 space-y-6 text-left">
           
           {/* Owner & Company Linkage */}
-          <section className="bg-white p-10 sm:p-12 rounded-[52px] border border-slate-100 shadow-sm relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
-                <Users size={200} />
+          <section className="bg-white p-8 sm:p-10 rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none">
+                <Users size={160} />
              </div>
              
-             <div className="flex items-center gap-3 mb-10">
-                <ShieldCheck size={18} className="text-indigo-600" />
-                <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Verified Ownership</h4>
+             <div className="flex items-center gap-3 mb-8">
+                <Building2 size={16} className="text-indigo-600" />
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Branch Governance</h4>
              </div>
 
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Executive Profile */}
-                <div className="space-y-6">
-                    <h5 className="text-[10px] font-black text-slate-300 uppercase tracking-widest border-b border-slate-50 pb-3">Store Owner</h5>
-                   <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-[32px] border border-slate-100 group hover:bg-white hover:shadow-xl transition-all">
-                      <div className="w-16 h-16 rounded-[24px] bg-white border border-slate-100 flex items-center justify-center overflow-hidden relative shadow-sm shrink-0">
+                <div className="space-y-4">
+                    <h5 className="text-[9px] font-black text-slate-300 uppercase tracking-widest border-b border-slate-50 pb-2">Principal Owner</h5>
+                   <div className="flex items-center gap-4 p-3.5 bg-slate-50 rounded-[28px] border border-slate-100 group hover:bg-white hover:shadow-lg transition-all">
+                      <div className="w-12 h-12 rounded-[20px] bg-white border border-slate-100 flex items-center justify-center overflow-hidden relative shadow-sm shrink-0">
                          {owner?.profile?.image_profile ? 
-                            <Image src={getCleanImageUrl(owner.profile.image_profile)} alt={owner.name} fill sizes="64px" className="object-cover" /> 
-                            : owner?.name?.charAt(0) || 'U'}
+                            <Image src={getCleanImageUrl(owner.profile.image_profile)} alt={owner.name} fill sizes="48px" className="object-cover" /> 
+                            : <span className="text-sm font-black text-slate-400">{owner?.name?.charAt(0) || 'U'}</span>}
                       </div>
-                      <div className="flex flex-col">
-                         <span className="text-lg font-black text-slate-900 mb-0.5">{owner?.name || 'Unknown User'}</span>
-                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">{owner?.email}</span>
+                      <div className="flex flex-col min-w-0">
+                         <span className="text-sm font-black text-slate-900 mb-0.5 truncate">{owner?.name || 'Unknown Executive'}</span>
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">{owner?.email}</span>
                       </div>
                    </div>
                    <button 
                      onClick={() => router.push(`/admin/company/details?userId=${owner?.id}`)}
-                     className="flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest px-6 py-3 bg-indigo-50 rounded-xl hover:bg-indigo-600 hover:text-white transition-all w-full justify-center"
+                     className="flex items-center gap-2 text-[9px] font-black text-indigo-600 uppercase tracking-widest px-5 py-3 bg-indigo-50/50 rounded-xl hover:bg-indigo-600 hover:text-white transition-all w-full justify-center"
                    >
-                     View Owner Profile <ArrowUpRight size={14} />
+                     Executive Audit <ArrowUpRight size={12} />
                    </button>
                 </div>
 
                 {/* Company Association */}
-                <div className="space-y-6">
-                    <h5 className="text-[10px] font-black text-slate-300 uppercase tracking-widest border-b border-slate-50 pb-3">Main Company</h5>
+                <div className="space-y-4">
+                    <h5 className="text-[9px] font-black text-slate-300 uppercase tracking-widest border-b border-slate-50 pb-2">Parent Entity</h5>
                    {company ? (
-                     <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-[32px] border border-slate-100 group hover:bg-white hover:shadow-xl transition-all">
-                        <div className="w-16 h-16 rounded-[24px] bg-white border border-slate-100 flex items-center justify-center overflow-hidden relative shadow-sm shrink-0">
+                     <div className="flex items-center gap-4 p-3.5 bg-slate-50 rounded-[28px] border border-slate-100 group hover:bg-white hover:shadow-lg transition-all">
+                        <div className="w-12 h-12 rounded-[20px] bg-white border border-slate-100 flex items-center justify-center overflow-hidden relative shadow-sm shrink-0">
                            {company.company_image ? 
-                              <Image src={getCleanImageUrl(company.company_image)} alt={company.company_name} fill sizes="64px" className="object-cover p-2" /> 
-                              : <Building2 className="text-slate-200" />}
+                              <Image src={getCleanImageUrl(company.company_image)} alt={company.company_name} fill sizes="48px" className="object-cover p-1.5" /> 
+                              : <Building2 className="text-slate-200" size={24} />}
                         </div>
-                        <div className="flex flex-col">
-                           <span className="text-lg font-black text-slate-900 mb-0.5">{company.company_name}</span>
-                           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">{company.address?.province || 'Main Hub'}</span>
+                        <div className="flex flex-col min-w-0">
+                           <span className="text-sm font-black text-slate-900 mb-0.5 truncate">{company.company_name}</span>
+                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">{company.address?.province || 'HQ'}</span>
                         </div>
                      </div>
                    ) : (
-                     <div className="p-10 border border-dashed border-slate-200 rounded-[32px] text-center">
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No parent company found</p>
+                     <div className="p-8 border border-dashed border-slate-200 rounded-[28px] text-center flex items-center justify-center h-full min-h-[82px]">
+                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No Parent Registry Found</p>
                      </div>
                    )}
                 </div>
@@ -200,57 +204,57 @@ function StoreDetailsContent() {
           </section>
 
           {/* Operational Infrastructure Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <StatCard label="Current Stock" value="0.0" icon={Box} />
-             <StatCard label="Sales Volume" value="0.0" icon={ShoppingCart} emerald />
-             <StatCard label="System Status" value="Stable" icon={Globe} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <MetricCard label="Stock Capacity" value={products.length} icon={Box} color="indigo" />
+             <MetricCard label="Node Localization" value={store.user?.company_info?.address?.province || 'Global'} icon={MapPin} color="emerald" />
+             <MetricCard label="Registry Status" value="Online" icon={Globe} color="purple" />
           </div>
 
-          <div className="bg-white p-10 sm:p-12 rounded-[52px] border border-slate-100 shadow-sm">
-             <div className="flex items-center justify-between mb-10">
+          <div className="bg-white p-8 sm:p-10 rounded-[40px] border border-slate-100 shadow-sm">
+             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                   <Box className="text-indigo-600" size={18} />
-                   <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Inventory</h3>
+                   <Package className="text-indigo-600" size={16} />
+                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Inventory Nodes</h3>
                 </div>
                 <button 
                   onClick={() => router.push(`/admin/products?storeId=${store.id}`)}
-                  className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline"
+                  className="text-[9px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 transition-colors"
                 >
-                  View Full Directory
+                  Full Registry Survey
                 </button>
              </div>
 
              {productsLoading ? (
                <div className="py-20 text-center">
-                 <Loader2 className="animate-spin text-slate-200 mx-auto mb-4" size={32} />
-                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Accessing product nodes...</p>
+                 <Loader2 className="animate-spin text-slate-200 mx-auto mb-3" size={28} />
+                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Syncing inventory nodes...</p>
                </div>
              ) : products.length > 0 ? (
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                 {products.map((product) => (
-                   <div key={product.id} className="p-4 bg-slate-50/50 rounded-[32px] border border-slate-100 group hover:bg-white hover:shadow-xl transition-all flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-[24px] bg-white border border-slate-100 overflow-hidden relative shadow-sm shrink-0">
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 {products.slice(0, 6).map((product) => (
+                   <div key={product.id} className="p-3.5 bg-slate-50/50 rounded-[24px] border border-slate-100 group hover:bg-white hover:shadow-xl transition-all flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-[16px] bg-white border border-slate-100 overflow-hidden relative shadow-sm shrink-0">
                          {product.images?.[0]?.image ? (
-                           <Image src={product.images[0].image} alt={product.name} fill sizes="64px" className="object-cover" />
-                         ) : <Package className="text-slate-200 m-auto" size={24} />}
+                           <Image src={product.images[0].image} alt={product.name} fill sizes="48px" className="object-cover" />
+                         ) : <Package className="text-slate-200 m-auto" size={18} />}
                       </div>
                       <div className="flex-1 min-w-0">
-                         <h4 className="text-sm font-black text-slate-900 truncate mb-0.5">{product.name}</h4>
+                         <h4 className="text-[11px] font-black text-slate-900 truncate mb-0.5">{product.name}</h4>
                          <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-black text-indigo-600 uppercase tracking-tighter bg-indigo-50 px-1.5 py-0.5 rounded-md">
-                               {product.category?.name || 'Category'}
+                            <span className="text-[8px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-1.5 py-0.5 rounded-md">
+                               REGISTRY
                             </span>
-                            <span className="text-[10px] font-bold text-slate-400">${parseFloat(product.price).toLocaleString()}</span>
+                            <span className="text-[10px] font-bold text-slate-400 tracking-tight">${parseFloat(product.price).toLocaleString()}</span>
                          </div>
                       </div>
-                      <ArrowUpRight size={14} className="text-slate-300 group-hover:text-indigo-600 transition-colors mr-2" />
+                      <ArrowUpRight size={12} className="text-slate-300 group-hover:text-indigo-600 transition-colors mr-1" />
                    </div>
                  ))}
                </div>
              ) : (
-               <div className="py-20 text-center border border-dashed border-slate-100 rounded-[40px]">
-                 <Package className="text-slate-100 mx-auto mb-4" size={48} />
-                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No products detected in inventory</p>
+               <div className="py-20 text-center border border-dashed border-slate-100 rounded-[32px]">
+                 <Package className="text-slate-100 mx-auto mb-3" size={32} />
+                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No stock nodes detected</p>
                </div>
              )}
           </div>
@@ -261,44 +265,34 @@ function StoreDetailsContent() {
   );
 }
 
-export default function StoreDetailsPage() {
+function MetricCard({ label, value, icon: Icon, color }) {
+  const themes = {
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    purple: 'bg-purple-600 shadow-purple-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+  };
   return (
-    <Suspense fallback={
-      <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
-        <Loader2 className="animate-spin text-indigo-600" size={48} />
-        <div className="text-center">
-          <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading Store</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Preparing data stream...</p>
-        </div>
+    <div className="bg-white p-4 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-center flex flex-col items-center">
+      <div className={`p-2 rounded-xl w-9 h-9 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+        <Icon size={16} strokeWidth={3} />
       </div>
-    }>
-      <StoreDetailsContent />
-    </Suspense>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
+      <h3 className="text-lg font-black text-slate-900 tracking-tighter leading-none relative z-10 whitespace-nowrap overflow-hidden text-ellipsis max-w-full px-2">{value}</h3>
+      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
+    </div>
   );
 }
 
 function InfoRow({ icon: Icon, label, value, highlight }) {
   return (
-    <div className={`flex items-center gap-4 p-4 rounded-3xl transition-all ${highlight ? 'bg-indigo-50/50 border border-indigo-100 shadow-sm' : 'bg-slate-50/50 border border-transparent'}`}>
-       <div className={`p-2 rounded-2xl bg-white shadow-sm shrink-0 ${highlight ? 'text-indigo-600' : 'text-slate-400'}`}>
-         <Icon size={16} strokeWidth={2.5} />
+    <div className={`flex items-center gap-3.5 p-3 rounded-2xl transition-all ${highlight ? 'bg-indigo-50/50 border border-indigo-100' : 'bg-slate-50/50 border border-transparent'}`}>
+       <div className={`p-2 rounded-xl bg-white shadow-sm shrink-0 ${highlight ? 'text-indigo-600' : 'text-slate-400'}`}>
+         <Icon size={14} strokeWidth={2.5} />
        </div>
-       <div className="flex flex-col text-left">
-          <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] leading-tight mb-1">{label}</span>
-          <span className={`text-xs font-black truncate max-w-[180px] ${highlight ? 'text-indigo-600' : 'text-slate-800'}`}>{value}</span>
+       <div className="flex flex-col text-left overflow-hidden">
+          <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.2em] leading-tight mb-0.5">{label}</span>
+          <span className={`text-[11px] font-black truncate max-w-full ${highlight ? 'text-indigo-600' : 'text-slate-800'}`}>{value}</span>
        </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, icon: Icon, emerald }) {
-  return (
-    <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm text-center flex flex-col items-center group hover:border-indigo-100 transition-all">
-       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 shadow-inner ${emerald ? 'bg-emerald-50 text-emerald-500' : 'bg-slate-50 text-indigo-600'} group-hover:scale-110 transition-transform`}>
-          <Icon size={22} strokeWidth={2.5} />
-       </div>
-       <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1.5">{label}</span>
-       <span className="text-lg font-black text-slate-900 uppercase">{value}</span>
     </div>
   );
 }

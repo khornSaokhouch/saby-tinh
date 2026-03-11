@@ -11,16 +11,16 @@ export default function ProfileSection({ user, formData, imagePreview, onInputCh
   };
 
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
+    <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-50 relative z-10">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-white shadow-sm border-indigo-100/50"><User size={18} strokeWidth={2.5} /></div>
-          <h3 className="text-base font-black text-slate-900 tracking-tight italic uppercase">Public Profile</h3>
+          <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-lg"><User size={16} strokeWidth={3} /></div>
+          <h3 className="text-base font-black text-slate-900 tracking-tighter">Identity Registry</h3>
         </div>
-        <div className="px-3 py-1 bg-slate-50 rounded-xl flex items-center gap-2 border border-slate-100/50">
+        <div className="px-2.5 py-1 bg-slate-50 rounded-lg flex items-center gap-2 border border-slate-100/50">
             <Calendar size={10} className="text-slate-400" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-              Joined: {formatDate(user?.created_at)}
+            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+              Sync: {formatDate(user?.created_at)}
             </span>
         </div>
       </div>
@@ -57,11 +57,11 @@ export default function ProfileSection({ user, formData, imagePreview, onInputCh
             />
             <button 
               onClick={() => fileInputRef.current.click()}
-              className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100/50 flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100 flex items-center gap-1.5"
             >
-              <Upload size={12} strokeWidth={3} /> Change Avatar
+              <Upload size={12} strokeWidth={3} /> Sync Avatar
             </button>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight ml-1">JPG or PNG. Max 2MB.</p>
+            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-60">Dimensions: 800x800 Recommended</p>
           </div>
         </div>
 
@@ -81,13 +81,13 @@ export default function ProfileSection({ user, formData, imagePreview, onInputCh
            <InputField label="New Password" name="password" value={formData.password} onChange={onInputChange} type="password" icon={Key} placeholder="Leave empty to keep" />
         </div>
         
-        <div className="col-span-2 space-y-2 relative z-10">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 block">Bio / About Me</label>
+        <div className="col-span-2 space-y-1.5 relative z-10">
+          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 block">Entity Synopsis</label>
           <textarea 
             name="bio"
             value={formData.bio}
             onChange={onInputChange}
-            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[12px] font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-100 transition-all h-24 resize-none placeholder:text-slate-300 leading-relaxed shadow-sm"
+            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[11px] font-bold text-slate-700 focus:outline-none focus:bg-white focus:border-indigo-100 transition-all h-20 resize-none placeholder:text-slate-300 shadow-sm"
             placeholder="Tell us a bit about yourself..."
           ></textarea>
         </div>

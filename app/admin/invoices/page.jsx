@@ -37,7 +37,7 @@ export default function AdminInvoices() {
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
           </h1>
-          <p className="text-slate-500 text-[12px] font-medium mt-1 italic">
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
             Overview of merchant earnings and transaction status.
           </p>
         </div>
@@ -134,11 +134,9 @@ export default function AdminInvoices() {
                   </tr>
                 ))
               ) : filteredStores.length === 0 ? (
-                <tr>
                   <td colSpan="5" className="py-16 text-center">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">No merchants located in registry</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">No merchants located in registry</p>
                   </td>
-                </tr>
               ) : filteredStores.map((store, idx) => (
                 <tr key={store.id} className="group hover:bg-slate-50/30 transition-colors">
                   <td className="px-6 py-4">
@@ -151,7 +149,7 @@ export default function AdminInvoices() {
                         />
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <h3 className="text-xs font-black text-slate-900 tracking-tight uppercase truncate group-hover:text-indigo-600 transition-colors">{store.name}</h3>
+                        <h3 className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">{store.name}</h3>
                         <p className="text-slate-400 text-[8px] font-black uppercase tracking-widest mt-0.5">ID: #{store.id}</p>
                       </div>
                     </div>
@@ -208,14 +206,14 @@ function StatCard({ title, value, icon: Icon, color, trend }) {
           <Icon size={16} strokeWidth={2.5} />
         </div>
         {trend && (
-          <div className="text-[8px] font-black px-1.5 py-0.5 rounded border bg-slate-50 text-slate-400 uppercase tracking-widest italic">
+          <div className="text-[8px] font-black px-1.5 py-0.5 rounded border bg-slate-50 text-slate-400 uppercase tracking-widest">
             {trend}
           </div>
         )}
       </div>
       <div className="relative z-10">
         <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-0.5">{title}</p>
-        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
       </div>
     </div>
   );

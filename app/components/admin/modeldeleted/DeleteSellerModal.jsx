@@ -25,7 +25,7 @@ export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleti
                         </div>
 
                         <div className="space-y-1 mb-6">
-                            <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase italic">Reject Partner?</h3>
+                            <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase">Reject Partner?</h3>
                             <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
                                 Denying <span className="text-slate-900 font-black">"{sellerName}"</span> will remove their application and notify the merchant via email.
                             </p>

@@ -42,14 +42,14 @@ export default function AdminProfilePage() {
   // --- LOADING STATE ---
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6 space-y-8 animate-pulse">
-        <div className="h-48 bg-slate-200 rounded-3xl w-full" />
+      <div className="max-w-[1400px] mx-auto p-6 space-y-8 animate-pulse pt-4">
+        <div className="h-48 bg-slate-200 rounded-[32px] w-full" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="h-32 bg-slate-200 rounded-2xl" />
-          <div className="h-32 bg-slate-200 rounded-2xl" />
-          <div className="h-32 bg-slate-200 rounded-2xl" />
+          <div className="h-32 bg-slate-200 rounded-[24px]" />
+          <div className="h-32 bg-slate-200 rounded-[24px]" />
+          <div className="h-32 bg-slate-200 rounded-[24px]" />
         </div>
-        <div className="h-64 bg-slate-200 rounded-3xl w-full" />
+        <div className="h-64 bg-slate-200 rounded-[32px] w-full" />
       </div>
     );
   }
@@ -80,11 +80,11 @@ export default function AdminProfilePage() {
       variants={containerVar}
       initial="hidden"
       animate="show"
-      className="max-w-6xl mx-auto p-4 sm:p-8 space-y-6 font-sans"
+      className="max-w-[1400px] mx-auto p-4 sm:p-6 space-y-6 font-sans pt-4"
     >
       {/* --- HEADER SECTION --- */}
       <motion.div variants={itemVar} className="relative group">
-        <div className="absolute inset-0 bg-white border border-slate-100 rounded-[24px] shadow-sm" />
+        <div className="absolute inset-0 bg-white border border-slate-100 rounded-[20px] shadow-sm" />
         
         <div className="relative p-7 flex flex-col md:flex-row md:items-end justify-between gap-6 z-10">
           <div className="flex items-start md:items-end gap-6">
@@ -167,7 +167,7 @@ export default function AdminProfilePage() {
           </motion.div>
 
           {/* Profile Information Panel */}
-          <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[24px] p-7 shadow-sm">
+          <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[20px] p-7 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
                 <User className="w-4 h-4 text-indigo-600" />
@@ -192,7 +192,7 @@ export default function AdminProfilePage() {
         <motion.div variants={itemVar} className="space-y-6">
           
           {/* Management Menu */}
-          <div className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm h-full flex flex-col">
+          <div className="bg-white border border-slate-100 rounded-[20px] p-6 shadow-sm h-full flex flex-col">
             <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-5 px-1">
               Admin Ops Center
             </h4>
@@ -232,16 +232,16 @@ export default function AdminProfilePage() {
 function DashboardCard({ title, value, icon: Icon, href, accentColor, subText }) {
   return (
     <Link href={href} className="block group">
-      <div className="bg-white border border-slate-100 p-5 rounded-[24px] shadow-sm transition-all duration-500 hover:shadow-md hover:border-indigo-100/50 relative overflow-hidden h-full">
-        <div className="flex justify-between items-start mb-4">
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${accentColor}`}>
-            <Icon className="w-4 h-4" strokeWidth={3} />
+      <div className="bg-white border border-slate-100 p-4 rounded-[20px] shadow-sm transition-all duration-500 hover:shadow-md hover:border-indigo-100/50 relative overflow-hidden h-full">
+        <div className="flex justify-between items-start mb-3">
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${accentColor}`}>
+            <Icon className="w-3.5 h-3.5" strokeWidth={3} />
           </div>
           <ArrowUpRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
         </div>
         <div className="space-y-0.5">
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
-          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none italic uppercase">{value}</h3>
+          <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none italic uppercase">{value}</h3>
           <p className="text-[9px] font-black text-slate-400/60 uppercase tracking-widest">{subText}</p>
         </div>
       </div>
@@ -268,7 +268,7 @@ function SidebarLink({ icon: Icon, label, href, badge }) {
   return (
     <Link 
       href={href}
-      className="flex items-center justify-between p-3 rounded-xl text-slate-500 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all group border border-transparent hover:border-indigo-100/30"
+      className="flex items-center justify-between p-2.5 rounded-xl text-slate-500 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all group border border-transparent hover:border-indigo-100/30"
     >
       <div className="flex items-center gap-3">
         <Icon className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} />

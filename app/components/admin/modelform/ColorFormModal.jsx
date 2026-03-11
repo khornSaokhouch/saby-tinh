@@ -44,9 +44,9 @@ export default function ColorFormModal({ isOpen, onClose, initialData, onSubmit,
               <div className="flex items-center justify-between mb-10">
                 <div>
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                    {initialData ? 'Update Color' : 'New Color'}
+                    {initialData ? 'Update Color' : 'Register Color'}
                   </h2>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Color Details</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Aesthetic Identity</p>
                 </div>
                 <button
                   onClick={onClose}
@@ -75,21 +75,21 @@ export default function ColorFormModal({ isOpen, onClose, initialData, onSubmit,
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex gap-4 pt-6 border-t border-slate-50">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all"
+                    className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-[2] py-5 bg-indigo-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700"
+                    className="flex-[2] py-5 bg-indigo-600 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-3 transition-all active:scale-[0.98] hover:bg-indigo-700"
                   >
-                    {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                    {initialData ? 'Update Color' : 'Save Color'}
+                    {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <div className="p-1 bg-white/10 rounded-lg"><Check size={14} strokeWidth={3} /></div>}
+                    {initialData ? 'Sync Aesthetic' : 'Register Color'}
                   </button>
                 </div>
               </form>

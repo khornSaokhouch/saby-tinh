@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { 
   Building2, Search, Filter, Mail, Phone, 
   ShieldAlert, Download, Trash2, CheckCircle2, FileText, 
-  ExternalLink, Loader2, Clock, RefreshCw 
+  ExternalLink, Loader2, Clock, RefreshCw, ChevronDown
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useSellerStore } from '@/stores/useSellerStore';
@@ -85,7 +85,7 @@ export default function SellerManagementPage() {
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Seller <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Requests</span>
           </h1>
-          <p className="text-slate-500 text-[12px] font-medium mt-1 italic">
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
             Manage merchant applications and business licensing.
           </p>
         </div>
@@ -121,14 +121,8 @@ export default function SellerManagementPage() {
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
         {/* Table Controls */}
-        <div className="p-4 border-b border-slate-50 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-1 p-1 bg-slate-50 rounded-lg">
-            <TabBtn active={activeTab === 'all'} onClick={() => setActiveTab('all')}>All</TabBtn>
-            <TabBtn active={activeTab === 'pending'} onClick={() => setActiveTab('pending')}>Pending</TabBtn>
-            <TabBtn active={activeTab === 'approved'} onClick={() => setActiveTab('approved')}>Approved</TabBtn>
-          </div>
-
-          <div className="relative w-full sm:w-64 group">
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-64 group text-left">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
@@ -137,6 +131,21 @@ export default function SellerManagementPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+
+          <div className="relative flex-1 sm:flex-none w-full sm:w-auto">
+            <select
+              value={activeTab}
+              onChange={e => setActiveTab(e.target.value)}
+              className="w-full sm:w-auto pl-4 pr-10 h-[32px] bg-slate-50 border border-transparent rounded-lg text-[9px] font-black text-slate-500 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all min-w-[140px] uppercase tracking-widest"
+            >
+              <option value="all">All Requests</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <ChevronDown size={12} />
+            </div>
           </div>
         </div>
 
@@ -156,13 +165,13 @@ export default function SellerManagementPage() {
               {loading ? (
                 <tr><td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Registry...</td></tr>
               ) : filteredSellers.length === 0 ? (
-                <tr><td colSpan="5" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic">No requests found</td></tr>
+                <tr><td colSpan="5" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No requests found</td></tr>
               ) : (
                 filteredSellers.map((seller) => (
                   <tr key={seller.id} className="group hover:bg-slate-50/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-black text-slate-900 tracking-tight uppercase group-hover:text-indigo-600 transition-colors">
+                        <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
                           {seller.company_name}
                         </span>
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Rep: {seller.name}</span>
@@ -183,7 +192,7 @@ export default function SellerManagementPage() {
                           <FileText size={10} /> License <ExternalLink size={8} />
                         </a>
                       ) : (
-                        <span className="text-[8px] font-black text-slate-300 uppercase italic">Missing File</span>
+                        <span className="text-[8px] font-black text-slate-300 uppercase">Missing File</span>
                       )}
                     </td>
                     <td className="px-4 py-4">
@@ -250,7 +259,7 @@ function StatCard({ label, value, icon: Icon, color, isWarning }) {
       </div>
       <div className="relative z-10">
         <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-0.5">{label}</p>
-        <h3 className="text-xl font-black text-slate-900 tracking-tighter italic">{value}</h3>
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter">{value}</h3>
       </div>
     </div>
   );
@@ -266,20 +275,5 @@ function StatusBadge({ status }) {
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
       {status === 'approved' ? 'Partner' : 'Review'}
     </span>
-  );
-}
-
-function TabBtn({ children, active, onClick }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-md transition-all ${
-        active 
-          ? 'bg-white shadow-sm text-indigo-600' 
-          : 'text-slate-400 hover:text-slate-600'
-      }`}
-    >
-      {children}
-    </button>
   );
 }

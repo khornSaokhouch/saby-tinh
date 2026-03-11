@@ -51,7 +51,7 @@ function StoreInvoicesContent() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
         <div className="text-center">
             <AlertCircle className="mx-auto text-rose-500 mb-4" size={48} />
-            <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter italic">Invalid Access</h2>
+            <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Invalid Access</h2>
             <Link href="/admin/invoices" className="text-[10px] font-black uppercase text-indigo-600 border-b border-indigo-200 pb-0.5">Return to Registry</Link>
         </div>
       </div>
@@ -157,7 +157,7 @@ function StoreInvoicesContent() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Syncing Registry...</td></tr>
+                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Syncing Registry...</td></tr>
               ) : invoices.map((inv, idx) => (
                 <tr key={inv.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-4">
@@ -235,7 +235,7 @@ function StatCard({ label, value, icon: Icon, color }) {
         <Icon size={14} strokeWidth={3} />
       </div>
       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <h3 className="text-xl font-black text-slate-900 tracking-tighter italic">{value}</h3>
+      <h3 className="text-xl font-black text-slate-900 tracking-tighter">{value}</h3>
     </div>
   );
 }

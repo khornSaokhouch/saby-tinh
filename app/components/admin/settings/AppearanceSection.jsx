@@ -2,10 +2,10 @@ import { Palette, Layout, Moon } from 'lucide-react';
 
 export default function AppearanceSection() {
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
+    <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
        <div className="flex items-center gap-3 mb-6 relative z-10">
-        <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-white shadow-sm border-indigo-100/50"><Palette size={18} strokeWidth={2.5} /></div>
-        <h3 className="text-base font-black text-slate-900 tracking-tight italic uppercase">Aesthetics</h3>
+        <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-lg"><Palette size={16} strokeWidth={3} /></div>
+        <h3 className="text-base font-black text-slate-900 tracking-tighter">UI Aesthetics</h3>
       </div>
       <div className="space-y-2 relative z-10">
          <label className="flex items-center justify-between p-3 rounded-xl border border-indigo-600 bg-indigo-50/50 cursor-pointer group/row transition-all shadow-sm">

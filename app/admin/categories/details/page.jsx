@@ -73,25 +73,31 @@ function CategoryDetailsContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 pb-32 font-sans pt-6">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div className="flex items-center gap-8">
           <motion.button 
-            whileHover={{ scale: 1.05, x: -5 }}
+            whileHover={{ scale: 1.05, x: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => router.back()}
-            className="w-14 h-14 flex items-center justify-center bg-white border border-slate-200 rounded-[24px] text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-2xl transition-all group"
+            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm group"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={18} />
           </motion.button>
-          <div className="space-y-1.5 text-left">
+          <div className="space-y-1 text-left">
             <div className="flex items-center gap-2">
-              <Tag className="w-4 h-4 text-indigo-600" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Hardware Segment Audit</span>
+              <Tag className="w-3.5 h-3.5 text-blue-500" />
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Hardware Segment Audit</span>
             </div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{category?.name || 'Segment Index'}</h1>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+              {category?.name?.split(' ').map((word, i) => (
+                <span key={i} className={i === (category?.name?.split(' ').length || 0) - 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400" : ""}>
+                  {word}{' '}
+                </span>
+              ))}
+            </h1>
           </div>
         </div>
 
@@ -109,77 +115,77 @@ function CategoryDetailsContent() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         
         {/* --- SIDEBAR --- */}
-        <div className="lg:col-span-4 space-y-8">
-          <div className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.02)] text-center relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-48 h-48 translate-x-16 -translate-y-16 rounded-full bg-indigo-600 opacity-[0.03] group-hover:scale-125 transition-transform duration-1000" />
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm text-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 translate-x-8 -translate-y-8 rounded-full bg-blue-600 opacity-[0.03] group-hover:scale-125 transition-transform duration-1000" />
             
-            <div className="relative mb-8">
-              <div className="w-32 h-32 rounded-[40px] bg-slate-50 border-[6px] border-white shadow-2xl mx-auto flex items-center justify-center text-4xl font-black text-slate-200 relative z-10 overflow-hidden group-hover:rotate-3 transition-all duration-700 p-2">
+            <div className="relative mb-6">
+              <div className="w-24 h-24 rounded-[32px] bg-slate-50 border-4 border-white shadow-xl mx-auto flex items-center justify-center text-3xl font-black text-slate-200 relative z-10 overflow-hidden group-hover:rotate-2 transition-all p-1">
                 {category?.category_image ? (
                   <Image 
                     src={getCleanImageUrl(category.category_image)} 
                     alt={category.name} 
                     fill 
-                    className="object-cover rounded-[32px] p-1" 
+                    className="object-cover rounded-[24px]" 
                   />
-                ) : <Layers size={48} />}
+                ) : <Layers size={32} />}
               </div>
             </div>
             
-            <h3 className="text-2xl font-black text-slate-900 relative z-10 mb-2">{category?.name}</h3>
-            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${category?.status === 1 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
-               {category?.status === 1 ? 'Active Segment' : 'Inactive Segment'}
+            <h3 className="text-xl font-black text-slate-900 relative z-10 tracking-tight">{category?.name}</h3>
+            <div className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${category?.status === 1 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+               {category?.status === 1 ? 'Operational Node' : 'Suspended Node'}
             </div>
 
-            <div className="grid grid-cols-1 gap-3 mt-10 relative z-10">
-               <InfoRow icon={Package} label="Total Assets" value={products.length} />
-               <InfoRow icon={Activity} label="Status" value={category?.status === 1 ? 'Operational' : 'Offline'} highlight={category?.status === 1} />
+            <div className="grid grid-cols-1 gap-2 mt-8 relative z-10">
+               <InfoRow icon={Package} label="Node Assets" value={products.length} highlight />
+               <InfoRow icon={Activity} label="Stream Status" value={category?.status === 1 ? 'Active Link' : 'Offline'} />
             </div>
           </div>
 
-          <div className="bg-slate-900 p-10 rounded-[48px] text-white shadow-2xl relative overflow-hidden group">
-             <div className="absolute bottom-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-               <Box size={140} />
+          <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-8 rounded-[32px] text-white shadow-lg relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
+               <ShieldCheck size={100} />
              </div>
              <div className="relative z-10 text-left">
-                <div className="flex items-center gap-2 mb-4 text-indigo-400">
-                  <ShieldCheck size={16} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.25em]">Audit Intelligence</span>
+                <div className="flex items-center gap-2 mb-3 text-blue-200/80">
+                  <ShieldCheck size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em]">Audit Intelligence</span>
                 </div>
-                <h3 className="text-2xl font-black mb-4 leading-tight">Segment Analysis</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium mb-10">
+                <h3 className="text-lg font-black mb-3 leading-tight tracking-tight text-white/95">Segment Analysis</h3>
+                <p className="text-[10px] text-blue-100/60 leading-relaxed font-bold mb-8">
                   This segment contains {products.length} registered hardware components. All data is synchronized with the master registry.
                 </p>
-                <div className="space-y-4">
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                     <span className="block text-[9px] font-black text-slate-500 uppercase mb-1">Density</span>
-                     <span className="text-xl font-black">{products.length} Nodes</span>
-                  </div>
+                <div className="space-y-3">
+                   <div className="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm group-hover:bg-white/20 transition-all">
+                      <span className="block text-[8px] font-black text-blue-300 uppercase tracking-widest mb-1.5 leading-none">Node Density</span>
+                      <span className="text-2xl font-black tracking-tighter leading-none">{products.length} Nodes</span>
+                   </div>
                 </div>
              </div>
           </div>
         </div>
 
         {/* --- MAIN CONTENT: PRODUCT REGISTRY --- */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-6">
           
-          <div className="bg-white rounded-[44px] border border-slate-100 shadow-sm overflow-hidden min-h-[600px] flex flex-col">
+          <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
             
             {/* Table Controls */}
-            <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-6 bg-slate-50/30">
-              <div className="relative w-full sm:w-96">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+              <div className="relative w-full sm:max-w-xs group text-left">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={14} />
                 <input 
                   type="text" 
                   placeholder="Filter segment assets..." 
-                  className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-[24px] text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400 shadow-sm"
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-100 rounded-xl text-[11px] font-bold focus:border-blue-100 transition-all outline-none placeholder:text-slate-400"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                 <div className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-100">
-                    {filteredProducts.length} Results
+              <div className="flex items-center gap-2">
+                 <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[8px] font-black uppercase tracking-widest border border-blue-100/50">
+                    {filteredProducts.length} Results Found
                  </div>
               </div>
             </div>
@@ -189,30 +195,37 @@ function CategoryDetailsContent() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50">
-                    <th className="px-10 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Asset Detail</th>
-                    <th className="px-6 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Store</th>
-                    <th className="px-6 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Price</th>
-                    <th className="px-10 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em] text-right">Action</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Asset Identity</th>
+                    <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store Node</th>
+                    <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Pricing</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {productsLoading ? (
-                     <tr><td colSpan="4" className="px-10 py-20 text-center"><Loader2 className="animate-spin text-indigo-600 mx-auto" size={32} /></td></tr>
+                     <tr>
+                       <td colSpan="4" className="px-6 py-20 text-center">
+                          <div className="flex flex-col items-center gap-3">
+                            <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Scanning Catalog...</p>
+                          </div>
+                       </td>
+                     </tr>
                   ) : filteredProducts.length === 0 ? (
                      <tr>
-                        <td colSpan="4" className="px-10 py-32 text-center">
-                           <div className="flex flex-col items-center gap-4">
-                              <Box size={40} className="text-slate-200" />
-                              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No assets found in this segment</p>
+                        <td colSpan="4" className="px-6 py-20 text-center">
+                           <div className="flex flex-col items-center gap-3 text-slate-200">
+                              <Box size={32} />
+                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">No nodes match your filter</p>
                            </div>
                         </td>
                      </tr>
                   ) : (
                     filteredProducts.map((product) => (
-                      <tr key={product.id} className="group hover:bg-slate-50/30 transition-all duration-300">
-                        <td className="px-10 py-6">
-                          <div className="flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden relative shrink-0">
+                      <tr key={product.id} className="group hover:bg-slate-50/20 transition-colors">
+                        <td className="px-6 py-3.5">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-white shadow-sm overflow-hidden relative shrink-0">
                                {product.images?.[0]?.image ? (
                                   <Image 
                                     src={getCleanImageUrl(product.images[0].image)} 
@@ -221,34 +234,34 @@ function CategoryDetailsContent() {
                                     className="object-cover group-hover:scale-110 transition-transform duration-700" 
                                   />
                                ) : (
-                                  <Package size={20} className="text-slate-300" />
+                                  <Package size={16} className="text-slate-300" />
                                )}
                             </div>
-                            <div className="flex flex-col">
-                              <span className="text-sm font-black text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{product.name}</span>
-                              <span className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">ID: #{product.id}</span>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate tracking-tight uppercase leading-none mb-1">{product.name}</span>
+                              <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.1em]">Node ID: #{product.id}</span>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-6">
+                        <td className="px-4 py-3.5">
                            <div className="flex items-center gap-2">
-                              <ShoppingBag size={12} className="text-indigo-500" />
-                              <span className="text-xs font-black text-slate-600 uppercase tracking-tight">{product.store?.name || 'Central Stock'}</span>
+                              <ShoppingBag size={10} className="text-blue-500" />
+                              <span className="text-[9px] font-black text-slate-600 uppercase tracking-tight">{product.store?.name || 'Global Stock'}</span>
                            </div>
                         </td>
-                        <td className="px-6 py-6">
+                        <td className="px-4 py-3.5">
                           <div className="flex flex-col">
-                             <span className="text-sm font-black text-slate-900">${parseFloat(product.price).toLocaleString()}</span>
-                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Registry Value</span>
+                             <span className="text-[10px] font-black text-slate-900 leading-none mb-0.5">${parseFloat(product.price).toLocaleString()}</span>
+                             <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">Unit Credit</span>
                           </div>
                         </td>
-                        <td className="px-10 py-6 text-right">
+                        <td className="px-6 py-3.5 text-right">
                            <button 
                              onClick={() => router.push(`/admin/products`)}
-                             className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all"
+                             className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:border-blue-100 transition-all hover:bg-blue-50"
                              title="Audit Asset"
                            >
-                             <Eye size={18} />
+                             <ArrowUpRight size={14} strokeWidth={2.5} />
                            </button>
                         </td>
                       </tr>
@@ -259,11 +272,11 @@ function CategoryDetailsContent() {
             </div>
 
             {/* Pagination / Footer */}
-            <div className="p-8 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Audit compilation complete</span>
-               <div className="flex gap-4">
-                  <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors px-4 py-2 border border-transparent hover:border-slate-200 rounded-xl">Prev Node</button>
-                  <button className="text-[10px] font-black text-slate-900 uppercase tracking-widest px-6 py-2 bg-white border border-slate-200 rounded-xl shadow-sm active:scale-95 transition-all">Next Node</button>
+            <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
+               <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest ml-2">Node scan complete</span>
+               <div className="flex gap-1.5">
+                  <button className="text-[8px] font-black text-slate-400 uppercase tracking-widest px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-all hover:text-slate-900">Prev</button>
+                  <button className="text-[8px] font-black text-slate-900 uppercase tracking-widest px-4 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm active:scale-95 transition-all hover:border-slate-300">Next</button>
                </div>
             </div>
           </div>
@@ -291,13 +304,13 @@ export default function CategoryDetailsPage() {
 
 function InfoRow({ icon: Icon, label, value, highlight }) {
   return (
-    <div className={`flex items-center gap-4 p-4 rounded-[24px] transition-all ${highlight ? 'bg-indigo-50/50 border border-indigo-100 shadow-sm' : 'bg-slate-50/50 border border-transparent'}`}>
-       <div className={`p-2.5 rounded-xl bg-white shadow-sm shrink-0 ${highlight ? 'text-indigo-600' : 'text-slate-400'}`}>
-         <Icon size={18} strokeWidth={2.5} />
+    <div className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${highlight ? 'bg-blue-50/50 border border-blue-100 shadow-sm' : 'border border-transparent bg-slate-50/50'}`}>
+       <div className={`p-1.5 rounded-lg bg-white shadow-sm shrink-0 ${highlight ? 'text-blue-600' : 'text-slate-400'}`}>
+         <Icon size={12} strokeWidth={3} />
        </div>
-       <div className="flex flex-col text-left">
-          <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] leading-tight mb-1">{label}</span>
-          <span className={`text-sm font-black truncate max-w-[180px] ${highlight ? 'text-indigo-600' : 'text-slate-900'}`}>{value}</span>
+       <div className="flex flex-col text-left overflow-hidden min-w-0">
+          <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">{label}</span>
+          <span className={`text-[10px] font-black truncate ${highlight ? 'text-blue-600' : 'text-slate-700'}`}>{value}</span>
        </div>
     </div>
   );

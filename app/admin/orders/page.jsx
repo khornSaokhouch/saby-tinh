@@ -50,7 +50,7 @@ export default function OrdersPage() {
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Orders</span>
           </h1>
-          <p className="text-slate-500 text-[12px] font-medium mt-1 italic">
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
             Monitor and manage customer transactions worldwide.
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function OrdersPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Registry...</td></tr>
+                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Scanning Registry...</td></tr>
               ) : filteredOrders.map((order, idx) => (
                 <tr key={order.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-4">
@@ -196,7 +196,7 @@ function StatCard({ label, value, icon: Icon, color }) {
         <Icon size={14} strokeWidth={3} />
       </div>
       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <h3 className="text-xl font-black text-slate-900 tracking-tighter italic leading-none">{value}</h3>
+      <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
     </div>
   );
 }

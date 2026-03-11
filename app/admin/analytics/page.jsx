@@ -52,7 +52,7 @@ export default function AnalyticsPage() {
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Market <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Analytics</span>
           </h1>
-          <p className="text-slate-500 text-[12px] font-medium mt-1 italic">
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
             Detailed performance breakdown for your store.
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* Revenue Velocity (Large) */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[320px]">
+        <div className="lg:col-span-2 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Fiscal Velocity</h3>
@@ -155,7 +155,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Category Share (Small) */}
-        <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[320px]">
+        <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="mb-4">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Distribution</h3>
             <p className="text-md font-black text-slate-900">Sales By Category</p>
@@ -212,7 +212,7 @@ export default function AnalyticsPage() {
               {topProducts.map((product) => (
                 <tr key={product.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-3">
-                    <span className="text-[11px] font-black text-slate-700 uppercase group-hover:text-indigo-600 transition-colors">{product.name}</span>
+                    <span className="text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{product.name}</span>
                   </td>
                   <td className="px-4 py-3 text-right text-[11px] font-bold text-slate-500">{product.sales}</td>
                   <td className="px-4 py-3 text-right text-[11px] font-black text-slate-900">{product.revenue}</td>
@@ -242,11 +242,11 @@ function StatCard({ title, value, trend, isPositive, icon: Icon, color }) {
   return (
     <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
       <div className="flex justify-between items-start mb-4 relative z-10">
-        <div className={`p-2 rounded-xl ${themes[color]} text-white shadow-lg shadow-indigo-100`}>
+        <div className={`p-2 rounded-xl ${themes[color]} text-white shadow-lg`}>
           <Icon size={16} strokeWidth={2.5} />
         </div>
         <div className={`text-[9px] font-black px-1.5 py-0.5 rounded border ${isPositive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
-          {isPositive ? '+' : ''}{trend}
+          {trend}
         </div>
       </div>
       <div className="relative z-10">

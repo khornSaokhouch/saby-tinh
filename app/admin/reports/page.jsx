@@ -64,23 +64,29 @@ export default function ReportsPage() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="p-4 md:p-7 space-y-7 bg-[#fcfcfd]/50 min-h-screen font-sans"
+      className="space-y-6 pb-20 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 pt-4"
     >
       
       {/* --- SECTION: HEADER --- */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight italic">REPORTS</h1>
-          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-0.5">Real-time store metrics & predictive analytics</p>
+        <div className="text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Market Intelligence</span>
+          </div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Metric <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Reports</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">Real-time store metrics & predictive analytics</p>
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-700 shadow-sm hover:bg-slate-50 transition-all uppercase tracking-widest">
-            <Calendar size={12} className="text-indigo-600" strokeWidth={3} />
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 hover:border-indigo-300 transition-all shadow-sm active:scale-95 uppercase tracking-widest">
+            <Calendar size={13} className="text-indigo-600" strokeWidth={3} />
             {dateRange}
           </button>
-          <button className="p-2 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-indigo-600 transition-all">
-            <Download size={16} />
+          <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95">
+            <Download size={14} strokeWidth={3} />
           </button>
         </div>
       </motion.div>

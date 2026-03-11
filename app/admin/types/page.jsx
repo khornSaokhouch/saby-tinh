@@ -81,54 +81,57 @@ export default function TypePage() {
   };
 
   return (
-    <div className="space-y-10 pb-10 font-sans">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500 pt-4">
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Schema</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Classification System</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Types</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-400">Types</span>
+          </h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => { fetchTypes(); fetchCategories(); }}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            title="Refresh Registry"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
           </button>
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={18} strokeWidth={2.5} /> New Type
+            <Plus size={16} strokeWidth={3} /> Add New Type
           </button>
         </div>
       </div>
 
-      {/* --- METRICS --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard label="Total Types" value={types.length} icon={Tag} color="indigo" />
-        <MetricCard label="Total Categories" value={categories.length} icon={Layers} color="emerald" />
-        <MetricCard label="Active Status" value="Online" icon={CheckCircle2} color="purple" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Registered Types" value={types.length} icon={Tag} color="indigo" />
+        <MetricCard label="Category Nodes" value={categories.length} icon={Layers} color="emerald" />
+        <MetricCard label="System Integrity" value="Unified" icon={CheckCircle2} color="purple" />
       </div>
 
-      {/* --- TYPES TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-50 bg-slate-50/20">
-          <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
             <input 
               type="text" 
-              placeholder="Search types..." 
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
+              placeholder="Search by type name..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+          </div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            {filteredTypes.length} Total Matches
           </div>
         </div>
 
@@ -136,10 +139,10 @@ export default function TypePage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Type Name</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Update</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[40%]">Designation Identity</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Parent Node</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -159,13 +162,13 @@ export default function TypePage() {
                   key={type.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-100 shadow-sm transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[11px] border border-indigo-100/50 shadow-sm transition-all group-hover:bg-indigo-600 group-hover:text-white">
                         {type.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{type.name}</span>
-                        <span className="text-[10px] font-bold text-slate-400 mt-0.5 tracking-[0.2em] uppercase leading-none">ID: {type.id}</span>
+                        <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{type.name}</span>
+                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {type.id}</span>
                       </div>
                     </div>
                   </td>
@@ -175,16 +178,16 @@ export default function TypePage() {
                       {getCategoryName(type.category_id)}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-slate-500">
-                        {new Date(type.updated_at).toLocaleDateString()}
+                  <td className="px-6 py-4 text-center">
+                    <span className="text-[11px] font-black text-slate-900 italic">
+                        {new Date(type.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => { setSelectedItem(type); setIsFormOpen(true); }} 
-                        className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                        className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100/50"
                       >
                         <Edit3 size={14} strokeWidth={2.5} />
                       </button>
@@ -219,7 +222,7 @@ export default function TypePage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(type.id)}
-                            className="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
+                            className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm border border-rose-100/50"
                           >
                             <Trash2 size={14} strokeWidth={2.5} />
                           </motion.button>
@@ -245,18 +248,23 @@ export default function TypePage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color }) {
+function MetricCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
-    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
-    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className={`p-2.5 rounded-xl border-2 border-white shadow-sm w-fit mb-4 ${themes[color]}`}><Icon size={18} strokeWidth={2.5} /></div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-      <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
-      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+        <Icon size={14} strokeWidth={3} />
+      </div>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+      </div>
+      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
     </div>
   );
 }

@@ -20,28 +20,33 @@ export default function AdminPromoCodeUsagesPage() {
   }, [currentPage, searchQuery]);
 
   return (
-    <div className="space-y-6 pb-10 font-sans">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Usage Analytics</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Usage Analytics Protocol</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Promo Code Usages</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Usage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Analytics</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Track and analyze promo code performance across the platform.
+          </p>
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[11px] font-black hover:bg-slate-50 transition-all shadow-sm uppercase tracking-widest active:scale-95">
-            <Download size={15} strokeWidth={2.5} />
-            <span>Export Data</span>
+          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-lg text-[10px] font-black hover:text-indigo-500 transition-all shadow-sm uppercase tracking-widest active:scale-95">
+            <Download size={14} strokeWidth={3} />
+            <span>Export Registry</span>
           </button>
         </div>
       </div>
 
       {/* --- KPI METRICS --- */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard 
           label="Total Usages" 
           value={stats?.total_usages?.toLocaleString() || '0'} 
@@ -58,28 +63,28 @@ export default function AdminPromoCodeUsagesPage() {
           label="Unique Users" 
           value={stats?.unique_users?.toLocaleString() || '0'} 
           icon={Users} 
-          color="orange" 
+          color="purple" 
         />
         <MetricCard 
-          label="Top Code" 
+          label="Top Performance" 
           value={stats?.top_code?.code || 'None'} 
-          subText={`${stats?.top_code?.count || 0} times`}
+          subText={`${stats?.top_code?.count || 0} hits`}
           icon={Activity} 
           color="rose" 
         />
       </div>
 
       {/* --- MAIN TABLE CONTAINER --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/30">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-64 group text-left">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
             <input 
               type="text" 
               placeholder="Search Code, User..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none placeholder:text-slate-400"
+              className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -89,91 +94,91 @@ export default function AdminPromoCodeUsagesPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500">
               <Calendar size={12} className="text-slate-400" />
-              <span>Filter Period</span>
+              <span>Timeframe</span>
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Usage ID</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Promo Code</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Customer</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Discount</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Order Reference</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Used At</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+            <thead>
+              <tr className="bg-slate-50/50">
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Usage Reference</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Protocol Code</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer Entity</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Value Shift</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order Node</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Timestamp</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Control</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                   <td colSpan="7" className="py-20 text-center">
-                      <div className="flex flex-col items-center gap-3">
-                         <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Compiling Analytics...</span>
-                      </div>
-                   </td>
+                   <td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Syncing Analytics Registry...</td>
                 </tr>
               ) : usages.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-16 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                       <Ticket className="w-12 h-12 text-slate-200" />
-                       <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">
-                         {error ? `Error: ${error}` : 'No usage records found.'}
+                  <td colSpan="7" className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                       <Ticket size={40} className="text-slate-100" />
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                         {error ? `System Error: ${error}` : 'Zero usage records detected'}
                        </p>
                     </div>
                   </td>
                 </tr>
               ) : usages.map((usage, idx) => (
                 <motion.tr 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.03 }}
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}
                   key={usage.id} 
-                  className="hover:bg-slate-50/50 transition-colors group"
+                  className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-5 py-4 text-xs font-bold text-slate-400 italic">#USG-{usage.id}</td>
-                  <td className="px-5 py-4">
+                  <td className="px-6 py-4 text-[10px] font-bold text-slate-400">#USG-{usage.id}</td>
+                  <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
-                       <span className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 rounded text-[11px] font-black text-indigo-600 tracking-tighter uppercase">
+                       <span className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 rounded text-[10px] font-black text-indigo-600 tracking-tighter uppercase whitespace-nowrap">
                          {usage.promo_code?.code || 'N/A'}
                        </span>
                     </div>
                   </td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center text-[10px] font-black text-white italic">
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center text-[9px] font-black text-white shadow-sm">
                         {(usage.user?.name || 'U').charAt(0).toUpperCase()}
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-900">{usage.user?.name || 'Unknown'}</span>
-                        <span className="text-[10px] text-slate-400 font-medium">{usage.user?.email}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[10px] font-bold text-slate-900 truncate max-w-[120px]">{usage.user?.name || 'Unknown User'}</span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[120px]">{usage.user?.email || 'N/A'}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-center">
-                    <span className="text-[13px] font-black text-emerald-600 leading-none">
+                  <td className="px-4 py-4 text-center">
+                    <span className="text-[12px] font-black text-emerald-600 leading-none tabular-nums">
                       -${parseFloat(usage.discount_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </td>
-                  <td className="px-5 py-4">
-                    <span className="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">
+                  <td className="px-4 py-4">
+                    <span className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer transition-colors">
                       #ORD-{usage.order_id || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-right text-[11px] font-bold text-slate-500 uppercase tabular-nums">
-                    {new Date(usage.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    <br/>
-                    <span className="opacity-50 text-[9px]">{new Date(usage.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
+                  <td className="px-4 py-4 text-right">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-slate-700">
+                        {new Date(usage.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                        at {new Date(usage.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-5 py-4 text-right">
-                    <button className="p-2 text-slate-300 hover:text-indigo-600 transition-colors">
-                      <Eye size={14} />
+                  <td className="px-6 py-4 text-right">
+                    <button className="p-1.5 bg-slate-900 text-white rounded-lg hover:bg-black shadow-sm active:scale-95 transition-all">
+                      <Eye size={14} strokeWidth={3} />
                     </button>
                   </td>
                 </motion.tr>
@@ -183,28 +188,28 @@ export default function AdminPromoCodeUsagesPage() {
         </div>
 
         {/* Footer / Pagination */}
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Showing <span className="text-indigo-600 italic">{usages.length}</span> of <span className="text-slate-900">{meta.total || 0}</span> usages
+        <div className="p-3 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
+          <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            Registry Scan: <span className="text-indigo-600">{usages.length}</span> / <span className="text-slate-900">{meta.total || 0}</span> Entries
           </p>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button 
-              className="p-2 border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-white disabled:opacity-30 transition-all"
+              className="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white disabled:opacity-30 transition-all shadow-sm"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1 || loading}
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={14} strokeWidth={3} />
             </button>
-            <div className="flex items-center gap-1.5">
-               <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-600 text-white text-xs font-black italic shadow-lg shadow-indigo-100">{currentPage}</button>
+            <div className="flex items-center gap-1">
+               <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-900 text-white text-[9px] font-black shadow-lg shadow-slate-200">{currentPage}</button>
             </div>
             <button 
-              className="p-2 border border-slate-200 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-white disabled:opacity-30 transition-all"
+              className="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-white disabled:opacity-30 transition-all shadow-sm"
               onClick={() => setCurrentPage(p => p + 1)}
               disabled={currentPage >= meta.last_page || loading}
             >
-              <ChevronRight size={16} />
+              <ChevronRight size={14} strokeWidth={3} />
             </button>
           </div>
         </div>
@@ -214,29 +219,26 @@ export default function AdminPromoCodeUsagesPage() {
   );
 }
 
-// --- SUB-COMPONENTS ---
-
 function MetricCard({ label, value, icon: Icon, color, subText }) {
-  const styles = {
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100/50",
-    orange: "bg-orange-50 text-orange-600 border-orange-100/50",
-    rose: "bg-rose-50 text-rose-600 border-rose-100/50",
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100/50",
+  const themes = {
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    purple: 'bg-purple-600 shadow-purple-100',
+    rose: 'bg-rose-500 shadow-rose-100',
   };
-
   return (
-    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${styles[color]} relative z-10`}>
-        <Icon size={16} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
       <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
         <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none italic">{value}</h3>
-            {subText && <span className="text-[10px] font-bold text-slate-400">{subText}</span>}
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
         </div>
       </div>
-      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

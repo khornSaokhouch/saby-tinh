@@ -74,73 +74,62 @@ export default function CompanyPage() {
   };
 
   return (
-    <div className="space-y-10 font-sans pb-10">
+    <div className="space-y-6 pb-10 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+      
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Directory</span>
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Network Directory</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Partners</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+            Corporate <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400">Partners</span>
+          </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchAllUsers()}
-            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 rounded-xl transition-all active:scale-95 shadow-sm"
+            title="Sync Registry"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
-            <Download size={14} className="group-hover:rotate-12 transition-transform" /> 
-            <span className="group-hover:text-indigo-600 transition-colors">Export Registry</span>
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all shadow-sm">
+            <Download size={14} /> Export Registry
           </button>
         </div>
       </div>
 
       {/* --- STATS OVERVIEW --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <MetricCard
-            label="Total Partners"
-            value={visibleUsers.length}
-            icon={Users}
-            color="indigo"
-          />
-          <MetricCard
-            label="Active Partners"
-            value={visibleUsers.filter(u => u.role !== 'banned').length}
-            icon={ShieldCheck}
-            color="emerald"
-          />
-          <MetricCard
-            label="Banned Partners"
-            value={visibleUsers.filter(u => u.role === 'banned').length}
-            icon={ShieldAlert}
-            color="purple"
-          />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <MetricCard label="Global Partners" value={visibleUsers.length} icon={Users} color="indigo" />
+          <MetricCard label="Verified Active" value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
+          <MetricCard label="Restricted" value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" />
       </div>
 
       {/* --- REGISTRY TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        
         {/* Table Controls */}
-        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
-            <input 
-              type="text" 
-              placeholder="Search partners..." 
-              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64 group text-left">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
+              <input 
+                type="text" 
+                placeholder="Search by name, email or ID..." 
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-indigo-600 transition-colors group">
-            <Filter size={16} className="group-hover:rotate-180 transition-transform duration-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Advanced Filters</span>
-          </button>
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            {filteredUsers.length} Node Partners
+          </div>
         </div>
 
         {/* Table Content */}
@@ -148,23 +137,41 @@ export default function CompanyPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50">Partner Name</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50">Role Mapping</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50 text-center">Last Sync</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100/50 text-right">Actions</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Partner Identity</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Role Config</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {loading ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-indigo-400" /></td></tr>
+              {loading && users.length === 0 ? (
+                 <tr>
+                   <td colSpan="4" className="py-20 text-center">
+                     <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Node Network...</span>
+                     </div>
+                   </td>
+                 </tr>
               ) : filteredUsers.length === 0 ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">No partners found.</td></tr>
+                 <tr>
+                    <td colSpan="4" className="py-20 text-center">
+                       <div className="flex flex-col items-center gap-3 text-slate-200">
+                          <Users size={40} />
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Zero partner nodes detected</p>
+                       </div>
+                    </td>
+                 </tr>
               ) : (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[11px] border border-white shadow-sm overflow-hidden relative transition-all group-hover:scale-105 active:scale-95 group-hover:rotate-3">
+                filteredUsers.map((user, idx) => (
+                  <motion.tr 
+                    key={user.id}
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
+                    className="group hover:bg-slate-50/30 transition-colors"
+                  >
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[11px] border border-white shadow-sm overflow-hidden relative shrink-0 transition-transform group-hover:scale-105">
                            {getCleanImageUrl(user.profile?.image_profile) ? (
                               <Image 
                                 src={getCleanImageUrl(user.profile?.image_profile)} 
@@ -176,29 +183,29 @@ export default function CompanyPage() {
                               user.name.charAt(0).toUpperCase()
                            )}
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{user.name}</span>
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{user.email}</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate tracking-tight">{user.name}</span>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{user.email}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3.5">
                       <select
                         value={user.role}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        className="px-3 py-1.5 bg-slate-50/80 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 outline-none cursor-pointer appearance-none shadow-sm hover:bg-white transition-all min-w-[100px] text-center"
+                        className="px-2 py-1 bg-slate-50/50 border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest focus:border-blue-100 outline-none cursor-pointer hover:bg-white transition-all min-w-[100px]"
                       >
                         <option value="user">USER</option>
                         <option value="owner">OWNER</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-[11px] font-black text-slate-900 italic">
-                        {new Date(user.updated_at).toLocaleDateString()}
+                    <td className="px-6 py-3.5 text-center">
+                      <span className="text-[10px] font-bold text-slate-500">
+                        {new Date(user.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                     </td>
-                     <td className="px-8 py-5 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                     <td className="px-6 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-2 text-left">
                         <AnimatePresence mode="wait" initial={false}>
                           {confirmDeleteId === user.id ? (
                             <motion.div
@@ -211,15 +218,15 @@ export default function CompanyPage() {
                               <button
                                 onClick={() => handleDeleteConfirm(user.id)}
                                 disabled={isActionLoading}
-                                className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-lg shadow-rose-100 disabled:opacity-50"
+                                className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all text-sm disabled:opacity-50"
                               >
-                                {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={2.5} />}
+                                {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                               </button>
                               <button
                                 onClick={() => setConfirmDeleteId(null)}
-                                className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-indigo-600 hover:text-slate-600 transition-all shadow-sm"
+                                className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
                               >
-                                <X size={14} />
+                                <X size={14} strokeWidth={3} />
                               </button>
                             </motion.div>
                           ) : (
@@ -232,62 +239,60 @@ export default function CompanyPage() {
                             >
                               <Link 
                                 href={`/admin/company/details?userId=${user.id}`}
-                                className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
-                                title="View Profile"
+                                className="p-1.5 bg-slate-900 text-white rounded-lg hover:bg-black shadow-sm active:scale-95 transition-all inline-flex"
+                                title="View Details"
                               >
-                                <ArrowUpRight size={18} strokeWidth={2.5} />
+                                <ArrowUpRight size={14} strokeWidth={3} />
                               </Link>
                               <button 
                                 onClick={() => setConfirmDeleteId(user.id)}
-                                className="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
+                                className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all inline-flex"
                               >
-                                <Trash2 size={18} strokeWidth={2.5} />
+                                <Trash2 size={14} strokeWidth={3} />
                               </button>
                             </motion.div>
                           )}
                         </AnimatePresence>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
-        <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
-           <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-             Total: {filteredUsers.length} Partners
+ 
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+             Total: {filteredUsers.length} Corporate Nodes
            </span>
-           <div className="flex gap-4">
-              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Prev</button>
-              <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-100 hover:bg-slate-800 transition-all active:scale-95">Next Segment</button>
+           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
+             Governance Access
            </div>
         </div>
       </div>
     </div>
   );
 }
-
-// --- SUB COMPONENTS ---
-function MetricCard({ label, value, icon: Icon, color }) {
+ 
+function MetricCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
-    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
-    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
-      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
-      <div className={`p-2.5 rounded-xl w-fit mb-4 border-2 border-white shadow-sm relative z-10 ${themes[color] || themes.indigo}`}>
-        <Icon size={18} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
-      <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
       </div>
-      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
     </div>
   );
 }

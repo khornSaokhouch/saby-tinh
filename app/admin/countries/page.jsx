@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
   Globe, Plus, Pencil, Trash2, Search, Loader2,
-  ArrowUpRight, ShieldAlert, MapPin, X, Check, RefreshCw
+  ShieldAlert, MapPin, X, Check, RefreshCw
 } from 'lucide-react';
 import { useCountryStore } from '@/stores/useCountryStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -56,78 +56,77 @@ export default function AdminCountriesPage() {
   };
 
   return (
-    <div className="space-y-10 font-sans">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500 pt-4">
 
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Country Directory</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Global Reach</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Countries</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+            Countries <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">Registry</span>
+          </h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchCountries()}
-            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            title="Refresh Registry"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
           </button>
 
           <button
             onClick={handleOpenCreate}
-            className="flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-[0.2em]"
+            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
           >
             <Plus size={16} strokeWidth={3} />
-            Create Entry
+            Add Country
           </button>
         </div>
       </div>
 
       {/* --- STATS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <MetricCard label="Total Countries" value={countries.length} icon={Globe} color="indigo" />
-        <MetricCard label="Search Results" value={filteredCountries.length} icon={MapPin} color="purple" />
+        <MetricCard label="Global Registry" value={countries.length} icon={Globe} color="indigo" />
+        <MetricCard label="Contextual Range" value={filteredCountries.length} icon={MapPin} color="purple" />
       </div>
 
-      {/* --- TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
 
         {/* Search Bar */}
-        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
           <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
             <input
               type="text"
-              placeholder="Search country registry..."
-              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
+              placeholder="Search by country name..."
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-            {filteredCountries.length} of {countries.length} Records
-          </span>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+            {filteredCountries.length} Regions Traceable
+          </div>
         </div>
 
-        {/* Table Content */}
-        <div className="overflow-x-auto no-scrollbar">
+        <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest w-16 text-center">ID</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Country Designation</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Registration Date</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[40%] text-left">Internal Name</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Registration Date</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && countries.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                  <td colSpan="3" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                     <div className="flex flex-col items-center gap-4">
                       <Loader2 className="animate-spin text-indigo-500" size={32} />
                       Loading countries...
@@ -136,7 +135,7 @@ export default function AdminCountriesPage() {
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-10 text-center">
+                  <td colSpan="3" className="px-8 py-10 text-center">
                     <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-xs font-bold border border-rose-100">
                       <ShieldAlert size={14} /> {error}
                     </div>
@@ -144,18 +143,13 @@ export default function AdminCountriesPage() {
                 </tr>
               ) : filteredCountries.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">
-                    No countries found.
+                  <td colSpan="3" className="px-8 py-10 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                    No regions found in registry
                   </td>
                 </tr>
               ) : (
                 filteredCountries.map((country, idx) => (
                   <tr key={country.id} className="group hover:bg-slate-50/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center font-black text-slate-400 text-[10px] border border-white shadow-sm group-hover:bg-white transition-colors mx-auto">
-                        {idx + 1}
-                      </div>
-                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
@@ -214,14 +208,13 @@ export default function AdminCountriesPage() {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-50 bg-slate-50/10">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-            Total: {filteredCountries.length} Entries
+        <div className="p-4 border-t border-slate-50 bg-slate-50/10 flex justify-between items-center">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            {filteredCountries.length} Regions Cataloged
           </span>
         </div>
       </div>
 
-      {/* --- FORM MODAL --- */}
       <AnimatePresence>
         {showForm && (
           <CountryFormModal
@@ -237,121 +230,123 @@ export default function AdminCountriesPage() {
 }
 
 // ──────────────────────────────────────────────
-// Form Modal
+// Country Form Modal
 // ──────────────────────────────────────────────
 function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
   const [name, setName] = useState(country?.name || '');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!name.trim()) return toast.error('Country name is required');
-
-    setSubmitting(true);
-    const res = country
-      ? await onUpdate(country.id, { name: name.trim() })
-      : await onCreate({ name: name.trim() });
-
-    if (res?.success) {
-      toast.success(country ? 'Country updated!' : 'Country created!');
-      onClose();
-    } else {
-      toast.error(res?.message || 'Failed to save');
-    }
-    setSubmitting(false);
-  };
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden border border-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+      />
+      
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-white"
       >
-        <div className="p-10 font-sans">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-10">
+        <div className="p-8 font-sans">
+          <div className="flex justify-between items-center mb-8">
             <div>
               <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                {country ? 'Update Country' : 'New Country'}
+                {country ? 'Update Region' : 'Register Country'}
               </h2>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Country Details</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Geographic Identity</p>
             </div>
             <button
               onClick={onClose}
-              className="p-3 bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all"
+              className="p-3 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-2xl transition-all"
             >
               <X size={20} />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            if (!name.trim()) return toast.error('Designation is required');
+            setSubmitting(true);
+            const res = country ? await onUpdate(country.id, { name: name.trim() }) : await onCreate({ name: name.trim() });
+            if (res?.success) {
+              toast.success(country ? 'Region updated' : 'Country registered');
+              onClose();
+            } else {
+              toast.error(res?.message || 'Operation failed');
+            }
+            setSubmitting(false);
+          }} className="space-y-6">
+            
             <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
-                Country Name
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-1">
+                Country Designation
               </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Cambodia"
-                autoFocus
-                className="w-full px-6 py-4 bg-slate-50/50 border-2 border-slate-50 rounded-2xl text-sm font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all shadow-sm"
-              />
+              <div className="relative">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">
+                  <Globe size={18} />
+                </div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  disabled={submitting}
+                  placeholder="e.g. United States"
+                  className="w-full pl-14 pr-6 py-4 bg-slate-50/50 border-2 border-transparent rounded-2xl text-[13px] font-black text-slate-900 focus:bg-white focus:border-indigo-600 transition-all outline-none shadow-sm disabled:opacity-50"
+                />
+              </div>
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-6 border-t border-slate-50">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all"
+                disabled={submitting}
+                className="flex-1 py-5 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-[2] py-5 bg-indigo-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700"
+                className="flex-[2] py-5 bg-indigo-600 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-3 transition-all active:scale-[0.98] hover:bg-indigo-700"
               >
-                {submitting ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                {country ? 'Update Country' : 'Save Country'}
+                {submitting ? <Loader2 size={16} className="animate-spin" /> : <div className="p-1 bg-white/10 rounded-lg"><Check size={14} strokeWidth={3} /></div>}
+                {country ? 'Sync Region' : 'Register Country'}
               </button>
             </div>
           </form>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
 // ──────────────────────────────────────────────
 // Metric Card
 // ──────────────────────────────────────────────
-function MetricCard({ label, value, icon: Icon, color }) {
+function MetricCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: 'bg-indigo-50 text-indigo-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
-    purple: 'bg-purple-50 text-purple-600',
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
-      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
-      <div className={`p-2.5 rounded-xl w-fit mb-4 border-2 border-white shadow-sm relative z-10 ${themes[color] || themes.indigo}`}>
-        <Icon size={18} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
+      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color] || themes.indigo}`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
-      <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
       </div>
-      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
     </div>
   );
 }

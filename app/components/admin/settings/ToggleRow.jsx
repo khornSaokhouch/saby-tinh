@@ -1,9 +1,9 @@
 export default function ToggleRow({ title, desc, defaultChecked }) {
   return (
     <div className="flex items-center justify-between py-1">
-      <div>
-        <h4 className="text-xs font-bold text-slate-800">{title}</h4>
-        <p className="text-[10px] font-medium text-slate-500 mt-0.5">{desc}</p>
+      <div className="text-left">
+        <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-tight">{title}</h4>
+        <p className="text-[9px] font-medium text-slate-500 mt-0.5">{desc}</p>
       </div>
       <label className="relative inline-flex items-center cursor-pointer">
         <input type="checkbox" defaultChecked={defaultChecked} className="sr-only peer" />

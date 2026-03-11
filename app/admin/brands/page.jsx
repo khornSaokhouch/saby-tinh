@@ -107,17 +107,23 @@ export default function BrandsPage() {
       </div>
 
       {/* --- BRANDS TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-50 bg-slate-50/20">
-          <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
-            <input 
-              type="text" 
-              placeholder="Search brands..." 
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        {/* Table Controls */}
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64 group text-left">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
+              <input
+                type="text"
+                placeholder="Search brands..."
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            {filteredBrands.length} Detected Nodes
           </div>
         </div>
 
@@ -177,12 +183,12 @@ export default function BrandsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button 
                         onClick={() => { setSelectedItem(brand); setIsFormOpen(true); }} 
-                        className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                        className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 shadow-sm active:scale-95 transition-all"
                       >
-                        <Edit3 size={14} strokeWidth={2.5} />
+                        <Edit3 size={14} strokeWidth={3} />
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>
@@ -197,15 +203,15 @@ export default function BrandsPage() {
                             <button
                               onClick={() => handleDelete(brand.id)}
                               disabled={isActionLoading}
-                              className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
+                              className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
                             >
-                              {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                              {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
-                              className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-indigo-600 hover:text-slate-600 transition-all shadow-sm"
+                              className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
                             >
-                              <X size={14} />
+                              <X size={14} strokeWidth={3} />
                             </button>
                           </motion.div>
                         ) : (
@@ -215,9 +221,9 @@ export default function BrandsPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(brand.id)}
-                            className="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
+                            className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
                           >
-                            <Trash2 size={14} strokeWidth={2.5} />
+                            <Trash2 size={14} strokeWidth={3} />
                           </motion.button>
                         )}
                       </AnimatePresence>

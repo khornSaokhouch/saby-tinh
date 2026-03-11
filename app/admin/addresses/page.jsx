@@ -34,86 +34,71 @@ export default function AdminAddressesPage() {
   }, [allAddresses, searchTerm]);
 
   return (
-    <div className="space-y-10 font-sans">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500 pt-4">
       
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Address Directory</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Logistics Hub</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none italic uppercase">Addresses</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+            Delivery <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">Points</span>
+          </h1>
         </div>
 
         <div className="flex items-center gap-3">
           <button 
             onClick={() => fetchAllAddresses()}
-            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            title="Refresh Registry"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
             <Download size={14} className="group-hover:text-indigo-600 transition-colors" /> 
-            <span className="group-hover:text-slate-900 transition-colors">Export Registry</span>
+            <span className="group-hover:text-slate-900 transition-colors">Export DB</span>
           </button>
         </div>
       </div>
 
       {/* --- STATS OVERVIEW --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard
-          label="Total Addresses"
-          value={allAddresses.length}
-          trend="+8%"
-          icon={LinkIcon}
-        />
-        <MetricCard
-          label="Unique Locations"
-          value={[...new Set(allAddresses.map(m => m.address_id))].length}
-          trend="+5.2%"
-          icon={MapIcon}
-        />
-        <MetricCard
-          label="Address Density"
-          value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`}
-          trend="+1.2%"
-          icon={Users}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Delivery Points" value={allAddresses.length} icon={LinkIcon} color="indigo" />
+        <MetricCard label="Unique Hubs" value={[...new Set(allAddresses.map(m => m.address_id))].length} icon={MapIcon} color="purple" />
+        <MetricCard label="User Linkage" value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`} icon={Users} color="emerald" />
       </div>
 
-      {/* --- ADDRESSES TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
         
         {/* Table Controls */}
-        <div className="p-5 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
           <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
             <input 
               type="text" 
-              placeholder="Filter by user or location..." 
-              className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700"
+              placeholder="Search by user, city or country..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-indigo-600 transition-colors group">
-            <Filter size={16} className="group-hover:rotate-180 transition-transform duration-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Advanced Filters</span>
-          </button>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+             {filteredMappings.length} Records Traceable
+          </div>
         </div>
 
         {/* Table Content */}
-        <div className="overflow-x-auto no-scrollbar">
+        <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Address Details</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Country</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[35%]">User Identity</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[40%]">Geographic Link</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Region</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Lifecycle</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -188,13 +173,13 @@ export default function AdminAddressesPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
-           <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-             Total: {filteredMappings.length} Endpoints
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
+           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+             {filteredMappings.length} Endpoints
            </span>
            <div className="flex gap-4">
-              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-[0.2em]" disabled>Prev</button>
-              <button className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">Next Segment</button>
+              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-widest" disabled>Previous</button>
+              <button className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">Next Segment</button>
            </div>
         </div>
       </div>
@@ -203,25 +188,23 @@ export default function AdminAddressesPage() {
   );
 }
 
-function MetricCard({ label, value, trend, icon: Icon, isWarning }) {
+function MetricCard({ label, value, trend, icon: Icon, color, subText }) {
+  const themes = {
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    purple: 'bg-purple-600 shadow-purple-100',
+  };
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
-      
-      <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className={`p-2.5 rounded-xl border-2 border-white shadow-sm ${isWarning ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-indigo-50 text-indigo-600 border-indigo-100/50'} group-hover:scale-110 transition-transform duration-500`}>
-          <Icon size={18} strokeWidth={2.5} />
-        </div>
-        <div className={`flex items-center gap-1 text-[9px] font-black tracking-widest px-1.5 py-0.5 rounded-md shadow-sm border ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
-          {trend} <ArrowUpRight size={10} strokeWidth={3} />
-        </div>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
+      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color] || themes.indigo}`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
-      
-      <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <div className="flex items-baseline gap-2 relative z-10">
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
       </div>
-      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700" />
+      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
     </div>
   );
 }

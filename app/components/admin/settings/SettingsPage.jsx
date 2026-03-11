@@ -98,7 +98,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 pb-10 font-sans">
+    <div className="space-y-6 pb-20 font-sans max-w-[1400px] mx-auto pt-4 animate-in fade-in duration-500">
       
       <SettingsHeader isSaving={isSaving} onSave={handleSave} />
 

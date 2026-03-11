@@ -50,9 +50,8 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white rounded-[24px] shadow-2xl w-full max-w-4xl overflow-hidden border border-slate-100"
+            className="bg-white rounded-[20px] shadow-2xl w-full max-w-4xl border border-slate-100 overflow-hidden flex flex-col md:flex-row"
           >
-            <div className="flex flex-col md:flex-row">
               {/* Image Section */}
               <div className="w-full md:w-5/12 bg-slate-50 p-8 flex flex-col items-center justify-center border-r border-slate-100">
                 <div className="relative group w-full aspect-video md:aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-slate-200 bg-white flex flex-col items-center justify-center hover:border-indigo-400 transition-all cursor-pointer">
@@ -70,12 +69,21 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
               </div>
 
               {/* Form Section */}
-              <div className="w-full md:w-7/12 p-8 relative">
-                <button onClick={onClose} className="absolute right-6 top-6 p-1.5 hover:bg-slate-50 rounded-lg text-slate-400 transition-all"><X size={18} /></button>
+              <div className="w-full md:w-7/12 p-8">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
+                    <Calendar size={20} strokeWidth={2.5} />
+                  </div>
+                  <button onClick={onClose} className="p-1 hover:bg-slate-50 rounded-lg transition-colors text-slate-400">
+                    <X size={18} />
+                  </button>
+                </div>
 
-                <div className="mb-8">
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase italic">{initialData ? "Edit" : "New"} Event</h2>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Campaign Configuration</p>
+                <div className="space-y-1 mb-6">
+                  <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase">{initialData ? "Edit Campaign" : "New Campaign"}</h3>
+                  <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+                    Configure the promotional event details, banner, and duration.
+                  </p>
                 </div>
 
                 <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-4">
@@ -86,7 +94,7 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-transparent rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none"
+                      className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none"
                       placeholder="e.g. Black Friday 2025"
                     />
                   </div>
@@ -96,7 +104,7 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full h-24 px-4 py-2.5 bg-slate-50 border border-transparent rounded-xl text-xs font-medium text-slate-700 focus:bg-white focus:border-indigo-100 transition-all resize-none outline-none"
+                      className="w-full h-24 px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-100 transition-all resize-none outline-none"
                       placeholder="Brief details about the event..."
                     />
                   </div>
@@ -109,7 +117,7 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
                         value={formData.start_date}
                         onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                         required
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-transparent rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-100 outline-none"
+                        className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none"
                       />
                     </div>
                     <div>
@@ -119,25 +127,24 @@ export default function EventFormModal({ isOpen, onClose, initialData, onSubmit,
                         value={formData.end_date}
                         onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                         required
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-transparent rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-100 outline-none"
+                        className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <button type="button" onClick={onClose} className="flex-1 py-2.5 text-[10px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest">Discard</button>
+                    <button type="button" onClick={onClose} className="flex-1 py-2 text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all">Discard</button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-[2] py-2.5 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 flex items-center justify-center gap-2"
+                      className="flex-[2] py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-black text-[9px] uppercase tracking-widest shadow-md shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                     >
-                      {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
+                      {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin text-white" /> : <Check size={14} strokeWidth={3} />}
                       {initialData ? "Update Record" : "Save Event"}
                     </button>
                   </div>
                 </form>
               </div>
-            </div>
           </motion.div>
         </div>
       )}

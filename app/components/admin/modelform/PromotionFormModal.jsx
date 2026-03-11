@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { X, Loader2, Percent, Check, ChevronDown, Layers, Plus  } from "lucide-react";
+import { X, Loader2, Percent, Check, ChevronDown, Layers, Plus, Megaphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 
@@ -55,23 +55,26 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="bg-white rounded-[32px] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-slate-100"
+            className="bg-white rounded-[20px] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-slate-100"
           >
-            <div className="p-7 font-sans">
+            <div className="p-6 font-sans">
               {/* Header */}
-              <div className="flex items-center justify-between mb-7">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                    {initialData ? "Update Promotion" : "New Promotion"}
-                  </h2>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Promotion Settings</p>
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
+                  <Megaphone size={20} strokeWidth={2.5} />
                 </div>
-                <button
-                  onClick={onClose}
-                  className="p-2.5 bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-90"
-                >
+                <button onClick={onClose} className="p-1 hover:bg-slate-50 rounded-lg transition-colors text-slate-400">
                   <X size={18} />
                 </button>
+              </div>
+
+              <div className="space-y-1 mb-6">
+                <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase">
+                  {initialData ? "Update Promotion" : "New Promotion"}
+                </h3>
+                <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+                  Configure discount percentages and timeframes for your catalog.
+                </p>
               </div>
 
               <form onSubmit={handleFormSubmit} className="space-y-5">
@@ -83,7 +86,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 outline-none transition-all shadow-sm"
+                      className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none shadow-sm"
                       placeholder="Black Friday Sale"
                     />
                   </div>
@@ -95,7 +98,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                         value={formData.discount_percentage}
                         onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
                         required
-                        className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 outline-none transition-all shadow-sm pr-10"
+                        className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none shadow-sm pr-10"
                         placeholder="20"
                       />
                       <Percent className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
@@ -108,7 +111,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full h-20 px-5 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] font-medium text-slate-700 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 outline-none transition-all resize-none shadow-sm"
+                    className="w-full h-20 px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-100 transition-all resize-none shadow-sm outline-none"
                     placeholder="Briefly explain the promotion strategy..."
                   />
                 </div>
@@ -116,11 +119,11 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-1">Start Date</label>
-                    <input type="date" value={formData.start_date} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} required className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all" />
+                    <input type="date" value={formData.start_date} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} required className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none shadow-sm" />
                   </div>
                   <div>
                     <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-1">End Date</label>
-                    <input type="date" value={formData.end_date} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} required className="w-full px-5 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all" />
+                    <input type="date" value={formData.end_date} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} required className="w-full px-3 py-2 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-900 focus:bg-white focus:border-indigo-100 transition-all outline-none shadow-sm" />
                   </div>
                 </div>
 
@@ -161,7 +164,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                       <button
                         type="button"
                         onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                        className="w-full flex items-center justify-between px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-indigo-600 transition-all text-left group"
+                        className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 border border-transparent rounded-lg hover:border-indigo-100 hover:bg-white transition-all text-left shadow-sm group"
                       >
                         <div className="flex items-center gap-2">
                           <Layers size={14} className="text-slate-400 group-hover:text-indigo-600 transition-colors" />
@@ -216,20 +219,20 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex gap-3 pt-4">
                   <button
                     onClick={onClose}
                     type="button"
-                    className="flex-1 py-4 text-[10px] font-black text-slate-400 hover:text-rose-500 uppercase tracking-[0.2em] transition-all"
+                    className="flex-1 py-2 text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all"
                   >
-                    Cancel
+                    Back
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-[2] py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 flex items-center justify-center gap-2 transition-all active:scale-95 hover:bg-black"
+                    className="flex-[2] py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-black text-[9px] uppercase tracking-widest shadow-md shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                   >
-                    {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} strokeWidth={3} />}
+                    {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin text-white" /> : <Plus size={14} strokeWidth={3} />}
                     {initialData ? "Update Promotion" : "Save Promotion"}
                   </button>
                 </div>

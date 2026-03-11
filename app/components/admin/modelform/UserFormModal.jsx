@@ -77,28 +77,29 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-2xl bg-white rounded-[32px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col font-sans"
+            className="bg-white rounded-[20px] shadow-2xl w-full max-w-xl relative z-10 overflow-hidden border border-slate-100"
           >
-            {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white z-10">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+            <div className="p-6 font-sans max-h-[90vh] overflow-y-auto custom-scrollbar">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
+                  <User size={20} strokeWidth={2.5} />
+                </div>
+                <button type="button" onClick={onClose} className="p-1 hover:bg-slate-50 rounded-lg transition-colors text-slate-400">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="space-y-1 mb-6">
+                <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase">
                   {initialData ? 'Update User' : 'New User'}
-                </h2>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">
+                </h3>
+                <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
                   {initialData ? 'Update account details' : 'Register a new user account'}
                 </p>
               </div>
-              <button 
-                onClick={onClose}
-                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
-              >
-                <X size={20} />
-              </button>
-            </div>
 
-            {/* Form */}
-            <div className="overflow-y-auto p-8 custom-scrollbar">
+              {/* Form */}
               <form id="userForm" onSubmit={handleSubmit} className="space-y-6">
                 
                 {/* Image Upload */}
@@ -230,29 +231,27 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                     </div>
                   </div>
                 </div>
+
+                {/* Footer Buttons */}
+                <div className="flex gap-3 pt-4 sticky bottom-0 bg-white pb-2 mt-4">
+                  <button
+                    onClick={onClose}
+                    type="button"
+                    className="flex-1 py-2 text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-[2] py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-black text-[9px] uppercase tracking-widest shadow-md shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                  >
+                    {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin text-white" /> : <Shield size={14} strokeWidth={3} />}
+                    {initialData ? 'Sync Changes' : 'Save User'}
+                  </button>
+                </div>
               </form>
             </div>
-
-            {/* Footer */}
-            <div className="px-8 py-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3 z-10">
-              <button 
-                type="button"
-                onClick={onClose}
-                className="px-8 py-4 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-              <button 
-                type="submit"
-                form="userForm"
-                disabled={isSubmitting}
-                className="flex items-center gap-2 px-10 py-4 bg-indigo-600 text-white rounded-[20px] font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 transition-all active:scale-[0.98] hover:bg-indigo-700 disabled:opacity-70"
-              >
-                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : (initialData ? 'Sync Changes' : 'Save User')}
-              </button>
-            </div>
-
           </motion.div>
         </div>
       )}

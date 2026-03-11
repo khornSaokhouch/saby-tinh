@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { 
-  TrendingUp , Search, Plus, Edit3, Trash2, Clock, 
-  Loader2, CheckCircle2, Ticket, Zap, LayoutGrid, Filter,
-  Package, Store as StoreIcon, Tag, RefreshCw
+  TrendingUp, Search, RefreshCw, LayoutGrid, 
+  Package, Store as StoreIcon, Filter, ChevronDown,
+  Zap, ArrowUpRight, Tag, Loader2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useProductStore } from '@/stores/useProductStore';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 
@@ -27,13 +27,11 @@ export default function ProductPromotionsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
-    // Fetch products that HAVE promotions
     fetchProductsByFilters({ has_promotion: true });
     fetchCategories();
 
     const interval = setInterval(() => {
       fetchProductsByFilters({ has_promotion: true });
-      fetchCategories();
     }, 30000);
 
     return () => clearInterval(interval);
@@ -50,181 +48,166 @@ export default function ProductPromotionsPage() {
   const loading = productLoading || catLoading;
 
   return (
-    <div className="space-y-10 pb-10 font-sans">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+      
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Platform Offer Audit</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Promotion Audit</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase italic">Discounted Catalog</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Discounted <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400">Catalog</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Monitoring active product offers and merchant discounts.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
-            onClick={() => {
-              fetchProductsByFilters({ has_promotion: true });
-              fetchCategories();
-            }}
-            className="p-3 bg-white border border-slate-100 text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            onClick={() => fetchProductsByFilters({ has_promotion: true })}
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-rose-500 transition-all shadow-sm"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
         </div>
       </div>
 
-      {/* --- METRICS --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard label="Total Discounted" value={products.length} icon={Package} color="indigo" />
-        <MetricCard label="Active Stores" value={new Set(products.map(p => p.store_id)).size} icon={StoreIcon} color="emerald" subText="With Offers" />
-        <MetricCard label="Categories" value={new Set(products.map(p => p.category_id)).size} icon={LayoutGrid} color="purple" />
+      {/* --- KPI METRICS --- */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard label="Total Offers" value={products.length} icon={Tag} color="rose" />
+        <StatCard label="Live Merchants" value={new Set(products.map(p => p.store_id)).size} icon={StoreIcon} color="indigo" />
+        <StatCard label="Categories" value={new Set(products.map(p => p.category_id)).size} icon={LayoutGrid} color="blue" />
       </div>
 
-      {/* --- FILTERS & PRODUCT TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+      {/* --- CONTENT SECTION --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        
+        {/* Search & Filter Bar */}
+        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-64 group text-left">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-500 transition-colors" size={13} />
             <input 
               type="text" 
               placeholder="Search offer catalog..." 
-              className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm text-slate-700 font-sans"
+              className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-rose-100 transition-all placeholder:text-slate-400"
               value={searchLocal}
               onChange={(e) => setSearchLocal(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative group">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-10 pr-10 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase text-slate-700 min-w-[180px] appearance-none cursor-pointer outline-none hover:border-indigo-200 transition-all tracking-widest shadow-sm"
-              >
-                <option value="all">All Inventory </option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <LayoutGrid size={12} className="text-slate-400" />
-              </div>
+          <div className="relative flex-1 sm:flex-none w-full sm:w-auto">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full sm:w-auto pl-4 pr-10 h-[32px] bg-slate-50 border border-transparent rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all min-w-[140px]"
+            >
+              <option value="all">All Inventory</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <ChevronDown size={12} />
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto no-scrollbar min-h-[400px]">
-          <table className="w-full text-left border-collapse">
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Discounted Item</th>
-                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Merchant / Scope</th>
-                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price Point</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Offers</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Discounted Item</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Merchant Info</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Price Point</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Active Campaign</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr>
-                  <td colSpan="4" className="py-24 text-center">
-                    <Loader2 className="w-10 h-10 animate-spin mx-auto text-indigo-600 opacity-20" />
-                    <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Analyzing Inventory...</p>
-                  </td>
-                </tr>
+                <tr><td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Scanning Catalog...</td></tr>
               ) : filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="py-24 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <Package size={40} className="text-slate-100" />
-                      <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">No discounted items located</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredProducts.map((product, idx) => (
-                <motion.tr 
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
-                  key={product.id} className="group hover:bg-slate-50/30 transition-colors"
-                >
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-14 h-14 rounded-2xl bg-white overflow-hidden border border-slate-100 shadow-sm group-hover:shadow-md transition-all duration-300">
-                        {product.images?.[0]?.image ? (
-                          <img src={product.images[0].image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50 font-black text-[9px]">NO IMG</div>
-                        )}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tight line-clamp-1">{product.name}</span>
-                        <span className="text-[10px] font-bold text-slate-400 mt-0.5 tracking-wider">ID: #{product.id} • {product.brand?.name || 'GENERIC'}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 italic">
-                          <StoreIcon size={10} strokeWidth={3} />
+                <tr><td colSpan="4" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No promotions found</td></tr>
+              ) : (
+                filteredProducts.map((product) => (
+                  <tr key={product.id} className="hover:bg-slate-50/30 transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 shadow-sm">
+                          {product.images?.[0]?.image ? (
+                            <img src={product.images[0].image} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300 font-black text-[8px]">NULL</div>
+                          )}
                         </div>
-                        <span className="text-[12px] font-black text-slate-700 uppercase tracking-tight">{product.store?.name}</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-rose-500 transition-colors truncate">{product.name}</span>
+                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{product.brand?.name || 'GENERIC'} • ID: {product.id}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                         <div className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
-                            {product.category?.category_image ? (
-                              <img src={product.category.category_image} alt="" className="w-full h-full object-cover rounded-lg" />
-                            ) : (
-                              <LayoutGrid size={10} strokeWidth={3} />
-                            )}
-                         </div>
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{product.category?.name}</span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <StoreIcon size={10} className="text-indigo-500" />
+                          <span className="text-[10px] font-bold text-slate-700">{product.store?.name}</span>
+                        </div>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4">{product.category?.name}</span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 font-black">
-                    <div className="flex flex-col">
-                      <span className="text-[15px] text-slate-900">${Number(product.price).toLocaleString()}</span>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{product.type?.name || 'Retail'}</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="flex flex-wrap gap-2">
-                       {product.category?.promotions?.map(promo => (
-                         <div key={promo.id} className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-rose-100 ring-1 ring-rose-600/5 group-hover:scale-105 transition-transform shadow-sm">
-                           <TrendingUp size={10} strokeWidth={3} />
-                           {promo.discount_percentage}% OFF • {promo.name}
-                         </div>
-                       ))}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black text-slate-900">${Number(product.price).toLocaleString()}</span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{product.type?.name || 'Retail'}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex flex-wrap justify-end gap-1.5">
+                        {product.category?.promotions?.map(promo => (
+                          <span key={promo.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm">
+                            <TrendingUp size={9} strokeWidth={3} />
+                            {promo.discount_percentage}% OFF
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Table Footer */}
+        <div className="p-3 bg-slate-50/50 border-t border-slate-50 text-center">
+            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Authorized Promotion Audit • {filteredProducts.length} Active Discounts</p>
         </div>
       </div>
     </div>
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color }) {
+// --- SUB-COMPONENTS (Dashboard/Registry Style) ---
+
+function StatCard({ label, value, icon: Icon, color }) {
   const themes = {
-    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100/50',
-    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
-    purple: 'bg-purple-50 text-purple-600 border-purple-100/50',
+    rose: "bg-rose-500 shadow-rose-100",
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    blue: "bg-blue-600 shadow-blue-100",
   };
   return (
-    <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500 text-left">
-      <div className="absolute top-0 right-0 w-20 h-20 translate-x-8 -translate-y-8 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-[0.03] active:opacity-[0.05] group-hover:rotate-45 transition-all duration-700" />
-      <div className={`p-2.5 rounded-xl w-fit mb-4 border-2 border-white shadow-sm relative z-10 ${themes[color] || themes.indigo}`}>
-        <Icon size={18} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
       <div className="relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
       </div>
-      <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }
