@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo  } from 'react';
 import { 
-  RefreshCw , Search, LayoutGrid , ArrowUpRight, 
-  Trash2, CheckCircle2, XCircle, Edit3, Plus, 
+  RefreshCw , Search, Layers  , ArrowUpRight, 
+  Trash2, CheckCircle2, Clock , Edit3, Plus, 
   Loader2, Check, X, Eye, Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -77,43 +77,43 @@ export default function CategoryPage() {
   };
 
   return (
-    <div className="space-y-6 pb-10 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
-
-      {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 text-left">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+      {/* --- HEADER --- */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Inventory Taxonomy</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Inventory Architecture</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400">Categories</span>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Categories</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Structure and manage your platform's product taxonomy.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchCategories()}
-            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 rounded-xl transition-all active:scale-95 shadow-sm"
-            title="Sync Registry"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
-          <button
+          <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> New Category
+            <Plus size={14} strokeWidth={3} /> Create Category
           </button>
         </div>
       </div>
 
-      {/* --- STATS OVERVIEW --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Nodes" value={categories.length} icon={LayoutGrid} color="indigo" />
-        <MetricCard label="Active Indices" value={categories.filter(c => c.status == 1).length} icon={CheckCircle2} color="emerald" />
-        <MetricCard label="Restricted" value={categories.filter(c => c.status != 1).length} icon={XCircle} color="purple" />
+        <MetricCard label="Total Categories" value={categories.length} icon={Layers} color="indigo" />
+        <MetricCard label="Active Items" value={categories.filter(c => Number(c.status) === 1).length} icon={CheckCircle2} color="emerald" subText="Live" />
+        <MetricCard label="System Integrity" value="Unified" icon={Clock} color="purple" />
       </div>
 
       {/* --- CATEGORY TABLE --- */}
@@ -126,7 +126,7 @@ export default function CategoryPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
               <input
                 type="text"
-                placeholder="Filter by name or ID..."
+                placeholder="Search categories..."
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -134,7 +134,7 @@ export default function CategoryPage() {
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredCategories.length} Active Classes
+            {filteredCategories.length} Categories Found
           </div>
         </div>
 
@@ -143,31 +143,26 @@ export default function CategoryPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Category Identity</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Status Node</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Category Detail</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest min-w-[140px]">Last Update</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && categories.length === 0 ? (
-                 <tr>
-                   <td colSpan="4" className="py-20 text-center">
-                     <div className="flex flex-col items-center gap-3">
-                        <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Index...</span>
-                     </div>
-                   </td>
-                 </tr>
+                <tr>
+                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading ...</td>
+                </tr>
               ) : filteredCategories.length === 0 ? (
-                  <tr>
-                    <td colSpan="4" className="py-20 text-center">
-                       <div className="flex flex-col items-center gap-3 text-slate-200">
-                          <Package size={40} />
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Zero category nodes detected</p>
-                       </div>
-                    </td>
-                  </tr>
+                <tr>
+                  <td colSpan="4" className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Layers size={40} className="text-slate-100" />
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-slate-300">No categories matching filter</p>
+                    </div>
+                  </td>
+                </tr>
               ) : (
                 filteredCategories.map((category, idx) => (
                   <motion.tr
@@ -187,24 +182,30 @@ export default function CategoryPage() {
                            )}
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate tracking-tight">{category.name}</span>
+                          <span className="text-[11px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate tracking-tight">{category.name}</span>
                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">ID: {category.id}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5">
-                      <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
-                        category.status == 1
+                    <td className="px-6 py-3.5 text-center">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${
+                        Number(category.status) === 1
                           ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                          : 'bg-slate-50 text-slate-400 border-slate-100'
+                          : 'bg-rose-50 text-rose-600 border-rose-100'
                       }`}>
-                        {category.status == 1 ? 'Live' : 'Hidden'}
+                        <div className={`w-1 h-1 rounded-full ${Number(category.status) === 1 ? 'bg-emerald-600 animate-pulse' : 'bg-rose-500'}`} />
+                        {Number(category.status) === 1 ? 'Live' : 'Hidden'}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-center">
-                      <span className="text-[10px] font-bold text-slate-500">
-                        {new Date(category.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
+                    <td className="px-6 py-3.5 center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-700">
+                          {new Date(category.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                          at {new Date(category.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5 text-left">
@@ -217,7 +218,7 @@ export default function CategoryPage() {
                         </Link>
                         <button
                           onClick={() => { setSelectedItem(category); setIsFormOpen(true); }}
-                          className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 shadow-sm active:scale-95 transition-all"
+                          className="p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-sm active:scale-95 transition-all"
                         >
                           <Edit3 size={14} strokeWidth={3} />
                         </button>
@@ -270,10 +271,10 @@ export default function CategoryPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Total Scanned: {filteredCategories.length} Node Classes
+             Showing: {filteredCategories.length} Categories
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Verified Taxonomy
+             Registry Sync
            </div>
         </div>
       </div>
@@ -296,16 +297,18 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <div className="flex items-baseline gap-2 relative z-10">
-        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
-        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
       </div>
-      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

@@ -99,7 +99,7 @@ export default function PromotionsPage() {
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> Deploy Campaign
+            <Plus size={14} strokeWidth={3} /> Create Promotion
           </button>
         </div>
       </div>
@@ -133,14 +133,14 @@ export default function PromotionsPage() {
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Promotion Detail</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Owner / Creator</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Modified</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Control</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && promotions.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Syncing Registry...</td>
+                  <td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading ...</td>
                 </tr>
               ) : filteredPromotions.length === 0 ? (
                 <tr>

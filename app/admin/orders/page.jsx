@@ -42,16 +42,16 @@ export default function OrdersPage() {
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Registry Operations</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Orders</span>
+            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">Orders</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Monitor and manage customer transactions worldwide.
+            Monitor and coordinate global customer transactions.
           </p>
         </div>
         
@@ -62,9 +62,8 @@ export default function OrdersPage() {
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
-            <Download size={14} strokeWidth={3} />
-            Export
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95">
+            <Download size={14} strokeWidth={3} /> Export Data
           </button>
         </div>
       </div>
@@ -111,10 +110,10 @@ export default function OrdersPage() {
               <tr className="bg-slate-50/50">
                 <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Fulfillment</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">ORDER STATUS</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Net Total</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Primary Item</th> 
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Total price</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Item</th> 
                 <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
@@ -183,20 +182,26 @@ export default function OrdersPage() {
 
 // --- SUB-COMPONENTS (Dashboard/Registry Pattern) ---
 
-function StatCard({ label, value, icon: Icon, color }) {
+function StatCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: "bg-indigo-600 shadow-indigo-100",
-    rose: "bg-rose-500 shadow-rose-100",
-    emerald: "bg-emerald-500 shadow-emerald-100",
-    blue: "bg-blue-600 shadow-blue-100",
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    rose: 'bg-rose-500 shadow-rose-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    blue: 'bg-blue-600 shadow-blue-100',
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group">
-      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
+      </div>
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

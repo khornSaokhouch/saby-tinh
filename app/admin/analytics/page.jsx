@@ -42,9 +42,9 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
-      {/* --- HEADER (Dashboard Style) --- */}
+      {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Intelligence Engine</span>
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
             Market <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Analytics</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Detailed performance breakdown for your store.
+            Detailed performance breakdown for your global enterprise.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function AnalyticsPage() {
             <Calendar size={13} className="text-indigo-600" />
             Last 30 Days
           </div>
-          <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95">
+          <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-black transition-all shadow-lg shadow-slate-200 active:scale-95">
             <Download size={14} strokeWidth={3} />
           </button>
         </div>
@@ -233,26 +233,27 @@ export default function AnalyticsPage() {
 
 function StatCard({ title, value, trend, isPositive, icon: Icon, color }) {
   const themes = {
-    indigo: "bg-indigo-600",
-    rose: "bg-rose-500",
-    emerald: "bg-emerald-500",
-    blue: "bg-blue-600",
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    rose: "bg-rose-500 shadow-rose-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    blue: "bg-blue-600 shadow-blue-100",
   };
 
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
       <div className="flex justify-between items-start mb-4 relative z-10">
-        <div className={`p-2 rounded-xl ${themes[color]} text-white shadow-lg`}>
-          <Icon size={16} strokeWidth={2.5} />
+        <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110`}>
+          <Icon size={14} strokeWidth={3} />
         </div>
-        <div className={`text-[9px] font-black px-1.5 py-0.5 rounded border ${isPositive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
+        <div className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${isPositive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
           {trend}
         </div>
       </div>
       <div className="relative z-10">
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-0.5">{title}</p>
-        <h3 className="text-xl font-black text-slate-900 tracking-tighter">{value}</h3>
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{title}</p>
+        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
       </div>
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

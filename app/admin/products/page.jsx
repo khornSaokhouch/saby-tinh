@@ -77,39 +77,41 @@ function AdminProductsContent() {
   };
 
   return (
-    <div className="space-y-6 pb-10 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
  
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Global Product Directory</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Catalog</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-            Inventory <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">Registry</span>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">Products</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Browse and coordinate your global product inventory.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => fetchProducts()}
-            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 rounded-xl transition-all active:scale-95 shadow-sm"
-            title="Sync Registry"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-emerald-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <div className="px-3.5 py-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-2 shadow-sm">
-            <ShieldCheck size={14} className="text-emerald-500" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin Node</span>
+          <div className="px-3 py-1.5 bg-white border border-slate-100 rounded-lg flex items-center gap-2 shadow-sm">
+            <ShieldCheck size={12} className="text-emerald-500" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin Only</span>
           </div>
         </div>
       </div>
  
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Active Stock" value={stats.total} icon={Box} color="indigo" />
-        <MetricCard label="Operational" value={stats.active} icon={CheckCircle2} color="emerald" subText={`${stats.total - stats.active} off`} />
-        <MetricCard label="Valuation Apex" value={`$${stats.topPrice.toLocaleString()}`} icon={DollarSign} color="purple" />
+        <MetricCard label="Total Products" value={stats.total} icon={Box} color="indigo" />
+        <MetricCard label="Active Products" value={stats.active} icon={CheckCircle2} color="emerald" subText={`${stats.total - stats.active} inactive`} />
+        <MetricCard label="Highest Price" value={`$${stats.topPrice.toLocaleString()}`} icon={DollarSign} color="purple" />
       </div>
  
       {/* --- TABLE AREA --- */}
@@ -124,7 +126,7 @@ function AdminProductsContent() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={13} />
               <input
                 type="text"
-                placeholder="Search by name, brand or ID..."
+                placeholder="Search products..."
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 focus:bg-white focus:border-emerald-100 transition-all outline-none placeholder:text-slate-400"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -137,7 +139,7 @@ function AdminProductsContent() {
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${isFilterOpen ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 shadow-sm'}`}
             >
               <SlidersHorizontal size={14} />
-              Configuration
+              Filters
               {hasActiveFilters && (
                 <span className="bg-emerald-500 text-white text-[8px] font-black rounded-full px-1.5 py-0.5 ml-1">SET</span>
               )}
@@ -157,7 +159,7 @@ function AdminProductsContent() {
  
             {/* Results Count */}
             <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-              {filteredProducts.length} Entries Detected
+              {filteredProducts.length} Products Found
             </div>
           </div>
  
@@ -174,7 +176,7 @@ function AdminProductsContent() {
                   {/* Store Filter */}
                   <FilterSelect
                     icon={Store}
-                    label="Store Node"
+                    label="Store"
                     value={filterStore}
                     onChange={setFilterStore}
                     options={stores.map(s => ({ value: String(s.id), label: s.name }))}
@@ -182,7 +184,7 @@ function AdminProductsContent() {
                   {/* Category Filter */}
                   <FilterSelect
                     icon={Layers}
-                    label="Vertical"
+                    label="Category"
                     value={filterCategory}
                     onChange={setFilterCategory}
                     options={categories.map(c => ({ value: String(c.id), label: c.name }))}
@@ -190,7 +192,7 @@ function AdminProductsContent() {
                   {/* Brand Filter */}
                   <FilterSelect
                     icon={Tag}
-                    label="Label"
+                    label="Brand"
                     value={filterBrand}
                     onChange={setFilterBrand}
                     options={brands.map(b => ({ value: String(b.id), label: b.name }))}
@@ -198,7 +200,7 @@ function AdminProductsContent() {
                   {/* Price Range */}
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <DollarSign size={10} className="text-emerald-500" />Valuation Range
+                      <DollarSign size={10} className="text-emerald-500" />Price Range
                     </label>
                     <div className="flex items-center gap-2">
                        <div className="relative flex-1">
@@ -232,10 +234,10 @@ function AdminProductsContent() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Metadata</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Classification</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Node Path</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Valuation</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Detail</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Category & Brand</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Price</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
               </tr>
             </thead>
@@ -245,7 +247,7 @@ function AdminProductsContent() {
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="animate-spin text-emerald-500" size={24} />
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Synchronizing Registry...</span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading ...</span>
                     </div>
                   </td>
                 </tr>
@@ -277,10 +279,10 @@ function AdminProductsContent() {
                   {/* Brand & Category */}
                   <td className="px-6 py-3.5">
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">
+                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Category: 
                         {product.category?.name || '—'}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400 truncate">{product.brand?.name || '—'}</span>
+                      <span className="text-[10px] font-bold text-slate-400 truncate">Brands: {product.brand?.name || '—'}</span>
                     </div>
                   </td>
  
@@ -296,7 +298,7 @@ function AdminProductsContent() {
                   <td className="px-6 py-3.5">
                     <div className="flex flex-col">
                       <span className="text-[12px] font-black text-slate-900 tracking-tight">${parseFloat(product.price || 0).toLocaleString()}</span>
-                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Unit SRP</span>
+                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Price</span>
                     </div>
                   </td>
  
@@ -304,7 +306,7 @@ function AdminProductsContent() {
                   <td className="px-6 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${product.status ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
-                         {product.status ? 'Operational' : 'Inactive'}
+                         {product.status ? 'Active' : 'Inactive'}
                        </span>
                     </div>
                   </td>
@@ -314,10 +316,10 @@ function AdminProductsContent() {
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3 text-slate-200">
                       <Package size={40} />
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Zero entries detected</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No products matching filter</p>
                       {hasActiveFilters && (
                         <button onClick={clearFilters} className="text-emerald-600 text-[9px] font-black uppercase tracking-widest mt-2 hover:underline">
-                          Reset Environment
+                          Clear Filters
                         </button>
                       )}
                     </div>
@@ -331,10 +333,10 @@ function AdminProductsContent() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-            {filteredProducts.length} Nodes in view
+            {filteredProducts.length} Products displayed
           </span>
           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-            Read Only Access
+            Admin View
           </div>
         </div>
       </div>
@@ -348,8 +350,8 @@ export default function AdminProductsPage() {
       <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
         <Loader2 className="animate-spin text-emerald-500" size={48} />
         <div className="text-center">
-          <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading Assets</h2>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Syncing with directory hardware...</p>
+          <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading ...</h2>
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Fetching data...</p>
         </div>
       </div>
     }>
@@ -368,16 +370,18 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <div className="flex items-baseline gap-2 relative z-10">
-        <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none">{value}</h3>
-        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
       </div>
-      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }
@@ -394,7 +398,7 @@ function FilterSelect({ icon: Icon, label, value, onChange, options }) {
           onChange={e => onChange(e.target.value)}
           className="w-full h-10 pl-3 pr-8 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-700 focus:border-emerald-100 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all"
         >
-          <option value="">All Entries</option>
+          <option value="">All</option>
           {options.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}

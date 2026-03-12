@@ -69,30 +69,33 @@ export default function PaymentAccountsPage() {
   };
 
   return (
-    <div className="space-y-6 pb-10 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4">
-        <div className="space-y-1 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Secure Financial Registry</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Payment <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400">Gateways</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Manage your organization's financial bridges and account configurations.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchPaymentAccounts()}
-            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 rounded-xl transition-all active:scale-95 shadow-sm"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-blue-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black shadow-lg hover:bg-slate-800 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
             <Plus size={14} strokeWidth={3} /> New Bridge
           </button>
@@ -102,35 +105,36 @@ export default function PaymentAccountsPage() {
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard label="Active Nodes" value={paymentAccounts.length} icon={ShieldCheck} color="indigo" />
-        <MetricCard label="Operational" value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" />
-        <MetricCard label="Currencies" value={`${new Set(paymentAccounts.map(a => a.currency)).size} Units`} icon={Globe} color="purple" />
+        <MetricCard label="Operational" value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" subText="Live" />
+        <MetricCard label="Currencies" value={`${new Set(paymentAccounts.map(a => a.currency)).size} Units`} icon={Globe} color="purple" subText="Global" />
       </div>
 
       {/* --- ACCOUNTS TABLE --- */}
-      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+        {/* Table Controls */}
         <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
-          <div className="relative w-full sm:max-w-xs group text-left">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={14} />
+          <div className="relative w-full sm:w-64 group text-left">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={13} />
             <input 
               type="text" 
               placeholder="Filter gateway assets..." 
-              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-700 focus:border-blue-100 transition-all outline-none placeholder:text-slate-400"
+              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
             {filteredAccounts.length} Nodes Detected
-          </span>
+          </div>
         </div>
 
         <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Asset Identity</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Type Definition</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Regional Config</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Asset Identity</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Type Definition</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Regional Config</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Lifecycle</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
               </tr>
@@ -138,102 +142,121 @@ export default function PaymentAccountsPage() {
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 opacity-40" />
+                  <td colSpan="5" className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                    <div className="flex flex-col items-center gap-4 text-left">
+                      <Loader2 className="animate-spin text-blue-500 opacity-40" size={32} />
+                      Syncing database...
+                    </div>
                   </td>
                 </tr>
-              ) : filteredAccounts.map((acc, idx) => (
-                <motion.tr 
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}
-                  key={acc.id} className="group hover:bg-slate-50/20 transition-colors"
-                >
-                  <td className="px-6 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm group-hover:rotate-2 transition-transform">
-                         {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
-                           <img src="/img/bakong.png" alt="Bakong" className="w-6 h-6 object-contain" />
-                         ) : (
-                           <div className="w-full h-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[9px] italic">
-                             {acc.type_value?.substring(0, 2).toUpperCase()}
-                           </div>
-                         )}
+              ) : filteredAccounts.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No nodes found in registry</td>
+                </tr>
+              ) : (
+                filteredAccounts.map((acc, idx) => (
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
+                    key={acc.id} className="group hover:bg-slate-50/30 transition-colors"
+                  >
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm group-hover:scale-105 transition-all">
+                           {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
+                             <img src="/img/bakong.png" alt="Bakong" className="w-6 h-6 object-contain" />
+                           ) : (
+                             <div className="w-full h-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[9px] italic">
+                               {acc.type_value?.substring(0, 2).toUpperCase()}
+                             </div>
+                           )}
+                        </div>
+                        <div className="flex flex-col text-left">
+                          <span className="text-[12px] font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase leading-none mb-1 tracking-tight">{acc.account_name}</span>
+                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-70">Node ID: {acc.account_id}</span>
+                        </div>
                       </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate tracking-tight uppercase leading-none mb-1">{acc.account_name}</span>
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Node ID: {acc.account_id}</span>
+                    </td>
+                    <td className="px-4 py-3.5 text-left">
+                      <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700 uppercase leading-none mb-1">{acc.type_value}</span>
+                          <span className="text-[8px] font-black text-blue-500/50 uppercase tracking-widest italic">{acc.currency} Unit</span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-slate-700 truncate max-w-[150px] uppercase leading-none mb-1">{acc.type_value}</span>
-                        <span className="text-[8px] font-black text-blue-500/50 uppercase tracking-widest italic">{acc.account_id}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight">{acc.account_city}</span>
-                        <span className="px-1.5 py-0.5 bg-slate-100 rounded text-[7px] font-black text-slate-400 uppercase tracking-widest">{acc.currency}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5 text-center">
-                    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-widest shadow-sm
-                      ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
-                      <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                      {acc.status ? 'Live' : 'Static'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-3.5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => { setSelectedItem(acc); setIsFormOpen(true); }} 
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm group"
-                      >
-                        <Edit3 size={14} strokeWidth={2.5} />
-                      </button>
+                    </td>
+                    <td className="px-4 py-3.5 text-left">
+                      <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{acc.account_city}</span>
+                          <span className="px-1.5 py-0.5 bg-slate-100 rounded text-[7px] font-black text-slate-400 uppercase tracking-widest">{acc.currency}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 text-center">
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-[0.15em] shadow-sm
+                        ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
+                        <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                        {acc.status ? 'Live' : 'Static'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button 
+                          onClick={() => { setSelectedItem(acc); setIsFormOpen(true); }} 
+                          className="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 shadow-sm active:scale-95 transition-all"
+                        >
+                          <Edit3 size={14} strokeWidth={3} />
+                        </button>
 
-                      <AnimatePresence mode="wait" initial={false}>
-                        {confirmDeleteId === acc.id ? (
-                          <motion.div
-                            key="confirm-delete"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className="flex items-center gap-1"
-                          >
-                            <button
-                              onClick={() => handleDelete(acc.id)}
-                              disabled={isActionLoading}
-                              className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
+                        <AnimatePresence mode="wait" initial={false}>
+                          {confirmDeleteId === acc.id ? (
+                            <motion.div
+                              key="confirm-delete"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              className="flex items-center gap-1.5"
                             >
-                              {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} strokeWidth={3} />}
-                            </button>
-                            <button
-                              onClick={() => setConfirmDeleteId(null)}
-                              className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
+                              <button
+                                onClick={() => handleDelete(acc.id)}
+                                disabled={isActionLoading}
+                                className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
+                              >
+                                {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeleteId(null)}
+                                className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
+                              >
+                                <X size={14} strokeWidth={3} />
+                              </button>
+                            </motion.div>
+                          ) : (
+                            <motion.button
+                              key="delete-button"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              onClick={() => setConfirmDeleteId(acc.id)}
+                              className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
                             >
-                              <X size={12} strokeWidth={3} />
-                            </button>
-                          </motion.div>
-                        ) : (
-                          <motion.button
-                            key="delete-button"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            onClick={() => setConfirmDeleteId(acc.id)}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:border-rose-100 transition-all hover:bg-rose-50"
-                          >
-                            <Trash2 size={14} strokeWidth={2.5} />
-                          </motion.button>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
+                              <Trash2 size={14} strokeWidth={3} />
+                            </motion.button>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+             Showing: {filteredAccounts.length} Registry Entries
+           </span>
+           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
+             Registry Sync
+           </div>
         </div>
       </div>
 

@@ -103,10 +103,10 @@ function StoreInvoicesContent() {
 
       {/* --- KPI GRID --- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" />
-        <StatCard label="Settled" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" />
-        <StatCard label="Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="rose" />
-        <StatCard label="Volume" value="Live" icon={Activity} color="blue" />
+        <StatCard label="Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" subText="Transactions" />
+        <StatCard label="Settled" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" subText="Completed" />
+        <StatCard label="Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="rose" subText="Net Profit" />
+        <StatCard label="Volume" value="Live" icon={Activity} color="blue" subText="Real-time" />
       </div>
 
       {/* --- TABLE CONTAINER --- */}
@@ -222,7 +222,7 @@ export default function OrderByStore() {
 
 // --- REFINED SUB-COMPONENTS ---
 
-function StatCard({ label, value, icon: Icon, color }) {
+function StatCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
     indigo: "bg-indigo-600 shadow-indigo-100",
     rose: "bg-rose-500 shadow-rose-100",
@@ -230,12 +230,18 @@ function StatCard({ label, value, icon: Icon, color }) {
     blue: "bg-blue-600 shadow-blue-100",
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group">
-      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <h3 className="text-xl font-black text-slate-900 tracking-tighter">{value}</h3>
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
+      </div>
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

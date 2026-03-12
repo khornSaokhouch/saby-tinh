@@ -27,7 +27,7 @@ export default function AdminPromoCodeUsagesPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Usage Analytics Protocol</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Promo Code Analytics</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Usage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Analytics</span>
@@ -40,7 +40,7 @@ export default function AdminPromoCodeUsagesPage() {
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-lg text-[10px] font-black hover:text-indigo-500 transition-all shadow-sm uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
-            <span>Export Registry</span>
+            <span>Export Data</span>
           </button>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function AdminPromoCodeUsagesPage() {
           color="purple" 
         />
         <MetricCard 
-          label="Top Performance" 
+          label="Top Promo Code" 
           value={stats?.top_code?.code || 'None'} 
           subText={`${stats?.top_code?.count || 0} hits`}
           icon={Activity} 
@@ -83,7 +83,7 @@ export default function AdminPromoCodeUsagesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search Code, User..." 
+              placeholder="Search Promo Code, User..." 
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => {
@@ -106,19 +106,19 @@ export default function AdminPromoCodeUsagesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Usage Reference</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Protocol Code</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer Entity</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Value Shift</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order Node</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Timestamp</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Control</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Usage ID</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Promo Code</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Discount Amount</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Date</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                   <td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Syncing Analytics Registry...</td>
+                   <td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading Data...</td>
                 </tr>
               ) : usages.length === 0 ? (
                 <tr>
@@ -126,7 +126,7 @@ export default function AdminPromoCodeUsagesPage() {
                     <div className="flex flex-col items-center gap-3">
                        <Ticket size={40} className="text-slate-100" />
                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                         {error ? `System Error: ${error}` : 'Zero usage records detected'}
+                         {error ? `System Error: ${error}` : 'No usages found'}
                        </p>
                     </div>
                   </td>
@@ -190,7 +190,7 @@ export default function AdminPromoCodeUsagesPage() {
         {/* Footer / Pagination */}
         <div className="p-3 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
           <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">
-            Registry Scan: <span className="text-indigo-600">{usages.length}</span> / <span className="text-slate-900">{meta.total || 0}</span> Entries
+            Showing: <span className="text-indigo-600">{usages.length}</span> of <span className="text-slate-900">{meta.total || 0}</span> Usages
           </p>
           
           <div className="flex items-center gap-1.5">

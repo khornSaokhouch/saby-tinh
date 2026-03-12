@@ -1,14 +1,12 @@
 'use client';
-import { ShieldAlert, X, AlertTriangle, Loader2 } from 'lucide-react';
+import { LogOut, X, AlertTriangle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleting, sellerName }) {
-    if (!isOpen) return null;
-
-    return (
+export default function LogoutConfirmModal({ isOpen, onClose, onConfirm, isLoggingOut }) {
+  return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -25,23 +23,23 @@ export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleti
             <div className="p-8 font-sans">
               <div className="flex flex-col items-center text-center mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-rose-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-rose-100">
-                   <ShieldAlert size={24} strokeWidth={2.5} />
+                  <LogOut size={24} strokeWidth={2.5} />
                 </div>
                 <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                  Reject Partner?
+                  Sign Out?
                 </h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Review Decision</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Session Termination</p>
               </div>
 
               <div className="space-y-4 mb-8">
                 <p className="text-[13px] font-medium text-slate-500 text-center leading-relaxed">
-                  Denying <span className="text-slate-900 font-black">"{sellerName}"</span> will remove their application and notify the merchant via email.
+                  Are you sure you want to sign out of your administrative session?
                 </p>
 
                 <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3">
                   <AlertTriangle className="text-amber-600 shrink-0" size={16} />
                   <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest leading-normal">
-                    This action cannot be reversed within the current cycle.
+                    Any unsaved changes in current forms may be lost.
                   </p>
                 </div>
               </div>
@@ -52,17 +50,17 @@ export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleti
                   onClick={onClose}
                   className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
                 >
-                  Back
+                  Cancel
                 </button>
                 <button
                   onClick={onConfirm}
-                  disabled={isDeleting}
+                  disabled={isLoggingOut}
                   className="flex-[2] py-3.5 bg-rose-500 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-rose-100 flex items-center justify-center gap-2 transition-all active:scale-[0.95] hover:bg-rose-600"
                 >
-                  {isDeleting ? (
+                  {isLoggingOut ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : (
-                    "Confirm Reject"
+                    "Confirm Sign Out"
                   )}
                 </button>
               </div>
@@ -71,5 +69,5 @@ export default function DeleteSellerModal({ isOpen, onClose, onConfirm, isDeleti
         </div>
       )}
     </AnimatePresence>
-    );
+  );
 }

@@ -27,18 +27,18 @@ export default function AdminInvoices() {
   return (
     <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
-      {/* --- HEADER (Dashboard Style) --- */}
+      {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Financial Registry</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
+            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">Payments</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Overview of merchant earnings and transaction status.
+            Browse and coordinate merchant earnings and transaction settlements.
           </p>
         </div>
         
@@ -134,9 +134,11 @@ export default function AdminInvoices() {
                   </tr>
                 ))
               ) : filteredStores.length === 0 ? (
+                <tr>
                   <td colSpan="5" className="py-16 text-center">
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">No merchants located in registry</p>
                   </td>
+                </tr>
               ) : filteredStores.map((store, idx) => (
                 <tr key={store.id} className="group hover:bg-slate-50/30 transition-colors">
                   <td className="px-6 py-4">
@@ -200,10 +202,10 @@ function StatCard({ title, value, icon: Icon, color, trend }) {
   };
 
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
       <div className="flex justify-between items-start mb-4 relative z-10">
-        <div className={`p-2 rounded-xl ${themes[color]} text-white shadow-lg`}>
-          <Icon size={16} strokeWidth={2.5} />
+        <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110`}>
+          <Icon size={14} strokeWidth={3} />
         </div>
         {trend && (
           <div className="text-[8px] font-black px-1.5 py-0.5 rounded border bg-slate-50 text-slate-400 uppercase tracking-widest">
@@ -212,9 +214,10 @@ function StatCard({ title, value, icon: Icon, color, trend }) {
         )}
       </div>
       <div className="relative z-10">
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-0.5">{title}</p>
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{title}</p>
         <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
       </div>
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

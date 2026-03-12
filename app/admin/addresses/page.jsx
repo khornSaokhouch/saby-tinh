@@ -34,58 +34,57 @@ export default function AdminAddressesPage() {
   }, [allAddresses, searchTerm]);
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500 pt-4">
-      
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Logistics Hub</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Logistics Registry</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
             Delivery <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">Points</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Manage global shipping endpoints and user address associations.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchAllAddresses()}
-            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Registry"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 transition-all shadow-sm group uppercase tracking-widest">
-            <Download size={14} className="group-hover:text-indigo-600 transition-colors" /> 
-            <span className="group-hover:text-slate-900 transition-colors">Export DB</span>
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest">
+            <Download size={14} strokeWidth={3} /> Export DB
           </button>
         </div>
       </div>
 
-      {/* --- STATS OVERVIEW --- */}
+      {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard label="Delivery Points" value={allAddresses.length} icon={LinkIcon} color="indigo" />
         <MetricCard label="Unique Hubs" value={[...new Set(allAddresses.map(m => m.address_id))].length} icon={MapIcon} color="purple" />
-        <MetricCard label="User Linkage" value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`} icon={Users} color="emerald" />
+        <MetricCard label="User Linkage" value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`} icon={Users} color="emerald" subText="Density" />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-        
         {/* Table Controls */}
-        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/20">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-64 group text-left">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search by user, city or country..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
+              placeholder="Search by city, user or country..." 
+              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
              {filteredMappings.length} Records Traceable
           </div>
         </div>
@@ -95,91 +94,95 @@ export default function AdminAddressesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[35%]">User Identity</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[40%]">Geographic Link</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">User Identity</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Geographic Link</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Region</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Lifecycle</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                 <tr><td colSpan="4" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
-                   <div className="flex flex-col items-center gap-4">
-                     <Loader2 className="animate-spin text-indigo-500" size={32} />
-                     Loading addresses...
-                   </div>
-                 </td></tr>
+                <tr>
+                  <td colSpan="4" className="py-20 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
+                  </td>
+                </tr>
               ) : error ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center">
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-xs font-bold border border-rose-100">
-                      <ShieldAlert size={14} /> Error: {error}
-                    </div>
-                 </td></tr>
+                <tr>
+                   <td colSpan="4" className="py-20 text-center">
+                      <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold border border-rose-100 uppercase tracking-widest">
+                        <ShieldAlert size={14} /> Error: {error}
+                      </div>
+                   </td>
+                </tr>
               ) : filteredMappings.length === 0 ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">No addresses found.</td></tr>
+                <tr>
+                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No addresses found</td>
+                </tr>
               ) : (
                 filteredMappings.map((mapping, idx) => (
-                  <tr key={`${mapping.user_id}-${mapping.address_id}-${idx}`} className="group hover:bg-slate-50/30 transition-colors">
-                    <td className="px-6 py-4">
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
+                    key={`${mapping.user_id}-${mapping.address_id}-${idx}`} className="group hover:bg-slate-50/30 transition-colors"
+                  >
+                    <td className="px-6 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center font-black text-slate-400 text-[11px] border border-white shadow-sm uppercase group-hover:bg-white transition-colors">
+                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center font-black text-slate-400 text-[11px] border border-white shadow-sm overflow-hidden shrink-0 transition-transform group-hover:scale-105">
                            {mapping.user_name ? mapping.user_name.charAt(0) : '?'}
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{mapping.user_name}</span>
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{mapping.user_email}</span>
+                        <div className="flex flex-col text-left">
+                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{mapping.user_name}</span>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5 opacity-70 truncate max-w-[150px]">{mapping.user_email}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3.5">
                       <a 
                         href={`https://www.google.com/maps/search/?api=1&query=${mapping.latitude},${mapping.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex flex-col group/address"
-                        title="Open in Google Maps"
+                        className="flex flex-col text-left group/address"
                       >
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[13px] font-black text-slate-700 leading-tight group-hover/address:text-indigo-600 transition-colors">
+                          <span className="text-[12px] font-black text-slate-700 leading-tight group-hover/address:text-indigo-600 transition-colors">
                             {mapping.house_number ? `#${mapping.house_number}, ` : ''}{mapping.street}
                           </span>
                           <ExternalLink size={10} className="text-slate-300 opacity-0 group-hover/address:opacity-100 group-hover/address:text-indigo-400 transition-all" />
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover/address:text-slate-500 transition-colors">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5 opacity-70 truncate max-w-[200px]">
                           {mapping.commune}, {mapping.district}, {mapping.province}
                         </span>
                       </a>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100/50 transition-all shadow-sm">
+                    <td className="px-6 py-3.5 text-center">
+                      <span className="px-2.5 py-1 bg-slate-50 text-slate-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100/50 transition-all shadow-sm">
                         {mapping.country_name || 'Unset'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-3.5 text-right">
                        <div className="flex flex-col items-end">
-                         <span className="text-[11px] font-black text-slate-900 italic">
+                         <span className="text-[10px] font-bold text-slate-700">
                            {new Date(mapping.linked_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                          </span>
-                         <div className="flex items-center gap-1 text-[9px] font-black text-emerald-500 uppercase mt-0.5 tracking-widest bg-emerald-50 px-1.5 rounded-md border border-emerald-100/50">
-                            <ShieldCheck size={10} /> Live
+                         <div className="flex items-center gap-1 text-[8px] font-black text-emerald-500 uppercase mt-0.5 tracking-[0.2em]">
+                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> Live
                          </div>
                        </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/10">
-           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-             {filteredMappings.length} Endpoints
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+             Showing: {filteredMappings.length} Endpoints
            </span>
-           <div className="flex gap-4">
-              <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-widest" disabled>Previous</button>
-              <button className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">Next Segment</button>
+           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
+             Registry Sync
            </div>
         </div>
       </div>

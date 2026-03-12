@@ -81,57 +81,61 @@ export default function TypePage() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 font-sans animate-in fade-in duration-500 pt-4">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Classification System</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Taxonomy Registry</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-400">Types</span>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Types</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Organize and classify your platform's product architecture.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => { fetchTypes(); fetchCategories(); }}
-            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Registry"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} strokeWidth={2.5} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={16} strokeWidth={3} /> Add New Type
+            <Plus size={14} strokeWidth={3} /> Create Type
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Registered Types" value={types.length} icon={Tag} color="indigo" />
-        <MetricCard label="Category Nodes" value={categories.length} icon={Layers} color="emerald" />
-        <MetricCard label="System Integrity" value="Unified" icon={CheckCircle2} color="purple" />
+        <MetricCard label="Total Types" value={types.length} icon={Tag} color="indigo" />
+        <MetricCard label="Registry Sync" value={categories.length} icon={Layers} color="emerald" subText="Categories" />
+        <MetricCard label="System Status" value="Unified" icon={CheckCircle2} color="purple" />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
         <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
-            <input 
-              type="text" 
-              placeholder="Search by type name..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none placeholder:text-slate-400 shadow-sm"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64 group text-left">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
+              <input
+                type="text"
+                placeholder="Search types..."
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            {filteredTypes.length} Total Matches
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            {filteredTypes.length} Types Found
           </div>
         </div>
 
@@ -139,10 +143,10 @@ export default function TypePage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest w-[40%]">Designation Identity</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Parent Node</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Type Detail</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -154,17 +158,17 @@ export default function TypePage() {
                 </tr>
               ) : filteredTypes.length === 0 ? (
                 <tr>
-                    <td colSpan="4" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No types found</td>
+                    <td colSpan="4" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No types matching filter</td>
                 </tr>
               ) : filteredTypes.map((type, idx) => (
                 <motion.tr 
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
                   key={type.id} className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[11px] border border-indigo-100/50 shadow-sm transition-all group-hover:bg-indigo-600 group-hover:text-white">
-                        {type.name.charAt(0).toUpperCase()}
+                      <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden relative shrink-0 transition-transform group-hover:scale-105">
+                        <Box size={14} className="text-slate-400" />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{type.name}</span>
@@ -172,24 +176,29 @@ export default function TypePage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-widest">
-                      <Layers size={10} className="text-slate-400" strokeWidth={3} />
-                      {getCategoryName(type.category_id)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className="text-[11px] font-black text-slate-900 italic">
-                        {new Date(type.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <td className="px-6 py-3.5 text-center">
+                      <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[8px] font-black uppercase tracking-widest">
+                        <Layers size={10} className="text-slate-400" strokeWidth={3} />
+                        {getCategoryName(type.category_id)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5 center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-700">
+                            {new Date(type.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                          at {new Date(type.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button 
                         onClick={() => { setSelectedItem(type); setIsFormOpen(true); }} 
-                        className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100/50"
+                        className="p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-sm active:scale-95 transition-all"
                       >
-                        <Edit3 size={14} strokeWidth={2.5} />
+                        <Edit3 size={14} strokeWidth={3} />
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>
@@ -199,20 +208,20 @@ export default function TypePage() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1.5"
                           >
                             <button
                               onClick={() => handleDelete(type.id)}
                               disabled={isActionLoading}
-                              className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
+                              className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
                             >
-                              {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                              {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
-                              className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
+                              className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
                             >
-                              <X size={14} />
+                              <X size={14} strokeWidth={3} />
                             </button>
                           </motion.div>
                         ) : (
@@ -222,9 +231,9 @@ export default function TypePage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(type.id)}
-                            className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm border border-rose-100/50"
+                            className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
                           >
-                            <Trash2 size={14} strokeWidth={2.5} />
+                            <Trash2 size={14} strokeWidth={3} />
                           </motion.button>
                         )}
                       </AnimatePresence>
@@ -234,6 +243,16 @@ export default function TypePage() {
               ))}
             </tbody>
           </table>
+        </div>
+        
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+             Showing: {filteredTypes.length} Types
+           </span>
+           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
+             Registry Sync
+           </div>
         </div>
       </div>
 
@@ -255,16 +274,18 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <div className="flex items-baseline gap-2 relative z-10">
-        <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
-        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
       </div>
-      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

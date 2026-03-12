@@ -6,12 +6,15 @@ import { useAuthStore } from '@/stores/authStore';
 import { useSellerStore } from '@/stores/useSellerStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import LogoutConfirmModal from './modeldeleted/LogoutConfirmModal';
 
 export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
   const { user, fetchProfile } = useUserStore();
   const { logout } = useAuthStore();
   const { pendingCount, fetchPendingCount } = useSellerStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -37,7 +40,27 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleLogoutClick = () => {
+    setIsDropdownOpen(false);
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutCancel = () => setShowLogoutModal(false);
+
+  const handleLogoutConfirm = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      setShowLogoutModal(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
+    <>
     <header className="sticky top-0 z-40 flex h-14 w-full items-center bg-white/80 backdrop-blur-md border-b border-slate-100 px-5 lg:px-8 font-sans">
       <button 
         onClick={onMenuClick}
@@ -102,11 +125,11 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute right-0 mt-3 w-60 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100 p-2 z-[100] overflow-hidden"
+                  className="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100 p-1.5 z-[100] overflow-hidden"
                 >
-                  <div className="px-3 py-3 border-b border-slate-50 mb-1">
-                    <p className="text-xs font-semibold text-slate-400">Account</p>
-                    <p className="text-sm font-bold text-slate-900 truncate mt-0.5">{user?.email}</p>
+                  <div className="px-3 py-2.5 border-b border-slate-50 mb-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Account</p>
+                    <p className="text-[12px] font-bold text-slate-900 truncate tracking-tight">{user?.email}</p>
                   </div>
 
                   <DropdownItem 
@@ -122,19 +145,16 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   
-                  <div className="h-px bg-slate-100 my-1 mx-2" />
+                  <div className="h-px bg-slate-50 my-1 mx-2" />
                   
                   <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      logout();
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
+                    onClick={handleLogoutClick}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-slate-50 group-hover:bg-rose-100 flex items-center justify-center transition-colors">
                       <LogOut size={16} />
                     </div>
-                    <span className="text-sm font-semibold">Sign Out</span>
+                    <span className="text-[13px] font-bold">Sign Out</span>
                   </button>
                 </motion.div>
               )}
@@ -143,6 +163,14 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
         </div>
       </div>
     </header>
+
+    <LogoutConfirmModal 
+      isOpen={showLogoutModal}
+      onClose={handleLogoutCancel}
+      onConfirm={handleLogoutConfirm}
+      isLoggingOut={isLoggingOut}
+    />
+    </>
   );
 }
 

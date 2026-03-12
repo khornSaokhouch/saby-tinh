@@ -72,39 +72,41 @@ export default function CustomersPage() {
   };
 
   return (
-    <div className="space-y-6 pb-10 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
       {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Global Identity Directory</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Platform Governance</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-            User <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Registry</span>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Customers</span>
           </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">
+            Monitor and administer platform user accounts and permissions.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchAllUsers()}
-            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 rounded-xl transition-all active:scale-95 shadow-sm"
-            title="Sync Registry"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all shadow-sm">
-            <Download size={14} /> Export Node Data
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest">
+            <Download size={14} strokeWidth={3} /> Export Data
           </button>
         </div>
       </div>
 
       {/* --- STATS OVERVIEW --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Nodes" value={visibleUsers.length} icon={Users} color="indigo" />
-        <MetricCard label="Verified" value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
+        <MetricCard label="Total Customers" value={visibleUsers.length} icon={Users} color="indigo" />
+        <MetricCard label="Active Users" value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
         <MetricCard label="Restricted" value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" />
       </div>
 
@@ -118,26 +120,26 @@ export default function CustomersPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
               <input 
                 type="text" 
-                placeholder="Search by name, email or ID..." 
+                placeholder="Search users, emails..." 
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
-            <div className="relative w-full sm:w-48 text-left">
+            <div className="relative w-full sm:w-32 text-left shrink-0">
               <select
                 value={filterRole}
                 onChange={e => setFilterRole(e.target.value)}
-                className="w-full pl-4 pr-9 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all uppercase tracking-widest"
+                className="w-full pl-3 pr-7 py-1 bg-white border border-slate-100 rounded-lg text-[10px] font-bold text-slate-600 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all uppercase tracking-widest"
               >
-                <option value="">All Architectures</option>
-                <option value="user">Retailer</option>
-                <option value="owner">Executive</option>
-                <option value="banned">Restricted</option>
+                <option value="">All Roles</option>
+                <option value="user">USER</option>
+                <option value="owner">OWNER</option>
+                {/* <option value="banned">BANNED</option> */}
               </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                <ChevronDown size={13} />
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <ChevronDown size={12} />
               </div>
             </div>
           </div>
@@ -148,10 +150,10 @@ export default function CustomersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Identity Node</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Role Config</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Last Sync</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">User Detail</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Role</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -160,7 +162,7 @@ export default function CustomersPage() {
                    <td colSpan="4" className="py-20 text-center">
                      <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Identity Vault...</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading Users...</span>
                      </div>
                    </td>
                  </tr>
@@ -169,7 +171,7 @@ export default function CustomersPage() {
                     <td colSpan="4" className="py-20 text-center">
                        <div className="flex flex-col items-center gap-3 text-slate-200">
                           <Users size={40} />
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No matching nodes found</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No users matching filter</p>
                        </div>
                     </td>
                  </tr>
@@ -203,11 +205,11 @@ export default function CustomersPage() {
                       <select
                         value={user.role}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        className="px-2 py-1 bg-slate-50/50 border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest focus:border-indigo-100 outline-none cursor-pointer hover:bg-white transition-all"
+                        className="px-2 py-1 bg-slate-50/50 border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest focus:border-indigo-100 outline-none cursor-pointer hover:bg-white transition-all min-w-[100px]"
                       >
-                        <option value="user">Retailer</option>
-                        <option value="owner">Executive</option>
-                        <option value="banned">Restricted</option>
+                        <option value="user">USER</option>
+                        <option value="owner">OWNER</option>
+                        <option value="banned">BANNED</option>
                       </select>
                     </td>
                     <td className="px-6 py-3.5">
@@ -265,10 +267,10 @@ export default function CustomersPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-            {filteredUsers.length} Nodes in Registry
+            Showing: {filteredUsers.length} Users
           </span>
           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             System Admin Access
+             Admin Access
           </div>
         </div>
       </div>
@@ -283,16 +285,18 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     purple: 'bg-purple-600 shadow-purple-100',
   };
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-500">
-      <div className={`p-2 rounded-xl w-8 h-8 flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10 ${themes[color]}`}>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+      <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} flex items-center justify-center text-white mb-3 shadow-lg transition-transform group-hover:scale-110 relative z-10`}>
         <Icon size={14} strokeWidth={3} />
       </div>
-      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-      <div className="flex items-baseline gap-2 relative z-10">
-        <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none">{value}</h3>
-        {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+      <div className="relative z-10">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
+        </div>
       </div>
-      <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
+      <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

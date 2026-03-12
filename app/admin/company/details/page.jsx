@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { 
   Building2, Globe, Clock, MapPin, Loader2, 
   Mail, Phone, ExternalLink, ArrowLeft,
-   ShieldCheck, Calendar, Navigation, Building, ShieldAlert,
+   ShieldCheck, Calendar, ArrowUpRight , Building, ShieldAlert,
   CreditCard, Store, PieChart, Activity,
   Info, CheckCircle2, AlertCircle, Bookmark,
   TrendingUp, Wallet, DollarSign, Fingerprint
@@ -54,16 +54,11 @@ function PartnerDetailsContent() {
 
   if (companyLoading || userLoading) {
     return (
-      <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
-        <div className="relative">
-          <Loader2 className="animate-spin text-indigo-600" size={48} strokeWidth={1.5} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-2 h-2 bg-indigo-600 rounded-full animate-ping" />
-          </div>
-        </div>
-        <div className="text-center">
-          <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading Details</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Accessing partner information...</p>
+      <div className="h-[70vh] flex flex-col items-center justify-center gap-4 font-sans text-center">
+        <Loader2 className="animate-spin text-indigo-600" size={32} />
+        <div className="space-y-1">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Loading Profile</h2>
+          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">Accessing company details...</p>
         </div>
       </div>
     );
@@ -71,18 +66,17 @@ function PartnerDetailsContent() {
 
   if (!partner) {
     return (
-      <div className="max-w-2xl mx-auto mt-20">
-        <div className="bg-white p-12 rounded-[48px] border border-slate-100 text-center shadow-[0_30px_100px_rgba(0,0,0,0.04)] relative overflow-hidden font-sans">
-          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-transparent via-slate-100 to-transparent" />
-          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner">
-            <ShieldAlert className="text-slate-300" size={40} />
-          </div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-3">Partner Not Found</h2>
-          <p className="text-slate-500 font-medium mb-10 text-balance">The partner you are looking for does not exist in our directory.</p>
-          <button onClick={() => router.back()} className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 mx-auto hover:bg-indigo-600 transition-all shadow-xl active:scale-95">
-            <ArrowLeft size={16} /> Return to List
-          </button>
+      <div className="h-[60vh] flex flex-col items-center justify-center gap-4 font-sans text-center">
+        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm mb-2">
+          <ShieldAlert className="text-slate-300" size={32} />
         </div>
+        <div className="space-y-1">
+          <h2 className="text-lg font-black text-slate-900 tracking-tight">Company Not Found</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Directory verification failed</p>
+        </div>
+        <button onClick={() => router.back()} className="mt-4 px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-rose-600 transition-all">
+          <ArrowLeft size={14} strokeWidth={3} /> Go Back
+        </button>
       </div>
     );
   }
@@ -103,12 +97,12 @@ function PartnerDetailsContent() {
           </motion.button>
           <div className="space-y-1 text-left">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-500" />
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Node Profile</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Business Profile</span>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-              {partner.name.split(' ').map((word, i) => (
-                <span key={i} className={i === partner.name.split(' ').length - 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400" : ""}>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+              {partner.name.split(' ').map((word, i, arr) => (
+                <span key={i} className={i === arr.length - 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500" : ""}>
                   {word}{' '}
                 </span>
               ))}
@@ -116,9 +110,9 @@ function PartnerDetailsContent() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 bg-white border border-slate-100 px-4 py-2 rounded-2xl shadow-sm self-start md:self-center">
-           <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Verified Identity</span>
+        <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-2xl shadow-sm self-start md:self-center">
+           <ShieldCheck size={14} className="text-indigo-600" />
+           <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest leading-none">Verified Merchant</span>
         </div>
       </div>
 
@@ -141,34 +135,34 @@ function PartnerDetailsContent() {
               </div>
             </div>
             
-            <h3 className="text-xl font-black text-slate-900 relative z-10 tracking-tight">{partner.name}</h3>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mt-1 relative z-10 opacity-70">
-              Executive Node
+            <h3 className="text-xl font-black text-slate-900 relative z-10 tracking-tighter">{partner.name}</h3>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 relative z-10">
+              Business Owner
             </p>
 
             <div className="grid grid-cols-1 gap-2 mt-8 relative z-10">
-               <InfoRow icon={Mail} label="Primary Contact" value={partner.email} />
-               <InfoRow icon={Phone} label="Network ID" value={partner.phone_number || 'Internal'} />
-               <InfoRow icon={Calendar} label="Sync Date" value={new Date(partner.created_at).toLocaleDateString()} />
-               <InfoRow icon={Fingerprint} label="Node ID" value={`#${partner.id.toString().padStart(5, '0')}`} highlight />
+               <InfoRow icon={Mail} label="Owner Email" value={partner.email} />
+               <InfoRow icon={Phone} label="Contact Number" value={partner.phone_number || 'Not Linked'} />
+               <InfoRow icon={Calendar} label="Member Since" value={new Date(partner.created_at).toLocaleDateString()} />
+               <InfoRow icon={Fingerprint} label="Internal ID" value={`#${partner.id.toString().padStart(5, '0')}`} highlight />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-8 rounded-[32px] text-white shadow-lg relative overflow-hidden group">
+          <div className="bg-gradient-to-br from-indigo-700 to-rose-800 p-8 rounded-[32px] text-white shadow-lg relative overflow-hidden group">
              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                <PieChart size={100} />
              </div>
              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3 text-blue-200/80">
+                <div className="flex items-center gap-2 mb-3 text-indigo-300">
                   <TrendingUp size={14} />
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em]">Operational Insights</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest">Business Health</span>
                 </div>
-                <h3 className="text-lg font-black mb-3 leading-tight tracking-tight text-white/95">Network Performance Hub</h3>
+                <h3 className="text-lg font-black mb-3 leading-tight tracking-tight text-white italic">Strategic Performance</h3>
                 <p className="text-[10px] text-blue-100/60 leading-relaxed font-bold mb-8">
-                   Predictive analysis and growth trajectories for corporate node optimization.
+                   Strategic growth trajectory and business health overview.
                 </p>
-                <button className="flex items-center justify-center gap-3 w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 backdrop-blur-sm">
-                   View Analytics <ExternalLink size={12} />
+                <button className="flex items-center justify-center gap-3 w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border border-white/20 backdrop-blur-sm">
+                   View Full Report <ArrowUpRight size={12} strokeWidth={3} />
                 </button>
              </div>
           </div>
@@ -190,8 +184,8 @@ function PartnerDetailsContent() {
               </div>
               <div className="flex-1 space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                   <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">{company?.company_name || 'Business Unit'}</h2>
-                   {company && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-lg text-[8px] font-black uppercase tracking-widest border border-blue-100/50">Verified Entity</span>}
+                   <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{company?.company_name || 'Business Entity'}</h2>
+                   {company && <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg text-[8px] font-black uppercase tracking-widest border border-indigo-100/50">Registered Company</span>}
                 </div>
                 <div className="flex flex-wrap gap-4">
                   {company?.website_url && (
@@ -211,17 +205,17 @@ function PartnerDetailsContent() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div>
-                   <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Enterprise Abstract</h4>
+                   <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">About Company</h4>
                   <p className="text-[11px] font-bold text-slate-600 leading-relaxed text-balance">
-                    {company?.description || 'No corporate description available in this node.'}
+                    {company?.description || 'No business description provided for this profile.'}
                   </p>
                 </div>
                 
                 <div className="space-y-3">
-                   <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Operational Address</h4>
+                   <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Headquarters</h4>
                   {company?.address ? (
                     <div className="p-4 bg-slate-50 rounded-[20px] border border-slate-100 group">
-                      <p className="text-[11px] font-black text-slate-900 leading-tight mb-1 group-hover:text-blue-600 transition-colors">
+                      <p className="text-[11px] font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition-colors">
                         {company.address.house_number ? `#${company.address.house_number}, ` : ''}{company.address.street}
                       </p>
                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-relaxed">
@@ -230,7 +224,7 @@ function PartnerDetailsContent() {
                     </div>
                   ) : (
                     <div className="p-4 bg-slate-50 rounded-[20px] border border-dashed border-slate-200 text-center">
-                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Location Matrix Empty</p>
+                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Location Not Set</p>
                     </div>
                   )}
                 </div>
@@ -246,7 +240,7 @@ function PartnerDetailsContent() {
                 ) : (
                   <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-6 text-center gap-3">
                      <MapPin className="text-slate-200" size={24} />
-                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Map Node Unavailable</p>
+                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Map Unavailable</p>
                   </div>
                 )}
               </div>
@@ -259,10 +253,10 @@ function PartnerDetailsContent() {
              {/* Store Asset */}
              <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
                 <div className="flex items-center justify-between mb-6">
-                   <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                   <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
                       <Store size={18} strokeWidth={3} />
                    </div>
-                   <div className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest">Asset Node</div>
+                   <div className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest">Business Unit</div>
                 </div>
                 
                 {partner.store ? (
@@ -273,16 +267,16 @@ function PartnerDetailsContent() {
                        </div>
                        <div>
                           <h4 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1">{partner.store.name}</h4>
-                          <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em]">Operational</span>
+                          <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Operational</span>
                        </div>
                     </div>
                     <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
-                       Primary retail outlet managing hardware and consumer flow.
+                       Official business storefront and retail presence.
                     </p>
                   </div>
                 ) : (
                   <div className="py-6 text-center border border-dashed border-slate-100 rounded-2xl">
-                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No Store Indexed</p>
+                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No Store Linked</p>
                   </div>
                 )}
              </div>
@@ -290,10 +284,10 @@ function PartnerDetailsContent() {
              {/* Financial Assets */}
              <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
                 <div className="flex items-center justify-between mb-6">
-                   <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
+                   <div className="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
                       <Wallet size={18} strokeWidth={3} />
                    </div>
-                   <div className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest">Ledger Config</div>
+                   <div className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest">Payment Methods</div>
                 </div>
                 
                 <div className="space-y-2">
@@ -301,7 +295,7 @@ function PartnerDetailsContent() {
                     partner.payment_accounts.map((acc) => (
                       <div key={acc.id} className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-50 group/acc hover:bg-white hover:shadow-md transition-all">
                         <div className="flex items-center gap-2.5">
-                           <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-amber-500 border border-slate-50 shadow-sm group-hover/acc:scale-110 transition-transform">
+                           <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-rose-500 border border-slate-50 shadow-sm group-hover/acc:scale-110 transition-transform">
                              <CreditCard size={12} strokeWidth={3} />
                            </div>
                            <div className="flex flex-col">
@@ -314,7 +308,7 @@ function PartnerDetailsContent() {
                     ))
                   ) : (
                     <div className="py-6 text-center border border-dashed border-slate-100 rounded-2xl">
-                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No Methods Linked</p>
+                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No Accounts Found</p>
                     </div>
                   )}
                 </div>
@@ -323,10 +317,10 @@ function PartnerDetailsContent() {
 
           {/* Internal Metadata */}
           <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-10">
-             <StatBox label="Last Seen" value="Active" icon={Activity} />
-             <StatBox label="Security" value="System" icon={ShieldCheck} success />
-             <StatBox label="Hierarchy" value="Partner" icon={Building} />
-             <StatBox label="Verification" value="Pass" icon={CheckCircle2} success />
+             <StatBox label="Live Status" value="Active" icon={Activity} />
+             <StatBox label="Protection" value="System" icon={ShieldCheck} success />
+             <StatBox label="Membership" value="Partner" icon={Building} />
+             <StatBox label="Validation" value="Pass" icon={CheckCircle2} success />
           </section>
         </div>
       </div>
@@ -337,11 +331,11 @@ function PartnerDetailsContent() {
 export default function PartnerDetailsPage() {
   return (
     <Suspense fallback={
-      <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
-        <Loader2 className="animate-spin text-indigo-600" size={48} strokeWidth={1.5} />
-        <div className="text-center">
-          <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading Partner</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Preparing data stream...</p>
+      <div className="h-[70vh] flex flex-col items-center justify-center gap-4 font-sans text-center">
+        <Loader2 className="animate-spin text-indigo-600" size={32} />
+        <div className="space-y-1">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Loading Profile</h2>
+          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">Preparing data stream...</p>
         </div>
       </div>
     }>
@@ -352,21 +346,21 @@ export default function PartnerDetailsPage() {
 
 function InfoRow({ icon: Icon, label, value, highlight }) {
   return (
-    <div className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${highlight ? 'bg-blue-50/50 border border-blue-100 shadow-sm' : 'border border-transparent bg-slate-50/50'}`}>
-       <div className={`p-1.5 rounded-lg bg-white shadow-sm shrink-0 ${highlight ? 'text-blue-600' : 'text-slate-400'}`}>
-         <Icon size={12} strokeWidth={3} />
-       </div>
-       <div className="flex flex-col text-left overflow-hidden min-w-0">
-          <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">{label}</span>
-          <span className={`text-[10px] font-black truncate ${highlight ? 'text-blue-600' : 'text-slate-700'}`}>{value}</span>
-       </div>
-    </div>
+     <div className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${highlight ? 'bg-indigo-50/50 border border-indigo-100 shadow-sm' : 'border border-transparent bg-slate-50/50'}`}>
+        <div className={`p-1.5 rounded-lg bg-white shadow-sm shrink-0 ${highlight ? 'text-indigo-600' : 'text-slate-400'}`}>
+          <Icon size={12} strokeWidth={3} />
+        </div>
+        <div className="flex flex-col text-left overflow-hidden min-w-0">
+           <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">{label}</span>
+           <span className={`text-[10px] font-black truncate ${highlight ? 'text-indigo-600' : 'text-slate-700'}`}>{value}</span>
+        </div>
+     </div>
   );
 }
 
 function StatBox({ label, value, icon: Icon, success }) {
   return (
-    <div className="bg-white p-4 rounded-[24px] border border-slate-100 shadow-sm text-center flex flex-col items-center group hover:border-blue-100 transition-all">
+    <div className="bg-white p-4 rounded-[24px] border border-slate-100 shadow-sm text-center flex flex-col items-center group hover:border-indigo-100 transition-all">
        <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-3 shadow-inner ${success ? 'bg-emerald-50 text-emerald-500' : 'bg-slate-50 text-slate-400'} group-hover:scale-110 transition-transform`}>
           <Icon size={14} strokeWidth={3} />
        </div>

@@ -4,33 +4,11 @@ import { useEffect } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import Link from 'next/link';
 import { 
-  ShieldCheck, 
-  Activity, 
-  Lock, 
-  Edit3, 
-  User, 
-  Mail, 
-  Phone, 
-  Globe, 
-  ArrowUpRight, 
-  Settings, 
-  LogOut,
-  Key,
-  FileText,
-  Users
+  ShieldCheck, Activity, Lock, Edit3, User, 
+  Mail, Phone, Globe, ArrowUpRight, Settings, 
+  LogOut, Key, FileText, Users, RefreshCw, Heart
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-// Animation variants
-const containerVar = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
-
-const itemVar = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50, damping: 20 } }
-};
 
 export default function AdminProfilePage() {
   const { user, loading, error, fetchProfile } = useUserStore();
@@ -42,14 +20,12 @@ export default function AdminProfilePage() {
   // --- LOADING STATE ---
   if (loading) {
     return (
-      <div className="max-w-[1400px] mx-auto p-6 space-y-8 animate-pulse pt-4">
-        <div className="h-48 bg-slate-200 rounded-[32px] w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="h-32 bg-slate-200 rounded-[24px]" />
-          <div className="h-32 bg-slate-200 rounded-[24px]" />
-          <div className="h-32 bg-slate-200 rounded-[24px]" />
+      <div className="h-[70vh] flex flex-col items-center justify-center gap-4 text-center font-sans">
+        <RefreshCw className="animate-spin text-indigo-600" size={32} />
+        <div className="space-y-1">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Checking Credentials</h2>
+          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">Opening your profile...</p>
         </div>
-        <div className="h-64 bg-slate-200 rounded-[32px] w-full" />
       </div>
     );
   }
@@ -57,229 +33,178 @@ export default function AdminProfilePage() {
   // --- ERROR STATE ---
   if (error || !user) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
-          <ShieldCheck className="w-8 h-8" />
+      <div className="max-w-md mx-auto mt-20 font-sans p-6">
+        <div className="bg-white p-10 rounded-[24px] border border-slate-100 text-center shadow-sm">
+          <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Lock className="text-rose-500" size={32} />
+          </div>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Login Required</h2>
+          <p className="text-slate-400 text-xs font-medium mb-8">We couldn't load your profile details right now.</p>
+          <button onClick={() => window.location.reload()} className="w-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-600 transition-all">
+            <RefreshCw size={14} /> Try Again
+          </button>
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Access Restricted</h2>
-        <p className="text-slate-500 mb-6 max-w-md">
-          Unable to retrieve administrator profile data. Please verify your connection.
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-6 py-2.5 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors"
-        >
-          Retry Connection
-        </button>
       </div>
     );
   }
 
   return (
-    <motion.div 
-      variants={containerVar}
-      initial="hidden"
-      animate="show"
-      className="max-w-[1400px] mx-auto p-4 sm:p-6 space-y-6 font-sans pt-4"
-    >
-      {/* --- HEADER SECTION --- */}
-      <motion.div variants={itemVar} className="relative group">
-        <div className="absolute inset-0 bg-white border border-slate-100 rounded-[20px] shadow-sm" />
-        
-        <div className="relative p-7 flex flex-col md:flex-row md:items-end justify-between gap-6 z-10">
-          <div className="flex items-start md:items-end gap-6">
-            
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl bg-slate-900 flex items-center justify-center text-3xl font-black text-white shadow-xl shadow-slate-200 overflow-hidden border-4 border-white group-hover:rotate-3 transition-transform">
-              {user.profile?.image_profile ? (
-                <img src={user.profile.image_profile} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                user.name?.charAt(0) || <User />
-              )}
-            </div>
-            
-            <div className="mb-1">
-              <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-2xl font-black tracking-tight text-slate-900 italic uppercase">
-                  {user.name}
-                </h1>
-                <span className="px-2 py-0.5 rounded-lg bg-indigo-50 border border-indigo-100/50 text-indigo-700 text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-1.5 shadow-sm">
-                  <ShieldCheck size={10} strokeWidth={3} />
-                  Master Admin
-                </span>
-              </div>
-
-              <p className="text-slate-400 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
-                <Mail className="w-3.5 h-3.5" /> {user.email}
-              </p>
-            </div>
+    <div className="max-w-[1400px] mx-auto space-y-5 pb-12 font-sans animate-in fade-in duration-500">
+      
+      {/* --- HEADER --- */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-[20px] bg-slate-900 flex items-center justify-center text-2xl font-black text-white shadow-lg overflow-hidden border-2 border-white ring-1 ring-slate-100 shrink-0">
+            {user.profile?.image_profile ? (
+              <img src={user.profile.image_profile} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="uppercase">{user.name?.charAt(0)}</span>
+            )}
           </div>
-
-          {/* Header Actions */}
-          <div className="flex items-center gap-2">
-            <Link 
-              href="/admin/settings"
-              className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black transition-all flex items-center gap-2 text-slate-700 shadow-sm uppercase tracking-widest"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>Configure</span>
-            </Link>
-
-            <button className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100/50 rounded-xl transition-all shadow-sm">
-              <LogOut className="w-4 h-4" />
-            </button>
+          
+          <div className="text-left">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Administrator Account</span>
+            </div>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+              Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500 uppercase">{user.name}</span>
+            </h1>
           </div>
         </div>
-      </motion.div>
 
-      {/* --- MAIN GRID LAYOUT --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex items-center gap-2">
+          <Link 
+            href="/admin/settings"
+            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 uppercase tracking-widest hover:border-indigo-300 transition-all shadow-sm"
+          >
+            <Settings size={13} /> Edit Settings
+          </Link>
+          <button className="p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-md active:scale-95 transition-all">
+            <LogOut size={14} strokeWidth={3} />
+          </button>
+        </div>
+      </div>
+
+      {/* --- MAIN BENTO GRID --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        {/* LEFT COLUMN: Stats & Details */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* LEFT COLUMN: Summary & Details */}
+        <div className="lg:col-span-8 space-y-5">
           
-          {/* Admin Stats Row */}
-          <motion.div variants={itemVar} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <DashboardCard 
-              title="Access Level" 
-              value="Level 5" 
-              icon={Lock} 
-              href="/admin/roles"
-              accentColor="bg-slate-100 text-slate-700"
-              subText="Full Permissions"
-            />
-            <DashboardCard 
-              title="System Status" 
-              value="Online" 
-              icon={Activity} 
-              href="/admin/system"
-              accentColor="bg-emerald-50 text-emerald-600"
-              subText="All services active"
-            />
-            <DashboardCard 
-              title="Audit Logs" 
-              value="24 New" 
-              icon={FileText} 
-              href="/admin/logs"
-              accentColor="bg-blue-50 text-blue-600"
-              subText="Since last login"
-            />
-          </motion.div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard label="My Permissions" value="Full Access" icon={Lock} color="indigo" sub="Administrator level" />
+            <StatCard label="Account Status" value="Verified" icon={ShieldCheck} color="emerald" sub="Safe and secure" />
+            <StatCard label="Recent Actions" value="24 Logs" icon={FileText} color="blue" sub="View activity history" />
+          </div>
 
-          {/* Profile Information Panel */}
-          <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[20px] p-7 shadow-sm">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
-                <User className="w-4 h-4 text-indigo-600" />
-                Identity Data
-              </h3>
-              <button className="text-[9px] font-black text-indigo-600 hover:text-indigo-700 flex items-center gap-1 uppercase tracking-widest italic group">
-                <Edit3 size={10} className="group-hover:rotate-12 transition-transform" /> Modify
+          {/* Personal Information Panel */}
+          <div className="bg-white border border-slate-100 rounded-[24px] p-6 sm:p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-50">
+              <div>
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Details</h3>
+                <p className="text-lg font-black text-slate-900 tracking-tight leading-none mt-1">Personal Information</p>
+              </div>
+              <button className="p-2 bg-slate-50 hover:bg-white hover:border-indigo-100 border border-transparent rounded-lg transition-all group">
+                <Edit3 size={14} className="text-slate-400 group-hover:text-indigo-600" />
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-7 gap-x-10">
-              <DetailItem label="Full Designation" value={user.name} icon={User} />
-              <DetailItem label="Registry Email" value={user.email} icon={Mail} />
-              <DetailItem label="Secure Contact" value={user.phone_number || "+1 (555) 000-0000"} icon={Phone} />
-              <DetailItem label="Primary Node" value="HQ Mainframe" icon={Globe} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <DetailItem label="Full Name" value={user.name} icon={User} />
+              <DetailItem label="Email Address" value={user.email} icon={Mail} />
+              <DetailItem label="Phone Number" value={user.phone_number || "No phone added"} icon={Phone} />
+              <DetailItem label="Primary Office" value="Main Dashboard Hub" icon={Globe} />
             </div>
-          </motion.div>
-
+          </div>
         </div>
 
-        {/* RIGHT COLUMN: Admin Shortcuts */}
-        <motion.div variants={itemVar} className="space-y-6">
-          
-          {/* Management Menu */}
-          <div className="bg-white border border-slate-100 rounded-[20px] p-6 shadow-sm h-full flex flex-col">
-            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-5 px-1">
-              Admin Ops Center
-            </h4>
+        {/* RIGHT COLUMN: Shortcuts */}
+        <div className="lg:col-span-4 space-y-5">
+          <div className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm flex flex-col h-full">
+            <div className="mb-6">
+              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Tools</h4>
+              <p className="text-md font-black text-slate-900 tracking-tighter uppercase">Quick Links</p>
+            </div>
             
-            <nav className="space-y-1.5 flex-1">
-              <SidebarLink icon={ShieldCheck} label="Firewall & Auth" href="/admin/security" />
-              <SidebarLink icon={Users} label="Personnel" href="/admin/users" badge="2 Pending" />
-              <SidebarLink icon={Key} label="Access Tokens" href="/admin/api" />
-              <SidebarLink icon={FileText} label="System Trace" href="/admin/logs" />
-              <SidebarLink icon={Activity} label="Kernel Health" href="/admin/system" />
+            <nav className="space-y-1.5">
+              <ShortcutLink icon={ShieldCheck} label="Security Center" href="/admin/security" />
+              <ShortcutLink icon={Users} label="Manage Team" href="/admin/users" badge="2 New" />
+              <ShortcutLink icon={Key} label="API Access" href="/admin/api" />
+              <ShortcutLink icon={Activity} label="System Health" href="/admin/system" />
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-slate-50">
+            <div className="mt-auto pt-6">
                <div className="bg-slate-900 p-5 rounded-2xl shadow-xl text-white relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-full translate-x-10 -translate-y-10 blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                  <div className="flex items-start gap-3 relative z-10">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5" />
-                    <div>
-                      <h5 className="text-[11px] font-black text-white uppercase tracking-wider">Secure Zone</h5>
-                      <p className="text-[9px] text-slate-400 mt-1 leading-relaxed font-black uppercase tracking-widest opacity-70">
-                        Symmetric 256-bit AES protection active.
-                      </p>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                       <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
+                       <span className="text-[8px] font-black uppercase tracking-widest text-rose-400">Pro Protection</span>
                     </div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed font-black uppercase tracking-widest opacity-80">
+                      Your account is protected by industry standard encryption.
+                    </p>
                   </div>
+                  <Activity className="absolute -right-4 -bottom-4 opacity-[0.05] text-white" size={80} />
                </div>
             </div>
           </div>
+        </div>
 
-        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// --- SUB-COMPONENTS ---
+// --- SUB-COMPONENTS (Compact & Professional) ---
 
-function DashboardCard({ title, value, icon: Icon, href, accentColor, subText }) {
+function StatCard({ label, value, icon: Icon, color, sub }) {
+  const themes = {
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    blue: "bg-blue-600 shadow-blue-100",
+  };
   return (
-    <Link href={href} className="block group">
-      <div className="bg-white border border-slate-100 p-4 rounded-[20px] shadow-sm transition-all duration-500 hover:shadow-md hover:border-indigo-100/50 relative overflow-hidden h-full">
-        <div className="flex justify-between items-start mb-3">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100/50 ${accentColor}`}>
-            <Icon className="w-3.5 h-3.5" strokeWidth={3} />
-          </div>
-          <ArrowUpRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-        </div>
-        <div className="space-y-0.5">
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
-          <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none italic uppercase">{value}</h3>
-          <p className="text-[9px] font-black text-slate-400/60 uppercase tracking-widest">{subText}</p>
-        </div>
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm group transition-all hover:shadow-md">
+      <div className={`w-8 h-8 rounded-xl ${themes[color]} flex items-center justify-center text-white mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
+        <Icon size={14} strokeWidth={3} />
       </div>
-    </Link>
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+      <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+      <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 opacity-60">{sub}</p>
+    </div>
   );
 }
 
 function DetailItem({ label, value, icon: Icon }) {
   return (
-    <div className="group">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-1.5 opacity-70">
-          <Icon className="w-3 h-3 text-indigo-500" strokeWidth={3} /> {label}
-        </p>
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2 px-1">
+        <Icon size={10} className="text-slate-300" />
+        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
       </div>
-      <p className="text-[13px] font-black text-slate-800 tracking-tight border-b-2 border-slate-50 group-hover:border-indigo-100 transition-all pb-1 inline-block uppercase italic">
+      <div className="px-4 py-2.5 bg-slate-50 border border-transparent rounded-xl text-[11px] font-black text-slate-800 uppercase tracking-tight shadow-inner">
         {value}
-      </p>
+      </div>
     </div>
   );
 }
 
-function SidebarLink({ icon: Icon, label, href, badge }) {
+function ShortcutLink({ icon: Icon, label, href, badge }) {
   return (
     <Link 
       href={href}
-      className="flex items-center justify-between p-2.5 rounded-xl text-slate-500 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all group border border-transparent hover:border-indigo-100/30"
+      className="flex items-center justify-between px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100/50 group"
     >
       <div className="flex items-center gap-3">
-        <Icon className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} />
-        <span className="font-black text-[11px] uppercase tracking-widest leading-none">{label}</span>
+        <Icon size={13} className="text-slate-400 group-hover:text-indigo-500" strokeWidth={2.5} />
+        <span className="font-black text-[10px] uppercase tracking-widest">{label}</span>
       </div>
       {badge ? (
-        <span className="bg-rose-50 text-rose-600 border border-rose-100/50 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">
-          {badge}
-        </span>
+        <span className="bg-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase">{badge}</span>
       ) : (
-        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-all" />
       )}
     </Link>
   );
