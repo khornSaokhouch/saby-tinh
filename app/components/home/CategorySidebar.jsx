@@ -30,15 +30,15 @@ const CategorySidebar = ({ categories = [] }) => {
       onMouseLeave={() => setHoveredCategory(null)}
     >
       {/* --- MAIN SIDEBAR (LIQUID GLASS) --- */}
-      <aside className="w-full backdrop-blur-2xl rounded-[32px] border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col h-[480px] z-20 relative overflow-hidden">
+      <aside className="w-full backdrop-blur-2xl rounded-[32px] border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col h-[400px] z-20 relative overflow-hidden">
         
-        <div className="p-5 pb-3">
+        <div className="p-4 pb-2.5">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center shadow-lg">
               <Layers className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Category</h3>
+              <h3 className="text-[13px] font-black text-slate-900 uppercase tracking-tight">Category</h3>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@ const CategorySidebar = ({ categories = [] }) => {
                   <Link 
                     href={`/category/${slugify(category.name)}`}
                     className={`
-                      group relative flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
+                      group relative flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
                       active:scale-95
                       ${hoveredCategory?.id === category.id 
                         ? 'bg-blue-600/10 text-blue-600 backdrop-blur-xl shadow-[0_10px_20px_rgba(37,99,235,0.08)] border border-blue-600/20' 
@@ -59,7 +59,7 @@ const CategorySidebar = ({ categories = [] }) => {
                       }
                     `}
                   >
-                    <span className="text-sm font-medium tracking-tight z-10">{category.name}</span>
+                    <span className="text-[13px] font-medium tracking-tight z-10">{category.name}</span>
                     <ChevronRight className={`w-4 h-4 transition-all duration-500 ${
                          hoveredCategory?.id === category.id ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
                     }`} />
@@ -75,7 +75,7 @@ const CategorySidebar = ({ categories = [] }) => {
         </nav>
 
         <div className="p-3 bg-white/30 backdrop-blur-md border-t border-white/40">
-          <Link href="/category" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-white/60 border border-white/80 text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] hover:bg-white hover:text-blue-600 transition-all shadow-sm active:scale-95 group">
+          <Link href="/category" className="flex items-center justify-center gap-2 w-full py-2.5 rounded-[14px] bg-white/60 border border-white/80 text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] hover:bg-white hover:text-blue-600 transition-all shadow-sm active:scale-95 group">
             Explore All Categories 
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -93,10 +93,10 @@ const CategorySidebar = ({ categories = [] }) => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 15, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute left-[calc(100%+12px)] top-0 h-full w-[280px] bg-white backdrop-blur-3xl border border-white/50 shadow-[20px_40px_80px_-15px_rgba(0,0,0,0.12)] rounded-[32px] z-30 p-1.5 flex flex-col"
+              className="absolute left-[calc(100%+12px)] top-0 h-full w-[260px] bg-white backdrop-blur-3xl border border-white/50 shadow-[20px_40px_80px_-15px_rgba(0,0,0,0.12)] rounded-[32px] z-30 p-1.5 flex flex-col"
             >
-              <div className="p-5 pb-3">
-                <h4 className="text-lg font-black text-slate-900 tracking-tighter leading-none uppercase truncate">{hoveredCategory.name}</h4>
+              <div className="p-4 pb-3">
+                <h4 className="text-base font-black text-slate-900 tracking-tighter leading-none uppercase truncate">{hoveredCategory.name}</h4>
               </div>
               
               <ul className="space-y-1 overflow-y-auto custom-scrollbar px-1 pb-3">
@@ -105,7 +105,7 @@ const CategorySidebar = ({ categories = [] }) => {
                     <Link 
                       href={`/products?category=${hoveredCategory.id}&type=${type.id}`}
                       className="
-                        group flex items-center justify-between p-3 rounded-2xl 
+                        group flex items-center justify-between p-2.5 rounded-xl 
                         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
                         border border-transparent
                         hover:bg-blue-600/10 hover:backdrop-blur-xl hover:border-blue-600/20
@@ -117,7 +117,7 @@ const CategorySidebar = ({ categories = [] }) => {
                         <span className="text-[10px] font-mono font-bold text-slate-300 group-hover:text-blue-400 transition-colors">
                           {String(idx + 1).padStart(2, '0')}
                         </span>
-                        <p className="text-sm font-medium text-slate-600 group-hover:text-blue-600 transition-colors truncate max-w-[170px]">
+                        <p className="text-[13px] font-medium text-slate-600 group-hover:text-blue-600 transition-colors truncate max-w-[160px]">
                           {type.name}
                         </p>
                       </div>
@@ -129,7 +129,7 @@ const CategorySidebar = ({ categories = [] }) => {
                 ))}
               </ul>
 
-              <div className="mt-auto m-1.5 p-3.5 bg-slate-900/90 backdrop-blur-2xl rounded-[24px] flex items-center justify-between shadow-2xl">
+              <div className="mt-auto m-1.5 p-3 bg-slate-900/90 backdrop-blur-2xl rounded-[20px] flex items-center justify-between shadow-2xl">
                 <div className="flex items-center gap-2">
                    <Activity className="w-3.5 h-3.5 text-blue-400" />
                    <span className="text-[9px] font-black text-white uppercase tracking-widest">Active Categories Types</span>

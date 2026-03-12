@@ -38,10 +38,10 @@ const BannerSwiper = ({ events }) => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="lg:col-span-9 h-[480px] bg-slate-100/50 backdrop-blur-md rounded-[32px] animate-pulse" />;
+  if (!mounted) return <div className="lg:col-span-9 h-[240px] sm:h-[320px] lg:h-[400px] bg-slate-100/50 backdrop-blur-md rounded-2xl lg:rounded-[32px] animate-pulse" />;
 
   return (
-    <section className="lg:col-span-9 rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/20 h-[480px] group/container relative">
+    <section className="lg:col-span-9 rounded-2xl lg:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/20 h-[240px] sm:h-[320px] lg:h-[400px] group/container relative">
       
       {events && events.length > 0 ? (
         <Swiper
@@ -77,7 +77,7 @@ const BannerSwiper = ({ events }) => {
                   className="w-full h-full object-cover" 
                 />
                 
-                <div className="absolute inset-0 z-20 flex flex-col justify-end p-10 lg:p-16 pb-20">
+                <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 sm:p-8 lg:p-12 pb-8 sm:pb-12 lg:pb-16">
                   <div className="max-w-2xl">
                     
                     {/* Featured Tag: Liquid Style */}
@@ -85,13 +85,13 @@ const BannerSwiper = ({ events }) => {
                       initial={{ opacity: 0, y: -15 }} 
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                      className="flex items-center gap-3 mb-6"
+                      className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6"
                     >
-                      <div className="bg-blue-500/20 backdrop-blur-xl border border-blue-500/30 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/10">
-                        <Zap className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Featured</span>
+                      <div className="bg-blue-500/20 backdrop-blur-xl border border-blue-500/30 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-blue-500/10">
+                        <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-400 fill-blue-400" />
+                        <span className="text-[9px] sm:text-[10px] font-black text-blue-400 uppercase tracking-widest">Featured</span>
                       </div>
-                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Live Node</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Live Node</span>
                     </motion.div>
 
                     {/* Title */}
@@ -100,7 +100,7 @@ const BannerSwiper = ({ events }) => {
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
                     >
-                        <h2 className="text-5xl lg:text-7xl font-black mb-5 tracking-tighter text-white uppercase leading-[0.85]">
+                        <h2 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-2 sm:mb-4 tracking-tighter text-white uppercase leading-[0.85]">
                             {event.name}
                         </h2>
                     </motion.div>
@@ -112,7 +112,7 @@ const BannerSwiper = ({ events }) => {
                         transition={{ delay: 0.3, duration: 1 }}
                         className="mb-10 max-w-lg"
                     >
-                        <p className="text-sm lg:text-base text-slate-300 font-medium leading-relaxed line-clamp-2 opacity-80">
+                        <p className="text-[11px] sm:text-sm lg:text-base text-slate-300 font-medium leading-relaxed line-clamp-2 opacity-80">
                             {event.description}
                         </p>
                     </motion.div>
@@ -124,16 +124,16 @@ const BannerSwiper = ({ events }) => {
                       transition={{ delay: 0.4, type: 'spring', damping: 20 }}
                     >
                       <Link href={`/event/${slugify(event.name)}`} className="
-                        group inline-flex items-center gap-4 px-10 py-4 
+                        group inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-2.5 sm:py-3.5 
                         bg-white/10 backdrop-blur-2xl border border-white/20
-                        text-white rounded-[20px] text-[11px] font-black uppercase tracking-[0.2em] 
+                        text-white rounded-xl sm:rounded-[18px] text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] 
                         transition-all duration-500 ease-[0.23,1,0.32,1]
                         hover:bg-white hover:text-slate-950 hover:shadow-[0_20px_40px_rgba(255,255,255,0.1)]
                         active:scale-95
                       ">
-                        <Terminal className="w-4.5 h-4.5" /> 
+                        <Terminal className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> 
                         Explore Now
-                        <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1.5 transition-transform duration-500" />
+                        <ArrowRight className="w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover:translate-x-1.5 transition-transform duration-500" />
                       </Link>
                     </motion.div>
 
@@ -144,12 +144,12 @@ const BannerSwiper = ({ events }) => {
           ))}
 
           {/* Liquid Glass Navigation Arrows */}
-          <div className="absolute bottom-12 right-12 z-30 flex gap-3 opacity-0 group-hover/container:opacity-100 transition-opacity duration-500">
-            <button className="custom-prev w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all duration-500 cursor-pointer active:scale-90 group shadow-2xl">
-              <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
+          <div className="absolute bottom-10 right-10 z-30 flex gap-3 opacity-0 group-hover/container:opacity-100 transition-opacity duration-500">
+            <button className="custom-prev w-12 h-12 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all duration-500 cursor-pointer active:scale-90 group shadow-2xl">
+              <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
             </button>
-            <button className="custom-next w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all duration-500 cursor-pointer active:scale-90 group shadow-2xl">
-              <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
+            <button className="custom-next w-12 h-12 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all duration-500 cursor-pointer active:scale-90 group shadow-2xl">
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
 

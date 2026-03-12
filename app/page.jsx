@@ -47,8 +47,8 @@ export default function HomePage() {
             <Navbar />
 
             {/* HERO SECTION */}
-            <main className="max-w-full mx-auto px-6 pt-28 pb-4">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch h-[500px]">
+            <main className="max-w-full mx-auto px-2 pt-20 pb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch h-[240px] sm:h-[320px] lg:h-[400px]">
                     <div className="lg:col-span-3 h-full hidden lg:block">
                         <CategorySidebar categories={categories} />
                     </div>
