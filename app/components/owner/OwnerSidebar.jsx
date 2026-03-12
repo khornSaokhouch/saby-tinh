@@ -7,10 +7,11 @@ import {
   LogOut, Sparkles, ChevronRight, BarChart3, Package, Building2, MapPin, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
   NotebookIcon, FileText, Layers, Ticket
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 const menuGroups = [
   {
@@ -18,6 +19,7 @@ const menuGroups = [
     items: [
       { name: 'Dashboard', href: '/owner/dashboard', icon: LayoutDashboard },
       { name: 'Analytics', href: '/owner/analytics', icon: BarChart3 },
+       { name: 'Reports', href: '/owner/reports', icon: FileText },
     ]
   },
   {
@@ -61,6 +63,7 @@ const menuGroups = [
 
 export default function OwnerSidebar({ onClose }) {
   const pathname = usePathname();
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const { logout } = useAuthStore();
   const { orders, fetchOrders } = useShopOrderStore();
 
@@ -78,12 +81,9 @@ export default function OwnerSidebar({ onClose }) {
   return (
     <aside className="h-full bg-white flex flex-col border-r border-slate-100 w-56 font-sans overflow-hidden">
       {/* --- BRANDING --- */}
-      <div className="px-5 py-5 border-b border-slate-50">
-        <Link href="/owner/dashboard" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-            <Sparkles size={16} className="text-white" fill="currentColor" />
-          </div>
-          <div className="flex flex-col">
+      <div className="px-5 py-4 border-b border-slate-50">
+        <Link href="/owner/dashboard" className="flex flex-col items-center justify-center gap-1.5 group">
+          <div className="flex flex-col items-center">
             <span className="text-[13px] font-black text-slate-900 tracking-tighter uppercase leading-none">
               Saby-Tinh
             </span>
@@ -151,16 +151,21 @@ export default function OwnerSidebar({ onClose }) {
         ))}
       </nav>
 
-      {/* --- FOOTER --- */}
       <div className="p-3 border-t border-slate-100">
         <button 
-          onClick={logout}
+          onClick={() => setConfirmLogout(true)}
           className="w-full flex items-center gap-2.5 px-3 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
         >
           <LogOut size={15} className="group-hover:text-rose-500 transition-colors" />
           <span className="text-[12px] font-semibold">Sign Out</span>
         </button>
       </div>
+
+      <LogoutConfirmModal 
+        isOpen={confirmLogout}
+        onClose={() => setConfirmLogout(false)}
+        onConfirm={logout}
+      />
     </aside>
   );
 }

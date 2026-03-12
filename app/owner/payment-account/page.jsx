@@ -28,11 +28,9 @@ export default function PaymentAccountsPage() {
 
   useEffect(() => {
     fetchPaymentAccounts();
-
     const interval = setInterval(() => {
       fetchPaymentAccounts();
-    }, 30000);
-
+    }, 60000);
     return () => clearInterval(interval);
   }, [fetchPaymentAccounts]);
 
@@ -46,8 +44,9 @@ export default function PaymentAccountsPage() {
     try {
       await savePaymentAccount({ ...data, id: selectedItem?.id });
       setIsFormOpen(false);
+      toast.success('Node synchronized');
     } catch (err) {
-      console.error(err);
+      toast.error('Sync failed');
     } finally {
       setIsActionLoading(false);
     }
@@ -58,169 +57,159 @@ export default function PaymentAccountsPage() {
     try {
       await deletePaymentAccount(id);
       setConfirmDeleteId(null);
-      toast.success('Financial node purged');
+      toast.success('Node purged');
     } catch (err) {
-      console.error(err);
-      toast.error('Failed to decommission account');
+      toast.error('Purge failed');
     } finally {
       setIsActionLoading(false);
     }
   };
 
+  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
   return (
-    <div className="space-y-6 pb-10 font-sans">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+      
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-indigo-600" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Financial Node Registry</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Financial Protocol</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Payment Hubs</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Payment <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-indigo-500">Accounts</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">Registry for {today}</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchPaymentAccounts()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
           <button 
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-md hover:bg-slate-800 transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={16} strokeWidth={2.5} /> Register Account
+            <Plus size={14} strokeWidth={3} /> New Registry
           </button>
         </div>
       </div>
 
       {/* --- METRICS --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard label="Total Nodes" value={paymentAccounts.length} icon={ShieldCheck} color="indigo" />
-        <MetricCard label="Active Status" value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" />
-        <MetricCard label="Currency Zones" value={new Set(paymentAccounts.map(a => a.currency)).size} icon={Globe} color="purple" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Financial Nodes" value={paymentAccounts.length} icon={ShieldCheck} color="indigo" />
+        <MetricCard label="Active Status" value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" subText="Online" />
+        <MetricCard label="Global Zones" value={new Set(paymentAccounts.map(a => a.currency)).size} icon={Globe} color="rose" />
       </div>
 
-      {/* --- REGISTRY TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search by Account or ID..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+      {/* --- LIST --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="relative w-full sm:w-64 group text-left">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
+              <input 
+                type="text" 
+                placeholder="Search financial IDs..." 
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 focus:bg-white focus:border-indigo-100 transition-all outline-none placeholder:text-slate-400"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="hidden sm:block flex-1" />
+            <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                {paymentAccounts.length} Nodes Verified
+            </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto no-scrollbar min-h-[400px]">
+        <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Node</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Type / ID</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Zone / Currency</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Account Node</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Type / Mapping</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Zone</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {loading ? (
+              {loading && paymentAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
+                  <td colSpan="4" className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                        <RefreshCw className="animate-spin text-indigo-500" size={24} />
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Vault...</span>
+                    </div>
                   </td>
                 </tr>
               ) : filteredAccounts.map((acc, idx) => (
                 <motion.tr 
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
-                  key={acc.id} className="group hover:bg-slate-50/30 transition-colors"
+                  key={acc.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.02 }}
+                  className="group hover:bg-slate-50/30 transition-colors"
                 >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
+                  <td className="px-6 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-slate-900 group-hover:text-white transition-all">
                          {acc.type_value?.toLowerCase().includes('bakong') || acc.account_name?.toLowerCase().includes('bakong') ? (
-                           <img src="/img/bakong.png" alt="Bakong" className="w-8 h-8 object-contain" />
+                           <img src="/img/bakong.png" alt="Bakong" className="w-6 h-6 object-contain" />
                          ) : (
-                           <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs italic">
-                             {acc.type_value?.substring(0, 2).toUpperCase()}
+                           <div className="font-black text-[10px] uppercase italic">
+                             {acc.type_value?.substring(0, 2) || 'CC'}
                            </div>
                          )}
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-[13px] font-bold text-slate-900">{acc.account_name}</span>
-                        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Node ID: {acc.account_id}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[11px] font-black text-slate-900 truncate uppercase tracking-tight">{acc.account_name}</span>
+                        <div className={`inline-flex items-center gap-1.5 mt-0.5 text-[8px] font-black uppercase tracking-widest ${acc.status ? 'text-emerald-500' : 'text-slate-300'}`}>
+                           <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500' : 'bg-slate-300'}`} /> {acc.status ? 'Live' : 'Locked'}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col">
-                        <span className="text-[13px] font-bold text-slate-700">{acc.type_value}</span>
-                        <span className="text-[11px] font-medium text-indigo-600/60 tracking-wider whitespace-nowrap">{acc.account_id}</span>
+                  <td className="px-6 py-3.5">
+                    <div className="flex flex-col min-w-0">
+                        <span className="text-[11px] font-black text-slate-700 uppercase truncate">{acc.type_value}</span>
+                        <span className="text-[9px] font-black text-slate-300 tracking-tighter uppercase truncate">{acc.account_id}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-bold text-slate-500 uppercase">{acc.account_city}</span>
-                        <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[10px] font-bold text-slate-400">{acc.currency}</span>
-                    </div>
+                  <td className="px-6 py-3.5 text-center">
+                     <div className="flex items-center justify-center gap-2">
+                        <span className="text-[11px] font-black text-slate-500 uppercase">{acc.account_city}</span>
+                        <span className="px-1.5 py-0.5 bg-slate-50 border border-slate-100 rounded text-[8px] font-black text-slate-400">{acc.currency}</span>
+                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider
-                      ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
-                      <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                      {acc.status ? 'Active' : 'Offline'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-6 py-3.5 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button 
                         onClick={() => { setSelectedItem(acc); setIsFormOpen(true); }} 
-                        className="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+                        className="p-1.5 bg-indigo-500 text-white hover:bg-indigo-600 rounded-lg shadow-sm active:scale-95 transition-all"
                       >
-                        <Edit3 size={14} strokeWidth={2.5} />
+                        <Edit3 size={14} strokeWidth={3} />
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>
                         {confirmDeleteId === acc.id ? (
-                          <motion.div
-                            key="confirm-delete"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className="flex items-center gap-1"
-                          >
-                            <button
-                              onClick={() => handleDelete(acc.id)}
-                              disabled={isActionLoading}
-                              className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow-sm disabled:opacity-50"
-                            >
-                              {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} strokeWidth={2.5} />}
+                          <motion.div key="confirm" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="flex items-center gap-1">
+                            <button onClick={() => handleDelete(acc.id)} className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm">
+                              <Check size={12} strokeWidth={3} />
                             </button>
-                            <button
-                              onClick={() => setConfirmDeleteId(null)}
-                              className="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all shadow-sm"
-                            >
-                              <X size={12} strokeWidth={2.5} />
+                            <button onClick={() => setConfirmDeleteId(null)} className="p-1.5 bg-slate-100 text-slate-400 rounded-lg">
+                              <X size={12} strokeWidth={3} />
                             </button>
                           </motion.div>
                         ) : (
-                          <motion.button
-                            key="delete-button"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            onClick={() => setConfirmDeleteId(acc.id)}
-                            className="w-8 h-8 rounded-xl bg-rose-500 flex items-center justify-center text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-100"
-                          >
-                            <Trash2 size={14} strokeWidth={2.5} />
-                          </motion.button>
+                          <button onClick={() => setConfirmDeleteId(acc.id)} className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95">
+                            <Trash2 size={14} strokeWidth={3} />
+                          </button>
                         )}
                       </AnimatePresence>
                     </div>
@@ -239,23 +228,29 @@ export default function PaymentAccountsPage() {
         onSubmit={handleSave}
         isSubmitting={isActionLoading}
       />
-
     </div>
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color }) {
+function MetricCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: "bg-indigo-50 text-indigo-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    purple: "bg-purple-50 text-purple-600"
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    rose: "bg-rose-500 shadow-rose-100",
   };
   return (
-    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
-      <div className={`p-2.5 rounded-xl w-fit mb-4 ${themes[color]}`}><Icon size={18} /></div>
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-      <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{value}</h3>
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-all opacity-40" />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+        <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110 mb-3 relative z-10`}>
+            <Icon size={14} strokeWidth={3} />
+        </div>
+        <div className="relative z-10">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+            <div className="flex items-baseline gap-2">
+                <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+                {subText && <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">{subText}</span>}
+            </div>
+        </div>
+        <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

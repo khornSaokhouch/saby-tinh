@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
   const { user, fetchProfile } = useUserStore();
@@ -16,6 +17,8 @@ export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
@@ -183,11 +186,11 @@ export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute right-0 mt-3 w-60 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100 p-2 z-[100] overflow-hidden"
+                  className="absolute right-0 mt-3 w-52 bg-white rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100 p-1.5 z-[100] overflow-hidden"
                 >
-                  <div className="px-3 py-3 border-b border-slate-50 mb-1">
-                    <p className="text-xs font-semibold text-slate-400">Signed in as</p>
-                    <p className="text-sm font-bold text-slate-900 truncate mt-0.5">{user?.email}</p>
+                  <div className="px-3 py-3 border-b border-slate-50 mb-1.5 mx-0.5">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Auth_Identity</p>
+                    <p className="text-[11px] font-black text-slate-900 truncate mt-1 lowercase tracking-tight">{user?.email}</p>
                   </div>
 
                   <DropdownItem 
@@ -206,17 +209,16 @@ export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
                   <div className="h-px bg-slate-100 my-1 mx-2" />
                   
                   <button
-                    onClick={async () => {
+                    onClick={() => {
                       setIsDropdownOpen(false);
-                      await logout();
-                      router.push('/auth/login');
+                      setIsLogoutModalOpen(true);
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
+                    className="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-slate-50 group-hover:bg-rose-100 flex items-center justify-center transition-colors">
-                      <LogOut size={16} />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-rose-100 flex items-center justify-center transition-colors">
+                      <LogOut size={14} strokeWidth={3} />
                     </div>
-                    <span className="text-sm font-semibold">Sign Out</span>
+                    <span className="text-[11px] font-black uppercase tracking-tight">Sign Out</span>
                   </button>
                 </motion.div>
               )}
@@ -224,6 +226,17 @@ export default function OwnerNavbar({ onMenuClick, title = "Dashboard" }) {
           </div>
         </div>
       </div>
+      
+      <LogoutConfirmModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={async () => {
+          setIsLoggingOut(true);
+          await logout();
+          router.push('/auth/login');
+        }}
+        isLoggingOut={isLoggingOut}
+      />
     </header>
   );
 }
@@ -233,12 +246,12 @@ function DropdownItem({ href, icon: Icon, label, onClick }) {
     <Link 
       href={href} 
       onClick={onClick}
-      className="flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all group"
+      className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all group"
     >
-      <div className="w-8 h-8 rounded-lg bg-slate-50 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
-        <Icon size={16} />
+      <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-indigo-100 flex items-center justify-center transition-colors">
+        <Icon size={14} strokeWidth={3} />
       </div>
-      <span className="text-sm font-semibold">{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-tight">{label}</span>
     </Link>
   );
 }

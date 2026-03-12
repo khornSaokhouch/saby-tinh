@@ -16,52 +16,38 @@ import { useUserStore } from '@/stores/userStore';
 // --- HELPERS ---
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function StatusBadge({ status }) {
-  const config = {
-    Shipped:    { style: 'bg-blue-50 text-blue-600 border-blue-100', Icon: Truck },
-    Processing: { style: 'bg-indigo-50 text-indigo-600 border-indigo-100', Icon: Clock },
-    Pending:    { style: 'bg-orange-50 text-orange-600 border-orange-100', Icon: Clock },
-    Cancelled:  { style: 'bg-slate-100 text-slate-500 border-slate-200', Icon: XCircle },
-    Delivered:  { style: 'bg-emerald-50 text-emerald-600 border-emerald-100', Icon: CheckCircle2 },
-  };
-  const { style, Icon } = config[status] || config.Pending;
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest ${style}`}>
-      <Icon size={9} strokeWidth={2.5} />{status}
-    </span>
-  );
-}
-
 function MetricCard({ label, value, sub, icon: Icon, color, loading, trend }) {
-  const palette = {
-    indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
-    emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100' },
-    rose:    { bg: 'bg-rose-50',    text: 'text-rose-600',    border: 'border-rose-100' },
-    amber:   { bg: 'bg-amber-50',   text: 'text-amber-600',   border: 'border-amber-100' },
-    slate:   { bg: 'bg-slate-100',  text: 'text-slate-600',   border: 'border-slate-200' },
+  const themes = {
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    amber: "bg-amber-500 shadow-amber-100",
+    rose: "bg-rose-500 shadow-rose-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    slate: "bg-slate-700 shadow-slate-100",
   };
-  const p = palette[color] || palette.indigo;
+
   return (
-    <div className="bg-white p-5 rounded-[22px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-      <div className={`p-2.5 rounded-xl w-fit mb-4 border ${p.bg} ${p.text} ${p.border}`}>
-        <Icon size={17} strokeWidth={2.5} />
-      </div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1">{label}</p>
-      {loading ? (
-        <div className="h-7 w-24 bg-slate-100 rounded-lg animate-pulse" />
-      ) : (
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <h3 className="text-2xl font-black text-slate-900 tracking-tighter">{value}</h3>
-          {sub && <span className="text-[10px] font-bold text-slate-400">{sub}</span>}
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+        <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110 mb-3 relative z-10`}>
+            <Icon size={14} strokeWidth={3} />
         </div>
-      )}
-      {trend !== undefined && !loading && (
-        <div className={`absolute top-5 right-5 flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full ${trend >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-          {trend >= 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-          {Math.abs(trend)}%
+        <div className="relative z-10">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+            {loading ? (
+                <div className="h-6 w-16 bg-slate-50 rounded animate-pulse" />
+            ) : (
+                <div className="flex items-baseline gap-2">
+                    <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+                    {sub && <span className="text-[9px] font-bold text-slate-300">{sub}</span>}
+                </div>
+            )}
         </div>
-      )}
-      <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-slate-50/80 rounded-full group-hover:scale-150 transition-all duration-700" />
+        {trend !== undefined && !loading && (
+            <div className={`absolute top-4 right-4 flex items-center gap-0.5 text-[8px] font-black px-1.5 py-0.5 rounded-md ${trend >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                {trend >= 0 ? <ArrowUpRight size={8} strokeWidth={3} /> : <ArrowDownRight size={8} strokeWidth={3} />}
+                {Math.abs(trend)}%
+            </div>
+        )}
+        <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }
@@ -69,19 +55,19 @@ function MetricCard({ label, value, sub, icon: Icon, color, loading, trend }) {
 // Horizontal bar chart
 function HBarChart({ data, max }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {data.map((item, i) => (
         <div key={i} className="flex items-center gap-3">
-          <span className="text-[10px] font-bold text-slate-500 w-20 truncate shrink-0 text-right">{item.label}</span>
-          <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+          <span className="text-[9px] font-black text-slate-400 w-16 truncate shrink-0 text-right uppercase tracking-tighter">{item.label}</span>
+          <div className="flex-1 h-1.5 bg-slate-50 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${max > 0 ? (item.value / max) * 100 : 0}%` }}
-              transition={{ duration: 0.7, delay: i * 0.08 }}
+              transition={{ duration: 0.7, delay: i * 0.05 }}
               className={`h-full rounded-full ${item.color || 'bg-indigo-500'}`}
             />
           </div>
-          <span className="text-[10px] font-black text-slate-700 w-14 shrink-0">{item.display ?? item.value}</span>
+          <span className="text-[9px] font-black text-slate-900 w-10 shrink-0 tabular-nums">{item.display ?? item.value}</span>
         </div>
       ))}
     </div>
@@ -166,10 +152,10 @@ export default function OwnerAnalyticsPage() {
       const s = o.order_status?.status || 'Pending';
       map[s] = (map[s] || 0) + 1;
     });
-    const colors = { Pending: 'bg-orange-400', Processing: 'bg-indigo-400', Shipped: 'bg-blue-400', Delivered: 'bg-emerald-400', Cancelled: 'bg-slate-400' };
+    const colors = { Pending: 'bg-amber-400', Processing: 'bg-indigo-400', Shipped: 'bg-blue-400', Delivered: 'bg-emerald-400', Cancelled: 'bg-slate-300' };
     return Object.entries(map)
       .sort((a, b) => b[1] - a[1])
-      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-300' }));
+      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-200' }));
   }, [filteredOrders]);
 
   const maxStatus = Math.max(...statusBreakdown.map(s => s.value), 1);
@@ -181,10 +167,10 @@ export default function OwnerAnalyticsPage() {
       const s = o.payment_status?.status || 'Pending';
       map[s] = (map[s] || 0) + 1;
     });
-    const colors = { Success: 'bg-emerald-400', Pending: 'bg-orange-400', Failed: 'bg-rose-400', Refunded: 'bg-slate-400' };
+    const colors = { Success: 'bg-emerald-400', Pending: 'bg-amber-400', Failed: 'bg-rose-400', Refunded: 'bg-slate-300' };
     return Object.entries(map)
       .sort((a, b) => b[1] - a[1])
-      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-300' }));
+      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-200' }));
   }, [filteredOrders]);
 
   const maxPayment = Math.max(...paymentBreakdown.map(p => p.value), 1);
@@ -202,7 +188,7 @@ export default function OwnerAnalyticsPage() {
         map[id].units += parseInt(line.quantity || 1);
       });
     });
-    return Object.values(map).sort((a, b) => b.revenue - a.revenue).slice(0, 6);
+    return Object.values(map).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
   }, [filteredOrders]);
 
   const maxProductRev = Math.max(...topProducts.map(p => p.revenue), 1);
@@ -214,228 +200,219 @@ export default function OwnerAnalyticsPage() {
       const cat = p.category?.name || 'Uncategorized';
       map[cat] = (map[cat] || 0) + 1;
     });
-    const palette = ['bg-indigo-400','bg-rose-400','bg-amber-400','bg-emerald-400','bg-purple-400','bg-blue-400'];
+    const palette = ['bg-indigo-500','bg-rose-500','bg-amber-500','bg-emerald-500','bg-blue-500'];
     return Object.entries(map)
       .sort((a,b) => b[1]-a[1])
-      .slice(0,6)
+      .slice(0,5)
       .map(([label, value], i) => ({ label, value, color: palette[i % palette.length] }));
   }, [products]);
 
   const maxCat = Math.max(...categoryBreakdown.map(c => c.value), 1);
 
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
-    <div className="space-y-6 pb-10 font-sans">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
 
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Data Intelligence</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Intelligence</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Analytics</h1>
-          <p className="text-[11px] font-medium text-slate-400">{today}</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">Analytics</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">Insights for {today}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleRefresh}
-            className="p-3 bg-white border border-slate-200 text-slate-500 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          {/* Period Selector */}
-          <div className="relative">
+          
+          <div className="relative group">
             <select
               value={period}
               onChange={e => setPeriod(e.target.value)}
-              className="appearance-none bg-white border border-slate-200 text-slate-700 font-bold text-[11px] pl-4 pr-9 py-3 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 cursor-pointer shadow-sm"
+              className="appearance-none bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest pl-4 pr-8 py-2 rounded-lg outline-none cursor-pointer shadow-md hover:bg-slate-800 transition-all"
             >
               {['Last 7 Days', 'Last 30 Days', 'This Month', 'This Year'].map(p => (
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
-            <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" />
           </div>
         </div>
       </div>
 
       {/* --- KPI CARDS --- */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <MetricCard label="Total Revenue" value={`$${kpis.revenue.toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}`} icon={DollarSign} color="indigo" loading={loading} />
-        <MetricCard label="Total Orders" value={kpis.count} icon={ShoppingCart} color="amber" loading={loading} />
-        <MetricCard label="Avg. Order Value" value={`$${kpis.avg.toFixed(2)}`} icon={TrendingUp} color="emerald" loading={loading} />
-        <MetricCard label="Paid Orders" value={kpis.paid} icon={CheckCircle2} color="slate" loading={loading} />
-        <MetricCard label="Pending Orders" value={kpis.pending} icon={Clock} color="rose" loading={loading} />
+        <MetricCard label="Revenue" value={`$${kpis.revenue.toLocaleString(undefined, {maximumFractionDigits:0})}`} icon={DollarSign} color="indigo" loading={loading} />
+        <MetricCard label="Orders" value={kpis.count} icon={ShoppingCart} color="amber" loading={loading} />
+        <MetricCard label="Average" value={`$${kpis.avg.toFixed(0)}`} icon={TrendingUp} color="emerald" loading={loading} />
+        <MetricCard label="Paid" value={kpis.paid} icon={CheckCircle2} color="slate" loading={loading} />
+        <MetricCard label="Pending" value={kpis.pending} icon={Clock} color="rose" loading={loading} />
       </div>
 
-      {/* --- REVENUE & ORDER CHARTS --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* Revenue Bar Chart */}
-        <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl"><DollarSign size={15}/></div>
-              <div>
-                <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Monthly Revenue</h3>
-                <p className="text-[10px] text-slate-400 mt-0.5">Order totals per month</p>
-              </div>
-            </div>
-            <span className="text-lg font-black text-slate-900 tracking-tighter">${kpis.revenue.toLocaleString(undefined,{maximumFractionDigits:0})}</span>
-          </div>
-          {loading ? (
-            <div className="h-36 bg-slate-50 rounded-2xl animate-pulse" />
-          ) : (
-            <div className="h-36 flex items-end gap-1">
-              {monthlyRevenue.map((v, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                  <div className="relative w-full">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${Math.max((v / maxMonthRev) * 128, v > 0 ? 6 : 2)}px` }}
-                      transition={{ duration: 0.6, delay: i * 0.04 }}
-                      className="w-full bg-indigo-100 hover:bg-indigo-500 transition-colors rounded-t-md cursor-pointer"
-                    />
-                    {v > 0 && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[7px] px-1.5 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                        ${v.toFixed(0)}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-[7px] font-bold text-slate-400 uppercase">{MONTHS[i]}</span>
+      {/* --- CHARTS --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        
+        {/* Revenue Performance */}
+        <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-5 flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><DollarSign size={14} strokeWidth={3}/></div>
+                    <div className="text-left">
+                        <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Monthly Revenue</h3>
+                        <p className="text-[9px] font-bold text-slate-300 mt-1 uppercase">Cycle distribution</p>
+                    </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Order Count Chart */}
-        <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-50 text-amber-600 rounded-xl"><ShoppingCart size={15}/></div>
-              <div>
-                <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Monthly Orders</h3>
-                <p className="text-[10px] text-slate-400 mt-0.5">Order count per month</p>
-              </div>
-            </div>
-            <span className="text-lg font-black text-slate-900 tracking-tighter">{kpis.count}</span>
-          </div>
-          {loading ? (
-            <div className="h-36 bg-slate-50 rounded-2xl animate-pulse" />
-          ) : (
-            <div className="h-36 flex items-end gap-1">
-              {monthlyOrders.map((v, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                  <div className="relative w-full">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${Math.max((v / maxMonthOrd) * 128, v > 0 ? 6 : 2)}px` }}
-                      transition={{ duration: 0.6, delay: i * 0.04 }}
-                      className="w-full bg-amber-100 hover:bg-amber-400 transition-colors rounded-t-md cursor-pointer"
-                    />
-                    {v > 0 && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[7px] px-1.5 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                        {v} orders
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-[7px] font-bold text-slate-400 uppercase">{MONTHS[i]}</span>
+                <div className="text-right">
+                    <span className="text-xl font-black text-slate-900 tracking-tighter">${kpis.revenue.toLocaleString(undefined,{maximumFractionDigits:0})}</span>
                 </div>
-              ))}
             </div>
-          )}
+            {loading ? (
+                <div className="h-28 bg-slate-50 rounded-xl animate-pulse" />
+            ) : (
+                <div className="h-28 flex items-end gap-1 px-1">
+                    {monthlyRevenue.map((v, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
+                            <div className="relative w-full">
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${Math.max((v / maxMonthRev) * 100, v > 0 ? 5 : 2)}px` }}
+                                    transition={{ duration: 0.6, delay: i * 0.03 }}
+                                    className="w-full bg-indigo-100 group-hover:bg-indigo-500 transition-all rounded-t-md"
+                                />
+                            </div>
+                            <span className="text-[7px] font-black text-slate-300 uppercase tracking-tighter">{MONTHS[i][0]}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+
+        {/* Order Frequency */}
+        <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-5 flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><ShoppingCart size={14} strokeWidth={3}/></div>
+                    <div className="text-left">
+                        <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Order Velocity</h3>
+                        <p className="text-[9px] font-bold text-slate-300 mt-1 uppercase">Volume per cycle</p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <span className="text-xl font-black text-slate-900 tracking-tighter">{kpis.count}</span>
+                </div>
+            </div>
+            {loading ? (
+                <div className="h-28 bg-slate-50 rounded-xl animate-pulse" />
+            ) : (
+                <div className="h-28 flex items-end gap-1 px-1">
+                    {monthlyOrders.map((v, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
+                            <div className="relative w-full">
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${Math.max((v / maxMonthOrd) * 100, v > 0 ? 5 : 2)}px` }}
+                                    transition={{ duration: 0.6, delay: i * 0.03 }}
+                                    className="w-full bg-amber-100 group-hover:bg-amber-400 transition-all rounded-t-md"
+                                />
+                            </div>
+                            <span className="text-[7px] font-black text-slate-300 uppercase tracking-tighter">{MONTHS[i][0]}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
       </div>
 
-      {/* --- BREAKDOWN ROW --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* --- MULTI-METRIC ROW --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Order Status Breakdown */}
-        <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl"><BarChart3 size={15}/></div>
-            <div>
-              <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Order Status</h3>
-              <p className="text-[10px] text-slate-400 mt-0.5">Distribution by status</p>
+        {/* Status Heatmap */}
+        <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-5">
+            <div className="flex items-center gap-2.5 mb-6">
+                <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><BarChart3 size={12} strokeWidth={3}/></div>
+                <div className="text-left">
+                    <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Order Status</h3>
+                    <p className="text-[8px] font-black text-slate-300 mt-1 uppercase tracking-tighter">Fulfillment breakdown</p>
+                </div>
             </div>
-          </div>
-          {loading ? (
-            <div className="space-y-3">{[...Array(4)].map((_,i) => <div key={i} className="h-4 bg-slate-100 rounded animate-pulse" />)}</div>
-          ) : statusBreakdown.length > 0 ? (
-            <HBarChart data={statusBreakdown} max={maxStatus} />
-          ) : (
-            <p className="text-[11px] text-slate-400 font-medium text-center py-6">No orders found</p>
-          )}
+            {loading ? (
+                <div className="space-y-2">{[...Array(4)].map((_,i) => <div key={i} className="h-3 bg-slate-50 rounded animate-pulse" />)}</div>
+            ) : statusBreakdown.length > 0 ? (
+                <HBarChart data={statusBreakdown} max={maxStatus} />
+            ) : (
+                <p className="text-[10px] text-slate-300 font-black uppercase text-center py-4">No data available</p>
+            )}
         </div>
 
-        {/* Payment Status Breakdown */}
-        <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={15}/></div>
-            <div>
-              <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Payment Status</h3>
-              <p className="text-[10px] text-slate-400 mt-0.5">Distribution by payment</p>
+        {/* Payment Health */}
+        <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-5">
+            <div className="flex items-center gap-2.5 mb-6">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 size={12} strokeWidth={3}/></div>
+                <div className="text-left">
+                    <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Financials</h3>
+                    <p className="text-[8px] font-black text-slate-300 mt-1 uppercase tracking-tighter">Payment success rate</p>
+                </div>
             </div>
-          </div>
-          {loading ? (
-            <div className="space-y-3">{[...Array(3)].map((_,i) => <div key={i} className="h-4 bg-slate-100 rounded animate-pulse" />)}</div>
-          ) : paymentBreakdown.length > 0 ? (
-            <HBarChart data={paymentBreakdown} max={maxPayment} />
-          ) : (
-            <p className="text-[11px] text-slate-400 font-medium text-center py-6">No data</p>
-          )}
+            {loading ? (
+                <div className="space-y-2">{[...Array(3)].map((_,i) => <div key={i} className="h-3 bg-slate-50 rounded animate-pulse" />)}</div>
+            ) : paymentBreakdown.length > 0 ? (
+                <HBarChart data={paymentBreakdown} max={maxPayment} />
+            ) : (
+                <p className="text-[10px] text-slate-300 font-black uppercase text-center py-4">No data available</p>
+            )}
         </div>
 
-        {/* Product by Category */}
-        <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl"><Layers size={15}/></div>
-            <div>
-              <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">By Category</h3>
-              <p className="text-[10px] text-slate-400 mt-0.5">Product count per category</p>
+        {/* Category Focus */}
+        <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-5">
+            <div className="flex items-center gap-2.5 mb-6">
+                <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><Layers size={12} strokeWidth={3}/></div>
+                <div className="text-left">
+                    <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Stock Density</h3>
+                    <p className="text-[8px] font-black text-slate-300 mt-1 uppercase tracking-tighter">Volume by category</p>
+                </div>
             </div>
-          </div>
-          {productsLoading ? (
-            <div className="space-y-3">{[...Array(4)].map((_,i) => <div key={i} className="h-4 bg-slate-100 rounded animate-pulse" />)}</div>
-          ) : categoryBreakdown.length > 0 ? (
-            <HBarChart data={categoryBreakdown} max={maxCat} />
-          ) : (
-            <p className="text-[11px] text-slate-400 font-medium text-center py-6">No products</p>
-          )}
+            {productsLoading ? (
+                <div className="space-y-2">{[...Array(4)].map((_,i) => <div key={i} className="h-3 bg-slate-50 rounded animate-pulse" />)}</div>
+            ) : categoryBreakdown.length > 0 ? (
+                <HBarChart data={categoryBreakdown} max={maxCat} />
+            ) : (
+                <p className="text-[10px] text-slate-300 font-black uppercase text-center py-4">No data available</p>
+            )}
         </div>
       </div>
 
-      {/* --- TOP PRODUCTS --- */}
-      <div className="bg-white rounded-[22px] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-50 flex items-center gap-3">
-          <div className="p-2 bg-rose-50 text-rose-600 rounded-xl"><Star size={15}/></div>
-          <div>
-            <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Top Products by Revenue</h3>
-            <p className="text-[10px] text-slate-400 mt-0.5">Best performing products in selected period</p>
+      {/* --- TOP PERFORMANCE --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><Star size={14} strokeWidth={3}/></div>
+          <div className="text-left">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Top Performance</h3>
+            <p className="text-[9px] font-bold text-slate-300 mt-1 uppercase">Best sellers by revenue share</p>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Product</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Units Sold</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revenue</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Share</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product identity</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Efficiency</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Revenue</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Market share</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                [...Array(4)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={5} className="px-5 py-3">
-                      <div className="h-8 bg-slate-100 rounded-xl animate-pulse" />
-                    </td>
-                  </tr>
+                [...Array(3)].map((_, i) => (
+                  <tr key={i}><td colSpan={4} className="px-6 py-4"><div className="h-10 bg-slate-50 rounded-xl animate-pulse" /></td></tr>
                 ))
               ) : topProducts.length > 0 ? topProducts.map(({ product, revenue, units }, i) => {
                 const img = product?.images?.find(x => x.is_primary === 1)?.image || product?.images?.[0]?.image;
@@ -443,55 +420,50 @@ export default function OwnerAnalyticsPage() {
                 return (
                   <motion.tr
                     key={product.id}
-                    initial={{ opacity: 0, y: 6 }}
+                    initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="group hover:bg-slate-50/50 transition-colors"
+                    transition={{ delay: i * 0.03 }}
+                    className="group hover:bg-slate-50/30 transition-colors"
                   >
-                    <td className="px-5 py-4">
+                    <td className="px-6 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl overflow-hidden bg-slate-100 border border-white shadow-sm flex items-center justify-center shrink-0">
-                          {img ? <img src={img} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon size={13} className="text-slate-300" />}
+                        <div className="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                          {img ? <img src={img} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-slate-200" />}
                         </div>
-                        <div>
-                          <p className="text-[12px] font-bold text-slate-900 leading-tight line-clamp-1">{product.name}</p>
-                          <p className="text-[10px] text-slate-400 font-medium">ID: {product.id}</p>
+                        <div className="flex flex-col min-w-0">
+                          <p className="text-[11px] font-black text-slate-900 truncate tracking-tight uppercase leading-tight">{product.name}</p>
+                          <p className="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">{product.category?.name || 'GENERIC'}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
-                        {product.category?.name || '—'}
-                      </span>
+                    <td className="px-4 py-3.5">
+                        <div className="flex flex-col">
+                            <span className="text-[11px] font-black text-slate-700">{units} UNITS</span>
+                            <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Fulfillment</span>
+                        </div>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-[13px] font-black text-slate-800">{units}</span>
+                    <td className="px-4 py-3.5 text-right">
+                      <span className="text-[12px] font-black text-slate-900 tracking-tight">${revenue.toLocaleString(undefined,{maximumFractionDigits:0})}</span>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className="text-[13px] font-black text-slate-900">${revenue.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 h-1.5 bg-slate-50 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.6, delay: i * 0.06 }}
-                            className="h-full bg-rose-400 rounded-full"
+                            transition={{ duration: 0.6, delay: i * 0.05 }}
+                            className="h-full bg-orange-400 rounded-full"
                           />
                         </div>
-                        <span className="text-[10px] font-black text-slate-500 w-9">{pct}%</span>
+                        <span className="text-[9px] font-black text-slate-400 w-8 tabular-nums">{pct}%</span>
                       </div>
                     </td>
                   </motion.tr>
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} className="px-5 py-16 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <Package size={32} className="text-slate-200" />
-                      <p className="text-[12px] font-bold text-slate-400">No sales data for this period</p>
-                    </div>
+                  <td colSpan={4} className="py-16 text-center">
+                    <p className="text-[10px] text-slate-300 font-black uppercase">Insufficient data patterns</p>
                   </td>
                 </tr>
               )}
@@ -499,7 +471,6 @@ export default function OwnerAnalyticsPage() {
           </table>
         </div>
       </div>
-
     </div>
   );
 }

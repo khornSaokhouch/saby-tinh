@@ -18,11 +18,9 @@ export default function OwnerAddressesPage() {
 
   useEffect(() => {
     fetchUserAddresses();
-
     const interval = setInterval(() => {
       fetchUserAddresses();
-    }, 30000);
-
+    }, 60000);
     return () => clearInterval(interval);
   }, [fetchUserAddresses]);
 
@@ -42,194 +40,173 @@ export default function OwnerAddressesPage() {
     });
   }, [userAddresses, searchTerm, authUser]);
 
+  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
   return (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
-      {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-indigo-600" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address Directory</span>
+      {/* --- HEADER --- */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Geo Protocol</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Addresses</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            Registry <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">Addresses</span>
+          </h1>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">Directory for {today}</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => fetchUserAddresses()}
-            className="p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
-            title="Refresh Data"
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
 
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm group">
-            <Download size={16} className="group-hover:text-indigo-600 transition-colors" /> 
-            <span className="group-hover:text-slate-900 transition-colors">Export Addresses</span>
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-md hover:bg-slate-800 transition-all active:scale-95 uppercase tracking-widest">
+            <Download size={14} strokeWidth={3} /> Export Data
           </button>
         </div>
       </div>
 
-      {/* --- STATS OVERVIEW --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <MetricCard
-          label="My Addresses"
-          value={userAddresses.length}
-          trend="+8%"
-          icon={LinkIcon}
-        />
-        <MetricCard
-          label="Unique Locations"
-          value={[...new Set(userAddresses.map(m => m.id))].length}
-          trend="+5.2%"
-          icon={MapIcon}
-        />
-        <MetricCard
-          label="Coverage"
-          value={`${[...new Set(userAddresses.map(m => m.province))].length} Prov.`}
-          trend="+1.2%"
-          icon={Users}
-        />
+      {/* --- METRICS --- */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Saved Nodes" value={userAddresses.length} icon={LinkIcon} color="indigo" />
+        <MetricCard label="Unique Hubs" value={[...new Set(userAddresses.map(m => m.id))].length} icon={MapIcon} color="emerald" />
+        <MetricCard label="Coverage" value={`${[...new Set(userAddresses.map(m => m.province))].length} Prov.`} icon={Globe} color="rose" />
       </div>
 
-      {/* --- ADDRESSES TABLE --- */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+      {/* --- ADDRESSES LIST --- */}
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         
-        {/* Table Controls */}
-        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Filter addresses..." 
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none placeholder:text-slate-400"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        {/* Toolbar */}
+        <div className="p-4 border-b border-slate-50 bg-slate-50/20">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="relative w-full sm:w-64 group text-left">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
+              <input 
+                type="text" 
+                placeholder="Search address strings..." 
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 focus:bg-white focus:border-indigo-100 transition-all outline-none placeholder:text-slate-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="hidden sm:block flex-1" />
+            <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <ShieldCheck size={12} className="text-emerald-500" /> Integrity Verified
+            </div>
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 text-slate-500 hover:text-indigo-600 transition-colors group">
-            <Filter size={18} className="group-hover:scale-110 transition-transform" />
-            <span className="text-sm font-bold">Filters</span>
-          </button>
         </div>
 
-        {/* Table Content */}
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">User</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address Details</th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Country</th>
-                <th className="px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Profile Identity</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Address Descriptor</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Zone</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Activity</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {loading ? (
-                 <tr><td colSpan="4" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
-                   <div className="flex flex-col items-center gap-4">
-                     <Loader2 className="animate-spin text-indigo-500" size={32} />
-                     Loading addresses...
+              {loading && userAddresses.length === 0 ? (
+                 <tr><td colSpan="4" className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                   <div className="flex flex-col items-center gap-3">
+                     <RefreshCw className="animate-spin text-indigo-500" size={24} />
+                     Scanning Registry...
                    </div>
                  </td></tr>
-              ) : error ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center">
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-xs font-bold border border-rose-100">
-                      <ShieldAlert size={14} /> Error: {error}
+              ) : filteredMappings.length === 0 ? (
+                 <tr><td colSpan="4" className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                        <MapPin size={40} className="text-slate-100" />
+                        <p className="text-slate-400 font-black uppercase tracking-widest text-[9px] mt-2">Zero records found</p>
                     </div>
                  </td></tr>
-              ) : filteredMappings.length === 0 ? (
-                 <tr><td colSpan="4" className="px-8 py-10 text-center text-slate-400 font-bold">No addresses found.</td></tr>
               ) : (
                 filteredMappings.map((mapping, idx) => (
-                  <tr key={`${mapping.user_id || 'me'}-${mapping.id || mapping.address_id}-${idx}`} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 text-xs border border-white shadow-sm uppercase group-hover:bg-white transition-colors">
+                  <motion.tr 
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.02 }}
+                    className="group hover:bg-slate-50/30 transition-colors"
+                  >
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-400 text-[10px] uppercase transition-all group-hover:bg-slate-900 group-hover:text-white">
                            {mapping.user_name ? mapping.user_name.charAt(0) : (authUser?.name ? authUser.name.charAt(0) : '?')}
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-bold text-slate-900">{mapping.user_name || authUser?.name || 'Owner'}</span>
-                          <span className="text-[10px] font-medium text-slate-500 mt-0.5 whitespace-nowrap">{mapping.user_email || authUser?.email || ''}</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[11px] font-black text-slate-900 truncate tracking-tight uppercase leading-tight">{mapping.user_name || authUser?.name || 'Owner'}</span>
+                          <span className="text-[9px] font-black text-slate-300 tracking-widest uppercase mt-0.5 truncate">{mapping.user_email || authUser?.email || 'N/A'}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-6 py-3.5">
                       <a 
                         href={`https://www.google.com/maps/search/?api=1&query=${mapping.latitude},${mapping.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex flex-col group/address"
-                        title="Open in Google Maps"
                       >
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[13px] font-bold text-slate-700 leading-tight group-hover/address:text-indigo-600 transition-colors">
+                          <span className="text-[11px] font-black text-slate-700 leading-tight uppercase group-hover/address:text-indigo-600 transition-colors">
                             {mapping.house_number ? `#${mapping.house_number}, ` : ''}{mapping.street}
                           </span>
-                          <ExternalLink size={12} className="text-slate-300 opacity-0 group-hover/address:opacity-100 group-hover/address:text-indigo-400 transition-all" />
+                          <ExternalLink size={10} className="text-slate-300 opacity-0 group-hover/address:opacity-100 group-hover/address:text-indigo-400 transition-all" />
                         </div>
-                        <span className="text-[11px] font-medium text-slate-400 mt-0.5 uppercase tracking-wide group-hover/address:text-slate-500 transition-colors">
+                        <span className="text-[9px] font-black text-slate-300 mt-0.5 uppercase tracking-tighter truncate">
                           {mapping.commune}, {mapping.district}, {mapping.province}
                         </span>
                       </a>
                     </td>
-                    <td className="px-4 py-4 text-center">
-                      <span className="px-3 py-1 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                    <td className="px-6 py-3.5 text-center">
+                      <span className="inline-flex px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[8px] font-black uppercase tracking-widest border border-slate-200 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
                         {mapping.country?.name || mapping.country_name || 'Unset'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-3.5 text-right">
                        <div className="flex flex-col items-end">
-                         <span className="text-xs font-bold text-slate-600">
-                           {mapping.linked_at ? new Date(mapping.linked_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently'}
+                         <span className="text-[10px] font-black text-slate-700 tracking-tight uppercase">
+                           {mapping.linked_at ? new Date(mapping.linked_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Active'}
                          </span>
-                         <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase mt-0.5 tracking-tighter">
-                            <ShieldCheck size={10} /> Active
+                         <div className="flex items-center gap-1 text-[8px] font-black text-emerald-500 uppercase mt-0.5 tracking-widest">
+                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> Live
                          </div>
                        </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
-        <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-           <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-             Total: {filteredMappings.length} Addresses
-           </span>
-           <div className="flex gap-3">
-            <button className="px-5 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-30 uppercase tracking-widest" disabled>Prev</button>
-            <button className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-100 transition-all active:scale-95">Next Page</button>
-           </div>
-        </div>
       </div>
-
     </div>
   );
 }
 
-function MetricCard({ label, value, trend, icon: Icon, isWarning }) {
+function MetricCard({ label, value, icon: Icon, color }) {
+  const themes = {
+    indigo: "bg-indigo-600 shadow-indigo-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    rose: "bg-rose-500 shadow-rose-100",
+  };
   return (
-    <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-indigo-100 transition-colors">
-      <div className={`absolute top-0 right-0 w-24 h-24 translate-x-8 -translate-y-8 rounded-full opacity-[0.03] group-hover:scale-150 transition-transform duration-700 ${isWarning ? 'bg-rose-600' : 'bg-indigo-600'}`} />
-      
-      <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className={`p-3 rounded-2xl ${isWarning ? 'bg-rose-50 text-rose-600' : 'bg-indigo-50 text-indigo-600'} group-hover:scale-110 transition-transform duration-300`}>
-          <Icon size={20} strokeWidth={2.5} />
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+        <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110 mb-3 relative z-10`}>
+            <Icon size={14} strokeWidth={3} />
         </div>
-        <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-          {trend} <ArrowUpRight size={10} strokeWidth={3} />
+        <div className="relative z-10">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+            <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
         </div>
-      </div>
-      
-      <div className="relative z-10">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight">{value}</h3>
-      </div>
+        <div className="absolute -right-2 -bottom-2 w-16 h-16 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 opacity-50" />
     </div>
   );
 }

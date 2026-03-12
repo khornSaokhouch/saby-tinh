@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { X, Image as ImageIcon, UploadCloud } from 'lucide-react';
+import { X, Image as ImageIcon, UploadCloud, Store, Loader2, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/stores/useStore';
 import { useUserStore } from '@/stores/userStore';
@@ -81,64 +81,77 @@ export default function OwnerStoreFormModal({ isOpen, onClose, initialData }) {
 
           {/* Modal */}
           <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-white"
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-slate-100"
           >
-            <div className="p-6 md:p-8 font-sans">
+            <div className="p-8 font-sans max-h-[90vh] overflow-y-auto custom-scrollbar">
               {/* Header */}
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex flex-col">
-                  <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
-                    {initialData ? 'Update Store' : 'Register New Store'}
-                  </h2>
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-2">Retail Logistics Protocol</span>
+              <div className="flex flex-col items-center text-center mb-8">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-100">
+                   <Store size={24} strokeWidth={2.5} />
                 </div>
-                <button onClick={onClose} className="p-2 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-xl transition-colors">
-                  <X size={20} />
-                </button>
+                <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                  {initialData ? 'Update Store' : 'Register New Store'}
+                </h2>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Retail Logistics Protocol</p>
               </div>
 
               {/* Form */}
               <form className="space-y-5" onSubmit={handleSubmit}>
                 
                 {/* Image Upload */}
-                <div className="relative group w-full h-32 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden hover:border-indigo-400 transition-all cursor-pointer">
-                  {preview ? (
-                    <img src={preview} alt="Preview" className="w-full h-full object-contain p-4" />
-                  ) : (
-                    <div className="text-center">
-                      <UploadCloud className="mx-auto text-slate-300" size={32} />
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-2 block">Upload Storefront Image</span>
-                    </div>
-                  )}
-                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} />
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1 text-left">Storefront Image</label>
+                  <div className="relative group w-full h-32 bg-slate-50 rounded-[24px] border border-slate-100 flex items-center justify-center overflow-hidden hover:border-indigo-400 transition-all cursor-pointer shadow-sm">
+                    {preview ? (
+                      <img src={preview} alt="Preview" className="w-full h-full object-contain p-4" />
+                    ) : (
+                      <div className="text-center">
+                        <UploadCloud className="mx-auto text-slate-300" size={32} />
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 block">Upload Visual Node</span>
+                      </div>
+                    )}
+                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} />
+                  </div>
                 </div>
 
                 {/* Name Input */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder=" "
-                    className="peer w-full h-14 pt-5 px-5 bg-slate-50 border-b-2 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-indigo-600 transition-all outline-none"
-                  />
-                  <label className="absolute left-5 top-4 text-slate-400 text-sm font-medium transition-all 
-                    peer-focus:top-1.5 peer-focus:text-xs peer-focus:font-bold peer-focus:text-indigo-600 peer-focus:uppercase peer-focus:tracking-wider
-                    peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider"
-                  >
-                    Store Name
-                  </label>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1 text-left">Store Name</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all placeholder:text-slate-400"
+                      placeholder="e.g. Saby Tinh Central"
+                    />
+                  </div>
                 </div>
 
                 {/* Buttons */}
-                <div className="flex gap-4 pt-4">
-                  <button type="button" onClick={onClose} className="flex-1 py-4 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-all">Cancel</button>
-                  <button type="submit" disabled={isSubmitting} className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-indigo-700">
-                    {isSubmitting ? 'Saving...' : initialData ? 'Apply Changes' : 'Register Store'}
+                <div className="flex items-center gap-3 pt-4 border-t border-slate-50">
+                  <button 
+                    type="button" 
+                    onClick={onClose} 
+                    className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting} 
+                    className="flex-[2] py-3.5 bg-emerald-500 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 transition-all active:scale-[0.95] hover:bg-emerald-600"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Check size={14} strokeWidth={3} />
+                    )}
+                    {initialData ? 'Sync Details' : 'Register Unit'}
                   </button>
                 </div>
 

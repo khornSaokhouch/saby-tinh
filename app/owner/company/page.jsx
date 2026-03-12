@@ -465,7 +465,7 @@ export default function OwnerCompanyPage() {
 function InputField({ label, name, value, onChange, placeholder, type = "text", icon: Icon, readOnly = false, required = false }) {
   return (
     <div className="relative group">
-      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.14em] mb-1.5 ml-1 group-focus-within:text-indigo-600 transition-colors">
+      <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5 ml-1 group-focus-within:text-indigo-600 transition-colors">
         {label} {required && <span className="text-rose-500">*</span>}
       </label>
       <div className="relative">
@@ -478,17 +478,18 @@ function InputField({ label, name, value, onChange, placeholder, type = "text", 
           readOnly={readOnly}
           required={required}
           className={`
-            w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[13px] font-bold text-slate-700 
-            focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-300 focus:bg-white 
+            w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[12px] font-bold text-slate-700 
+            focus:outline-none focus:ring-2 focus:ring-indigo-500/5 focus:border-indigo-200 focus:bg-white 
             transition-all placeholder:text-slate-300 
-            ${Icon ? 'pl-10' : ''} 
+            ${Icon ? 'pl-9' : ''} 
             ${readOnly ? 'cursor-default bg-slate-100 text-slate-400 focus:border-slate-100 focus:ring-0' : ''}
           `}
         />
         {Icon && (
           <Icon 
             className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${readOnly ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-indigo-400'}`} 
-            size={14} 
+            size={13} 
+            strokeWidth={3}
           />
         )}
       </div>

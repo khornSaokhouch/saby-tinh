@@ -88,7 +88,7 @@ function OrderDetailsContent() {
 
   return (
     <div className="min-h-screen pb-12 font-sans">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+      <div className="max-w-full mx-auto px-4 sm:px-6 pt-6">
         
         {/* --- BREADCRUMBS / NAVIGATION --- */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -100,15 +100,21 @@ function OrderDetailsContent() {
               <ChevronLeft size={12} /> Back to Repository
             </button>
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">#ORD-{order.id}</h1>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">#ORD-{order.id}</h1>
               {order.invoice && (
-                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-mono font-black border border-indigo-100 shadow-sm">
+                <span className="px-2.5 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black border border-indigo-100 shadow-sm uppercase tracking-widest">
                   {order.invoice.invoice_number}
                 </span>
               )}
               <StatusBadge status={order.order_status?.status || "Pending"} />
             </div>
-            <p className="text-[11px] font-medium text-slate-500 mt-1">Placed on {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 flex items-center gap-2">
+              <Calendar size={12} className="text-indigo-400" />
+              Placed on {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              <span className="text-slate-300">/</span>
+              <Clock size={12} className="text-indigo-400" />
+              {new Date(order.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+            </p>
           </div>
           
           <div className="flex items-center gap-2">
@@ -160,24 +166,24 @@ function OrderDetailsContent() {
                           <tr key={idx} className="group hover:bg-slate-50/50 transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
+                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 overflow-hidden flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                                   <img src={image} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                  <span className="text-[13px] font-bold text-slate-900 truncate">{product?.name || "Unknown Interface"}</span>
-                                  <span className="text-[9px] font-bold text-indigo-600 mt-0.5 uppercase tracking-widest">
-                                    SKU: {line.product_item_variant?.product_item?.sku || `PRO-${line.product_item_variant?.product_item?.id || idx + 1}`}
+                                  <span className="text-[12px] font-black text-slate-900 truncate uppercase tracking-tight leading-tight">{product?.name || "Unknown Interface"}</span>
+                                  <span className="text-[9px] font-black text-indigo-500 mt-0.5 uppercase tracking-[0.2em]">
+                                    SECURE_SKU: {line.product_item_variant?.product_item?.sku || `PRO-${line.product_item_variant?.product_item?.id || idx + 1}`}
                                   </span>
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-center text-[13px] font-bold text-slate-600">
+                            <td className="px-4 py-4 text-center text-[12px] font-black text-slate-600 tabular-nums">
                               ${parseFloat(line.price).toLocaleString()}
                             </td>
-                            <td className="px-4 py-4 text-center text-[13px] font-black text-slate-900 italic">
-                               {line.quantity}
+                            <td className="px-4 py-4 text-center text-[12px] font-black text-slate-900 tabular-nums">
+                               {line.quantity}x
                             </td>
-                            <td className="px-6 py-4 text-right text-[13px] font-black text-slate-900">
+                            <td className="px-6 py-4 text-right text-[12px] font-black text-slate-900 tabular-nums">
                               ${(line.price * line.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </td>
                           </tr>
@@ -198,30 +204,30 @@ function OrderDetailsContent() {
                     <h3 className="font-bold text-[16px]">Logistic Protocol</h3>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                       <div className="flex flex-col">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Carrier / Method</span>
-                          <span className="text-[13px] font-bold text-slate-900">{order.shipping_method?.name || "Express Logistics"}</span>
-                       </div>
-                       <span className="px-2 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-black text-indigo-600 italic">ACTIVE</span>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Delivery Coordinates</span>
-                      <div className="flex gap-2.5">
-                         <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600">
-                           <MapPin size={14} />
-                         </div>
+                    <div className="space-y-4">
+                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                          <div className="flex flex-col">
-                            <span className="text-[13px] font-bold text-slate-900">{order.shipping_address?.province || "N/A"}</span>
-                            <span className="text-[11px] font-medium text-slate-500 leading-relaxed mt-0.5">
-                               {order.shipping_address?.house_number}, {order.shipping_address?.street}, {order.shipping_address?.commune}, {order.shipping_address?.district}
-                            </span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Carrier / Method</span>
+                            <span className="text-[12px] font-black text-slate-900 uppercase tracking-tight">{order.shipping_method?.name || "Express Logistics"}</span>
                          </div>
+                         <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-100 rounded text-[8px] font-black text-emerald-600 uppercase tracking-[0.2em]">Live Tracking</span>
+                      </div>
+                      
+                      <div className="space-y-1.5 pt-1">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Delivery Coordinates</span>
+                        <div className="flex gap-2.5">
+                           <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 text-indigo-600 shadow-sm">
+                             <MapPin size={14} strokeWidth={3} />
+                           </div>
+                           <div className="flex flex-col">
+                              <span className="text-[11px] font-black text-slate-900 uppercase tracking-tight">{order.shipping_address?.province || "N/A"}</span>
+                              <span className="text-[10px] font-black text-slate-400 leading-relaxed mt-0.5 uppercase tracking-tighter">
+                                 {order.shipping_address?.house_number}, {order.shipping_address?.street}, {order.shipping_address?.commune}, {order.shipping_address?.district}
+                              </span>
+                           </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
                </motion.div>
 
                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-[20px] border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
@@ -233,21 +239,21 @@ function OrderDetailsContent() {
                       <h3 className="font-bold text-[16px]">Payment Ledger</h3>
                     </div>
                     
-                    <div className="space-y-3.5">
+                    <div className="space-y-3.5 pt-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[13px] font-medium text-slate-500">Authorization</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Authorization</span>
                         <PaymentBadge status={order.payment_status?.status || "Pending"} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[13px] font-medium text-slate-500">Source</span>
-                        <span className="text-[13px] font-bold text-slate-900">{order.payment_method?.account_name || "Platform Direct"}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Source</span>
+                        <span className="text-[11px] font-black text-slate-900 uppercase tracking-tight">{order.payment_method?.account_name || "Platform Direct"}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[13px] font-medium text-slate-500">Reference</span>
-                        <span className="text-[11px] font-mono font-bold text-indigo-600 uppercase tracking-tighter truncate max-w-[120px]">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reference</span>
+                        <span className="text-[10px] font-mono font-black text-indigo-600 shadow-sm px-1.5 py-0.5 bg-indigo-50 rounded-md uppercase tracking-tighter truncate max-w-[140px]">
                           {order.user_payments && order.user_payments.length > 0 
                             ? `${order.user_payments[order.user_payments.length - 1].transaction_id}` 
-                            : "No Data"}
+                            : "NO_TX_DATA"}
                         </span>
                       </div>
                     </div>
@@ -273,28 +279,28 @@ function OrderDetailsContent() {
                     <h3 className="font-bold text-[16px]">Customer Profile</h3>
                   </div>
 
-                  <div className="flex items-center gap-3.5 mb-6">
-                     <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-lg font-black text-white italic border-2 border-white shadow-xl">
+                  <div className="flex items-center gap-3.5 mb-6 bg-slate-50 p-4 rounded-[20px] border border-slate-100">
+                     <div className="w-11 h-11 rounded-[16px] bg-slate-900 border-2 border-slate-800 flex items-center justify-center text-lg font-black text-white italic shadow-lg shadow-slate-200">
                         {(order.user?.name || "U").charAt(0).toUpperCase()}
                      </div>
                      <div className="flex flex-col min-w-0">
-                        <span className="text-[16px] font-black text-slate-900 truncate leading-tight">{order.user?.name || "Anonymous Client"}</span>
-                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-0.5 pointer-events-none">Loyalty Tier 1</span>
+                        <span className="text-[14px] font-black text-slate-900 truncate uppercase tracking-tight leading-tight">{order.user?.name || "Anonymous Client"}</span>
+                        <span className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] mt-0.5">Verified Profile</span>
                      </div>
                   </div>
 
-                  <div className="space-y-3">
-                     <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/50 border border-slate-50 group hover:border-indigo-100 transition-colors">
-                        <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
-                           <Mail size={14} />
+                  <div className="space-y-2.5">
+                     <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/30 border border-slate-50 group hover:border-indigo-100 transition-all">
+                        <div className="w-8 h-8 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                           <Mail size={14} strokeWidth={3} />
                         </div>
-                        <span className="text-[12px] font-bold text-slate-600 truncate">{order.user?.email || "not_disclosed@platform.com"}</span>
+                        <span className="text-[11px] font-black text-slate-600 truncate uppercase tracking-tight">{order.user?.email || "not_disclosed@platform.com"}</span>
                      </div>
-                     <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/50 border border-slate-50 group hover:border-indigo-100 transition-colors">
-                        <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
-                           <Phone size={14} />
+                     <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/30 border border-slate-50 group hover:border-indigo-100 transition-all">
+                        <div className="w-8 h-8 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                           <Phone size={14} strokeWidth={3} />
                         </div>
-                        <span className="text-[12px] font-bold text-slate-600">{order.user?.phone_number || "Not Provided"}</span>
+                        <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">{order.user?.phone_number || "NO_COMM_CHANNEL"}</span>
                      </div>
                   </div>
               </motion.div>
