@@ -28,18 +28,15 @@ export default function MobileSidebar({ isOpen, onClose, userProfile, categories
             animate={{ x: 0 }} 
             exit={{ x: '100%' }} 
             transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
-            className="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white z-[160] shadow-2xl p-6 flex flex-col"
+            className="fixed inset-y-0 right-0 w-[85%] max-w-[300px] bg-white z-[160] shadow-2xl p-5 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-lg flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xs font-black">S</span>
-                </div>
-                <span className="text-xl font-black text-slate-900 uppercase tracking-tighter">SABY-TINH</span>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col">
+                <span className="text-lg font-black text-slate-900 uppercase tracking-tighter leading-none">SABY-TINH</span>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-slate-100 text-slate-400 hover:text-rose-500 rounded-xl transition-colors">
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -57,7 +54,7 @@ export default function MobileSidebar({ isOpen, onClose, userProfile, categories
                       key={cat.id} 
                       href={`/category/${slugify(cat.name)}`} 
                       onClick={onClose} 
-                      className="p-4 text-[11px] font-bold bg-gray-50 rounded-2xl text-gray-600 text-center active:bg-blue-600 active:text-white transition-all"
+                      className="p-3 text-[11px] font-bold bg-gray-50 rounded-2xl text-gray-600 text-center active:bg-blue-600 active:text-white transition-all border border-transparent hover:border-slate-200"
                     >
                       {cat.name}
                     </Link>
@@ -81,18 +78,18 @@ export default function MobileSidebar({ isOpen, onClose, userProfile, categories
             </div>
 
             {/* Footer / Auth */}
-            <div className="mt-auto pt-6">
+            <div className="mt-auto pt-6 border-t border-slate-50">
               {!userProfile ? (
                 <Link 
                   href="/auth/login" 
                   onClick={onClose}
-                  className="block w-full text-center py-4 bg-blue-600 text-white font-medium rounded-2xl shadow-xl"
+                  className="block w-full text-center py-3 bg-blue-600 text-white text-xs font-medium rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all text-uppercase tracking-wider"
                 >
                   Get Started
                 </Link>
               ) : (
-                <button className="flex items-center justify-center gap-2 w-full py-4 text-red-500 font-bold hover:bg-red-50 rounded-2xl transition-colors">
-                  <LogOut className="w-5 h-5" /> Logout
+                <button className="flex items-center justify-center gap-2 w-full py-3 text-red-500 text-xs font-bold hover:bg-red-50 rounded-xl transition-all active:scale-95">
+                  <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               )}
             </div>

@@ -10,7 +10,7 @@ import {
   Store, 
   LayoutGrid, 
   User,
-  MessageSquare 
+  Search
 } from 'lucide-react';
 import { getCleanImageUrl, getUserInitial } from './utils';
 import Link from 'next/link';
@@ -31,28 +31,30 @@ export default function UserActions({ userProfile }) {
   const displayImageUrl = userProfile ? getCleanImageUrl(userProfile.profile_image_url) : null;
 
   return (
-    <div className="flex items-center gap-1 sm:gap-2">
+    <div className="flex items-center gap-2">
       {/* Desktop-only secondary actions */}
-      <div className="hidden md:flex items-center gap-1 sm:gap-2">
-        <NavIconButton icon={Heart} href="/favorites" count={favorites?.length} />
-        <NavIconButton icon={ShoppingBag} href="/shopping-cart" count={cartItemCount} />
-      </div>
+      {userProfile && (
+        <div className="hidden md:flex items-center gap-1 sm:gap-2">
+          <NavIconButton icon={Heart} href="/favorites" count={favorites?.length} />
+          <NavIconButton icon={ShoppingBag} href="/shopping-cart" count={cartItemCount} />
+        </div>
+      )}
 
-      {/* Profile/Login (Always on top) */}
+      {/* Profile/Login (Always on top for desktop) */}
       {userProfile ? (
         <Link href="/profile" className="ml-1 group">
-          <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden group-hover:border-blue-500 transition-all">
+          <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 overflow-hidden group-hover:border-indigo-500 transition-all">
             {displayImageUrl ? (
               <Image src={displayImageUrl} alt="User" width={40} height={40} className="object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center font-black text-blue-600 text-sm bg-blue-50">
+              <div className="w-full h-full flex items-center justify-center font-semibold text-indigo-600 text-sm bg-indigo-50">
                 {getUserInitial(userProfile.name)}
               </div>
             )}
           </div>
         </Link>
       ) : (
-        <Link href="/auth/login" className="px-5 py-2.5 text-[13px] font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all hover:shadow-lg hover:shadow-blue-500/25 active:scale-95">
+        <Link href="/auth/login" className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-full transition-all active:scale-95">
           Login
         </Link>
       )}
@@ -60,80 +62,87 @@ export default function UserActions({ userProfile }) {
   );
 }
 
-// Separated Mobile Bottom Bar for independent positioning
 export function MobileBottomTabs({ userProfile }) {
   const { cart } = useShoppingCartStore();
   const { favorites } = useFavoriteStore();
   const pathname = usePathname();
   
   const cartItemCount = cart?.items?.length || 0;
+  const displayImageUrl = userProfile ? getCleanImageUrl(userProfile.profile_image_url) : null;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 pb-safe-area-inset-bottom z-[150] shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
-      <div className="flex justify-around items-center h-16">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-1 pb-safe z-[150] shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+      <div className="flex justify-around items-center h-14">
         <TabItem href="/" icon={Home} label="Home" active={pathname === "/"} />
-        <TabItem href="/store" icon={Store} label="Shop" active={pathname === "/shop"} />
-        <TabItem 
-          href="/shopping-cart" 
-          icon={ShoppingBag} 
-          label="Cart" 
-          active={pathname === "/shopping-cart"} 
-          count={cartItemCount} 
-        />
-        <TabItem href="/products" icon={LayoutGrid} label="Category" active={pathname === "/category"} />
+      
+        <TabItem href="/store" icon={Store} label="Shops" active={pathname === "/store"} />
+          <TabItem href="/search" icon={Search} label="Search" active={pathname === "/search"} />
+        
+        {userProfile && (
+          <>
+            <TabItem 
+              href="/shopping-cart" 
+              icon={ShoppingBag} 
+              label="Cart" 
+              active={pathname === "/shopping-cart"} 
+              count={cartItemCount} 
+            />
+          </>
+        )}
         
         <TabItem 
-          href="/favorites" 
-          icon={Heart} 
-          label="Wishlist" 
-          active={pathname === "/favorites"} 
-          count={favorites?.length} 
+          href={userProfile ? "/profile" : "/auth/login"}
+          icon={!userProfile ? User : null}
+          userImage={displayImageUrl}
+          userName={userProfile?.name}
+          label={userProfile ? "Profile" : "Login"}
+          active={pathname === "/profile" || pathname === "/auth/login"}
         />
       </div>
     </div>
   );
 }
 
-// Helper for Desktop Icons
-function NavIconButton({ icon: Icon, href, count }) {
-  return (
-    <Link href={href} className="relative p-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all">
-      <Icon className="w-5 h-5" />
-      {count > 0 && (
-        <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-orange-500 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-white">
-          {count}
-        </span>
-      )}
-    </Link>
-  );
-}
-
-// Helper for Mobile Tabs
+// Sub-component for Mobile Tabs
 function TabItem({ href, icon: Icon, label, active, count, userImage, userName }) {
   return (
-    <Link href={href} className="flex flex-col items-center justify-center flex-1 min-w-0 gap-1 relative">
-      <div className={`relative p-1 rounded-xl transition-colors ${active ? 'text-blue-600' : 'text-slate-500'}`}>
+    <Link href={href} className="flex flex-col items-center justify-center flex-1 min-w-0 transition-all active:scale-90">
+      <div className={`relative flex items-center justify-center w-8 h-8 rounded-full mb-0.5 ${active ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500'}`}>
         {userImage ? (
-          <div className={`w-6 h-6 rounded-full overflow-hidden border-2 ${active ? 'border-blue-600' : 'border-transparent'}`}>
+          <div className={`w-6 h-6 rounded-full overflow-hidden border ${active ? 'border-indigo-500' : 'border-slate-200'}`}>
             <Image src={userImage} alt="Profile" width={24} height={24} className="object-cover" />
           </div>
         ) : Icon ? (
-          <Icon className={`w-6 h-6 ${active ? 'fill-blue-50' : ''}`} />
+          <Icon size={19} />
         ) : (
-           <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">
+           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
              {getUserInitial(userName)}
            </div>
         )}
         
         {count > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
-            {count}
+          <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-1 bg-rose-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
+            {count > 9 ? '9+' : count}
           </span>
         )}
       </div>
-      <span className={`text-[10px] font-medium truncate ${active ? 'text-blue-600' : 'text-slate-500'}`}>
+      <span className={`text-[9px] font-medium truncate w-full text-center px-1 ${active ? 'text-indigo-600' : 'text-slate-400'}`}>
         {label}
       </span>
+    </Link>
+  );
+}
+
+// Sub-component for Desktop
+function NavIconButton({ icon: Icon, href, count }) {
+  return (
+    <Link href={href} className="relative p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-all group">
+      <Icon size={20} />
+      {count > 0 && (
+        <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 bg-indigo-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
+          {count}
+        </span>
+      )}
     </Link>
   );
 }

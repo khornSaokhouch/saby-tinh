@@ -41,16 +41,16 @@ export default function Navbar() {
 
   return (
     <>
-      <div className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${isScrolled ? 'py-3' : 'py-0'}`}>
+      <div className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${isScrolled ? 'py-2' : 'py-0'}`}>
         <header 
           className={`mx-auto transition-all duration-500 ease-in-out
             ${isScrolled 
-              ? 'max-w-6xl rounded-full bg-white/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/40 px-2' 
+              ? 'max-w-5xl rounded-full bg-white/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/40 px-2' 
               : 'max-w-full bg-white border-b border-slate-100 px-0'
             }`}
         >
           <div className={`max-w-7xl mx-auto flex items-center justify-between transition-all duration-500 
-            ${isScrolled ? 'h-14 px-4' : 'h-20 px-6'}`}
+            ${isScrolled ? 'h-12 px-4' : 'h-16 px-5'}`}
           >
             {/* BRAND */}
             <div className="flex items-center gap-4 lg:gap-10">
@@ -59,7 +59,7 @@ export default function Navbar() {
                   <Sparkles size={18} className="text-white sm:size-[20px]" fill="currentColor" />
                 </div> */}
                 <div className="flex flex-col">
-                  <span className="text-base sm:text-lg font-black text-slate-900 tracking-tighter leading-none uppercase">
+                  <span className="text-sm sm:text-base font-black text-slate-900 tracking-tighter leading-none uppercase">
                     Saby-Tinh
                   </span>
                 </div>

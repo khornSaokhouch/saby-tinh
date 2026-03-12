@@ -6,139 +6,104 @@ import {
   FaFacebookF, 
   FaTwitter, 
   FaInstagram, 
-  FaLinkedinIn,
-  FaCcVisa,
-  FaCcMastercard,
-  FaCcPaypal,
+  FaLinkedinIn 
 } from 'react-icons/fa';
-import { ShieldCheck, Globe, Sparkles } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-slate-100 font-battambang">
+    <footer className="bg-white border-t border-slate-100 font-sans">
       
-      {/* Main Links Section */}
-      <div className="container mx-auto p-8 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-12 lg:gap-8">
+      {/* --- Main Navigation Section --- */}
+      <div className="max-w-[1400px] mx-auto px-6 py-10">
+        {/* grid-cols-2 for mobile pairs items side-by-side */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-10 gap-x-6">
           
-          {/* Brand Info */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-6 group">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-300 shadow-lg shadow-indigo-100">
-                  <Sparkles size={20} className="text-white" fill="currentColor" />
-                </div>
-
-                {/* LOGO — UNCHANGED */}
-                <span className="text-2xl font-black tracking-tighter text-slate-900 uppercase">
-                  Saby-Tinh
-                </span>
-              </div>
+          {/* Brand and Mission (Row 1 Left on Mobile) */}
+          <div className="col-span-1 lg:col-span-2 space-y-4">
+            <Link href="/" className="inline-block">
+              <span className="text-lg font-bold text-slate-900">
+                Saby-Tinh
+              </span>
             </Link>
 
-            <p className="text-slate-500 text-sm font-medium leading-relaxed mb-8 max-w-xs">
-              Next-generation terminal for high-performance computing, mobile architecture, and professional node registry.
+            <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-[260px]">
+              Connecting you with the best local stores and premium quality products.
             </p>
 
-            <div className="flex gap-3">
-              <SocialBtn icon={<FaFacebookF size={14} />} />
-              <SocialBtn icon={<FaTwitter size={14} />} />
-              <SocialBtn icon={<FaInstagram size={14} />} />
-              <SocialBtn icon={<FaLinkedinIn size={14} />} />
+            <div className="flex gap-2 pt-2">
+              <SocialBtn icon={<FaFacebookF size={12} />} color="text-blue-600 bg-blue-50 border-blue-100" />
+              <SocialBtn icon={<FaTwitter size={12} />}   color="text-sky-500 bg-sky-50 border-sky-100" />
+              <SocialBtn icon={<FaInstagram size={12} />} color="text-rose-500 bg-rose-50 border-rose-100" />
+              <SocialBtn icon={<FaLinkedinIn size={12} />} color="text-indigo-700 bg-indigo-50 border-indigo-100" />
             </div>
           </div>
 
-          {/* Inventory */}
-          <div className="lg:pl-8">
-            <h4 className="font-semibold text-slate-900 text-[11px] mb-6 uppercase">
-              Inventory Nodes
+          {/* Shopping Column (Row 1 Right on Mobile) */}
+          <div className="col-span-1">
+            <h4 className="text-sm font-semibold text-slate-900 mb-5">
+              Shopping
             </h4>
-            <ul className="space-y-4">
-              <FooterLink href="/store">Registry Store</FooterLink>
-              <FooterLink href="#">New Units</FooterLink>
-              <FooterLink href="#">Featured Gear</FooterLink>
-              <FooterLink href="#">System Nodes</FooterLink>
+            <ul className="space-y-3">
+              <FooterLink href="/store">Official Stores</FooterLink>
+              <FooterLink href="/category/phones">Mobile Devices</FooterLink>
+              <FooterLink href="/category/laptops">Computers</FooterLink>
+              <FooterLink href="/category/accessories">Accessories</FooterLink>
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h4 className="font-semibold text-slate-900 text-[11px] mb-6 uppercase">
-              Support Terminal
+          {/* Support Column (Row 2 Left on Mobile) */}
+          <div className="col-span-1">
+            <h4 className="text-sm font-semibold text-slate-900 mb-5">
+              Support
             </h4>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <FooterLink href="/faq">Help Center</FooterLink>
               <FooterLink href="/contact-us">Contact Us</FooterLink>
-              <FooterLink href="#">Warranty Protocol</FooterLink>
-              <FooterLink href="#">Link Status</FooterLink>
+              <FooterLink href="/track-order">Track Order</FooterLink>
+              <FooterLink href="/shipping-returns">Returns Policy</FooterLink>
             </ul>
           </div>
 
-          {/* Policy */}
-          <div>
-            <h4 className="font-semibold text-slate-900 text-[11px] mb-6 uppercase">
-              Registry Policy
+          {/* Corporate Column (Row 2 Right on Mobile) */}
+          <div className="col-span-1 lg:col-span-2 lg:pl-10">
+            <h4 className="text-sm font-semibold text-slate-900 mb-5">
+              Our Company
             </h4>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
+              <FooterLink href="/about">About Us</FooterLink>
               <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
               <FooterLink href="/terms-of-service">Terms of Service</FooterLink>
-              <FooterLink href="/admin-about">Admin about</FooterLink>
-              <FooterLink href="/about-us">About Us</FooterLink>
+              <FooterLink href="/admin-login">Partner Portal</FooterLink>
             </ul>
           </div>
-
-          {/* Security Node */}
-          <div className="flex flex-col items-start lg:items-end">
-            <div className="p-6 bg-slate-50 rounded-[28px] border border-slate-100 w-full lg:w-auto shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm text-indigo-600 border border-indigo-50">
-                  <ShieldCheck className="w-4 h-4" strokeWidth={3} />
-                </div>
-                <span className="text-[11px] font-semibold text-slate-900">
-                  Verified Gear
-                </span>
-              </div>
-
-              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                Official manufacturer warranty <br />
-                & secure procurement.
-              </p>
-            </div>
-          </div>
-
         </div>
       </div>
 
-      {/* Bottom Status Bar */}
-      <div className="bg-slate-50/50 border-t border-slate-100 py-8">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+      {/* --- Bottom Status Bar --- */}
+      <div className="bg-slate-50 border-t border-slate-100 py-4">
+        <div className="max-w-[1400px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-12">
-            <p className="text-slate-400 text-[11px] font-medium">
-              © {new Date().getFullYear()} Saby-Tinh Registry. All Rights Reserved.
-            </p>
-
-            <div className="flex items-center gap-2 text-slate-500 text-[11px] font-medium hover:text-indigo-600 transition-colors cursor-pointer">
-              <Globe className="w-4 h-4" />
-              <span>International (Global-OS)</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="text-slate-500 text-xs">
+              © {new Date().getFullYear()} Saby-Tinh
+            </span>
+            <span className="text-slate-300">|</span>
+            <span className="text-slate-500 text-xs">Reliable Platform</span>
           </div>
 
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-5 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-              <FaCcVisa size={22} />
-              <FaCcMastercard size={22} />
-              <FaCcPaypal size={22} />
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5 text-slate-600">
+              <ShieldCheck size={14} className="text-indigo-500" />
+              <span className="text-xs">Secure Payments</span>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full shadow-sm">
-              <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <div className="flex items-center gap-2">
+              <div className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </div>
-              <span className="text-[9px] font-semibold text-emerald-600">
-                System Secure
-              </span>
+              <span className="text-xs text-emerald-600">Live</span>
             </div>
           </div>
 
@@ -148,22 +113,21 @@ const Footer = () => {
   );
 };
 
-/* Sub Components */
+/* --- SUB COMPONENTS --- */
 
 const FooterLink = ({ href, children }) => (
   <li>
     <Link
       href={href}
-      className="text-[13px] font-medium text-slate-500 hover:text-indigo-600 hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-300 group"
+      className="text-sm text-slate-500 hover:text-indigo-600 transition-colors duration-200"
     >
-      <div className="w-1 h-1 bg-slate-200 rounded-full group-hover:bg-indigo-600 group-hover:scale-150 transition-all" />
       {children}
     </Link>
   </li>
 );
 
-const SocialBtn = ({ icon }) => (
-  <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:border-indigo-600 hover:bg-indigo-600 hover:text-white hover:shadow-xl hover:shadow-indigo-500/20 transition-all active:scale-90">
+const SocialBtn = ({ icon, color }) => (
+  <button className={`w-8 h-8 flex items-center justify-center rounded-lg border shadow-sm ${color}`}>
     {icon}
   </button>
 );
