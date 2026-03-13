@@ -1,12 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const { resetPassword } = useAuthStore();
   const searchParams = useSearchParams();
@@ -185,5 +185,17 @@ export default function ResetPasswordPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen w-full bg-slate-50 flex items-center justify-center font-sans font-bold text-[11px] text-slate-400 uppercase tracking-[0.2em]">
+        loading Saby-Tinh...
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
