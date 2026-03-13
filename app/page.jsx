@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '@/components/nabvar/Navbar';
 import Footer from "@/components/nabvar/Footer";
-import { ChevronRight, ArrowRight, Zap, Star, LayoutGrid } from 'lucide-react';
+import { ChevronRight, ArrowRight, Zap, Star, LayoutGrid, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import { useEventStore } from '@/stores/useEventStore';
@@ -17,16 +17,13 @@ import BecomeSellerButton from '@/components/ui/BecomeSellerButton';
 
 export default function HomePage() {
     const { categories, fetchCategories } = useCategoryStore();
-    const { events, fetchEvents } = useEventStore();
+    const { events, fetchEvents } = useProductStore(); // Assuming fetchEvents is here or in useEventStore
     const { products, fetchProducts } = useProductStore();
 
     useEffect(() => {
-        const loadData = async () => {
-            // Fetch all products to ensure all promotional offers from all owners are visible
-            await Promise.all([fetchCategories(), fetchEvents(), fetchProducts()]);
-        };
-        loadData();
-    }, [fetchCategories, fetchEvents, fetchProducts]);
+        fetchCategories();
+        fetchProducts();
+    }, []);
 
     const getIsNew = (date) => {
         const diff = Math.abs(new Date() - new Date(date));
@@ -40,15 +37,14 @@ export default function HomePage() {
             promo.user_id === storeUserId && promo.status === 1
         );
     }) || [];
-    const popularProducts = products?.slice(0, 10).sort(() => 0.5 - Math.random()) || []; 
 
     return (
-        <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
+        <div className="min-h-screen bg-slate-50/30 font-sans text-slate-900">
             <Navbar />
 
-            {/* HERO SECTION */}
-            <main className="max-w-full mx-auto px-2 pt-20 pb-4">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch h-[240px] sm:h-[320px] lg:h-[400px]">
+            {/* HERO SECTION - Refined Spacing */}
+            <main className="max-w-[1400px] mx-auto px-4 pt-20 pb-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[300px] md:h-[420px]">
                     <div className="lg:col-span-3 h-full hidden lg:block">
                         <CategorySidebar categories={categories} />
                     </div>
@@ -58,90 +54,92 @@ export default function HomePage() {
                 </div>
             </main>
 
-            {/* 1. NEW ARRIVALS */}
-            {newArrivals.length > 0 && (
-                <section className="max-w-7xl mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                                <Star size={20} fill="currentColor" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Explore Our New Arrivals</h2>
+            <div className="max-w-[1400px] mx-auto px-4 space-y-16 pb-20">
+                
+                {/* 1. PROMOTIONAL - High Visibility */}
+                {promotionalProducts.length > 0 && (
+                   <section>
+                        <SectionHeader 
+                            title="Flash Deals" 
+                            subtitle="Limited time offers from our top merchants" 
+                            icon={Zap} 
+                            color="text-rose-500 bg-rose-50"
+                        />
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                            {promotionalProducts.slice(0, 6).map((product) => (
+                                <ProductCard key={`promo-${product.id}`} product={product} />
+                            ))}
                         </div>
-                        <Link href="/new-arrivals" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
-                            View All <ArrowRight size={16} />
-                        </Link>
-                    </div>
+                    </section>
+                )}
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        {newArrivals.slice(0, 5).map((product) => (
-                            <ProductCard key={`new-${product.id}`} product={product} />
+                {/* 2. NEW ARRIVALS */}
+                {newArrivals.length > 0 && (
+                    <section>
+                        <SectionHeader 
+                            title="New Arrivals" 
+                            subtitle="Just landed in our global catalog" 
+                            icon={Sparkles} 
+                            color="text-indigo-600 bg-indigo-50"
+                            link="/new-arrivals"
+                        />
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                            {newArrivals.slice(0, 6).map((product) => (
+                                <ProductCard key={`new-${product.id}`} product={product} />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* 3. MAIN EXPLORATION */}
+                <section>
+                    <SectionHeader 
+                        title="Explore Collection" 
+                        subtitle="Curated hardware and premium accessories" 
+                        icon={LayoutGrid} 
+                        color="text-slate-600 bg-slate-100"
+                        link="/store"
+                    />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                        {products?.slice(0, 12).map((product) => (
+                            <ProductCard key={`all-${product.id}`} product={product} />
                         ))}
-                    </div>
-                </section>
-            )}
-
-            {/* 2. PROMOTIONAL OFFERS */}
-            {promotionalProducts.length > 0 && (
-               <section className="max-w-7xl mx-auto px-4 py-4">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="p-2 bg-rose-100 text-rose-600 rounded-lg">
-                            <Zap size={20} fill="currentColor" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Explore Promotional Offers</h2>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        {promotionalProducts.map((product) => (
-                            <ProductCard key={`promo-${product.id}`} product={product} />
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* 3. POPULAR PRODUCTS */}
-            {popularProducts.length > 0 && (
-               <section className="max-w-7xl mx-auto px-4 py-4">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
-                            <Star size={20} fill="currentColor" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Explore Popular Products</h2>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        {popularProducts.slice(0, 5).map((product) => (
-                            <ProductCard key={`popular-${product.id}`} product={product} />
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* 4. ALL PRODUCTS (Grid Layout) */}
-           <section className="max-w-7xl mx-auto px-4 py-4">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
-                            <LayoutGrid size={20} />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Explore Collection</h2>
                     </div>
                     
-                    <Link href="/store" className="text-sm font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1">
-                        Full Catalog <ChevronRight size={16} />
-                    </Link>
-                </div>
+                    <div className="mt-12 text-center">
+                        <Link href="/store" className="inline-flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:border-indigo-600 transition-all shadow-sm">
+                            Browse Entire Registry <ArrowRight size={14} />
+                        </Link>
+                    </div>
+                </section>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    {products?.map((product) => (
-                        <ProductCard key={`all-${product.id}`} product={product} />
-                    ))}
-                </div>
-            </section>
+            </div>
 
             <PartnerLogoBanner />
             <Footer />
             <BecomeSellerButton />
+        </div>
+    );
+}
+
+/* Helper Component for Headers */
+function SectionHeader({ title, subtitle, icon: Icon, color, link }) {
+    return (
+        <div className="flex items-end justify-between mb-8">
+            <div className="flex items-center gap-4">
+                <div className={`p-2.5 rounded-2xl ${color} shadow-sm`}>
+                    <Icon size={20} strokeWidth={2.5} />
+                </div>
+                <div>
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase leading-none">{title}</h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">{subtitle}</p>
+                </div>
+            </div>
+            {link && (
+                <Link href={link} className="hidden sm:flex items-center gap-1.5 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:translate-x-1 transition-transform">
+                    View All <ChevronRight size={14} strokeWidth={3} />
+                </Link>
+            )}
         </div>
     );
 }

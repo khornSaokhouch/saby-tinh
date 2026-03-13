@@ -3,8 +3,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function ForgotPasswordPage() {
+  const { forgotPassword } = useAuthStore();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -15,9 +17,7 @@ export default function ForgotPasswordPage() {
     setError(null);
     setLoading(true);
     try {
-      // TODO: wire up to your actual forgot-password API endpoint
-      // await request('/forgot-password', 'POST', { email });
-      await new Promise((r) => setTimeout(r, 1000)); // placeholder
+      await forgotPassword(email);
       setSuccess(true);
     } catch (err) {
       setError(err?.message || 'Something went wrong. Please try again.');

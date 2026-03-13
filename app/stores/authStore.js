@@ -139,6 +139,37 @@ register: async ({ name, email, password, confirm_password, phone_number }) => {
 },
 
       // -------------------------------
+      // Password Reset
+      // -------------------------------
+      forgotPassword: async (email) => {
+        set({ loading: true, error: null });
+        try {
+          const res = await request('/forgot-password', 'POST', { email });
+          return res;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Failed to send reset link';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      resetPassword: async (payload) => {
+        set({ loading: true, error: null });
+        try {
+          const res = await request('/reset-password', 'POST', payload);
+          return res;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Failed to reset password';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      // -------------------------------
       // Login with existing token
       // -------------------------------
       loginWithToken: async (token) => {

@@ -1,14 +1,15 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
-import { Heart, ShoppingCart, Tag, Star } from "lucide-react";
+import { Heart, ShoppingCart, Tag, Star, ArrowUpRight } from "lucide-react";
 import { useShoppingCartStore } from "@/stores/useShoppingCart";
 import { useUserStore } from "@/stores/userStore";
 import { useFavoriteStore } from "@/stores/useFavoriteStore";
 import { motion } from "framer-motion";
+import { toast } from 'react-hot-toast';
 
-const slugify = (text) => text.toString().toLowerCase().trim()
-  .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+const slugify = (text) => text?.toString().toLowerCase().trim()
+  .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-') || "";
 
 export default function ProductCard({ product }) {
   const userId = useUserStore((state) => state.user?.id);
@@ -18,11 +19,9 @@ export default function ProductCard({ product }) {
   const [isMounted, setIsMounted] = useState(false);
   const favourited = isFavorite(product.id) && isMounted;
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  useEffect(() => { setIsMounted(true); }, []);
 
-  // --- LOGIC ---
+  // --- LOGIC (Maintained) ---
   const storeUserId = product.store?.user_id || product.store?.user?.id;
   const promotions = (product.category?.promotions || []).filter(
     (p) => p.user_id === storeUserId && p.status === 1
@@ -32,39 +31,20 @@ export default function ProductCard({ product }) {
   const discount = hasPromotion ? activePromotion.discount_percentage : 0;
   
   const originalPrice = parseFloat(product.price || 0);
-  const discountedPrice = hasPromotion
-    ? originalPrice - (originalPrice * discount) / 100
-    : originalPrice;
-
-  const createdAt = new Date(product.created_at);
-  const now = new Date();
-  const diffDays = Math.ceil(Math.abs(now - createdAt) / (1000 * 60 * 60 * 24));
-  const isNew = diffDays <= 7;
-
-  // --- HANDLERS ---
-  const handleFavouriteClick = (e) => {
-    e.preventDefault();
-    toggleFavorite(product);
-  };
+  const discountedPrice = hasPromotion ? originalPrice - (originalPrice * discount) / 100 : originalPrice;
+  const isNew = Math.ceil(Math.abs(new Date() - new Date(product.created_at)) / (1000 * 60 * 60 * 24)) <= 7;
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
-    if (!userId) return alert("Please log in.");
-    
-    // Get the first variant of the first item as default for quick-add
+    if (!userId) return toast.error("Please log in.");
     const variantId = product.items?.[0]?.variants?.[0]?.id;
-    
-    if (!variantId) {
-      return alert("This product is currently unavailable for purchase.");
-    }
-
-    try {
-      await addToCart({ 
-        product_item_variant_id: variantId, 
-        quantity: 1 
-      });
-    } catch (err) {
-      console.error(err);
+    if (!variantId) return toast.error("Unavailable");
+    try { 
+      await addToCart({ product_item_variant_id: variantId, quantity: 1 }); 
+      toast.success("Added to cart");
+    } catch (err) { 
+      console.error(err); 
+      toast.error("Failed to add");
     }
   };
 
@@ -72,100 +52,86 @@ export default function ProductCard({ product }) {
   const primaryImage = product.images?.find(img => img.is_primary)?.image || product.images?.[0]?.image || "/placeholder.svg";
 
   return (
-    <motion.div 
-      whileHover={{ y: -5 }}
-      className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all duration-300 flex flex-col h-full"
-    >
-      {/* 1. TOP MEDIA AREA */}
-      <div className="relative aspect-square bg-slate-50 overflow-hidden">
-        <Link href={`/category/${slugify(product.category?.name || 'hardware')}/${productSlug}`}>
+    <div className="group relative bg-white border border-slate-100 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] flex flex-col h-full overflow-hidden">
+      
+      {/* MEDIA AREA */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-slate-50">
+        <Link href={`/category/${slugify(product.category?.name || 'catalog')}/${productSlug}`}>
           <img
             src={primaryImage}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
           />
         </Link>
-        
-        {/* NEW DROP - TOP LEFT */}
-        {isNew && (
-          <div className="absolute top-3 left-3 z-10">
-            <span className="bg-slate-900 text-white text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-[0.12em] flex items-center gap-1 shadow-lg">
-              <Star size={10} fill="#fbbf24" stroke="none" /> New
-            </span>
-          </div>
-        )}
 
-        {/* DISCOUNT - BOTTOM RIGHT */}
-        {hasPromotion && (
-          <div className="absolute bottom-3 right-3 z-10">
-            <span className="bg-indigo-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest shadow-lg flex items-center gap-1">
-               <Tag size={10} /> -{discount}%
+        {/* Floating Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
+          {isNew && (
+            <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shadow-sm border border-slate-100">
+              New Drop
             </span>
-          </div>
-        )}
-
-        {/* Wishlist Button - TOP RIGHT */}
-        <button
-          onClick={handleFavouriteClick}
-          className={`absolute top-3 right-3 p-2 rounded-xl transition-all shadow-sm z-10 ${
-            favourited 
-              ? "bg-rose-500 text-white" 
-              : "bg-white/90 backdrop-blur-md text-slate-400 hover:text-rose-500"
-          }`}
-        >
-          <Heart size={14} fill={favourited ? "currentColor" : "none"} />
-        </button>
-      </div>
-
-      {/* 2. CONTENT AREA */}
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                {product.category?.name || "Hardware"}
+          )}
+          {hasPromotion && (
+            <span className="bg-rose-500 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shadow-lg">
+              -{discount}%
             </span>
-            <div className="flex items-center gap-1.5 text-amber-500">
-                <Star size={11} fill="currentColor" stroke="none" />
-                <span className="text-[11px] font-black text-slate-900">
-                    {product.reviews_avg_rating ? Number(product.reviews_avg_rating).toFixed(1) : "0.0"}
-                </span>
-                <span className="text-[9px] text-slate-400 font-bold">
-                    ({product.reviews_count || 0})
-                </span>
-            </div>
+          )}
         </div>
 
-        <Link href={`/category/${slugify(product.category?.name || 'hardware')}/${productSlug}`}>
-          <h3 className="text-sm font-black text-slate-900 leading-snug line-clamp-1 mb-1 group-hover:text-indigo-600 transition-colors">
+        {/* Action Overlay (Visible on Hover/Desktop, Always on Mobile) */}
+        <div className="absolute top-2 right-2 flex flex-col gap-1.5 translate-x-10 group-hover:translate-x-0 transition-transform duration-300">
+           <button
+            onClick={(e) => { e.preventDefault(); toggleFavorite(product); }}
+            className={`p-2 rounded-xl transition-all shadow-sm ${favourited ? "bg-rose-500 text-white" : "bg-white text-slate-400 hover:text-rose-500"}`}
+          >
+            <Heart size={14} fill={favourited ? "currentColor" : "none"} strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+
+      {/* CONTENT AREA */}
+      <div className="p-3 flex flex-col flex-1">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[70%]">
+            {product.category?.name || "General"}
+          </span>
+          <div className="flex items-center gap-0.5 text-amber-500">
+             <Star size={8} fill="currentColor" stroke="none" />
+             <span className="text-[9px] font-black text-slate-900">{product.reviews_avg_rating ? Number(product.reviews_avg_rating).toFixed(1) : "5.0"}</span>
+          </div>
+        </div>
+
+        <Link href={`/category/${slugify(product.category?.name || 'catalog')}/${productSlug}`} className="mb-1">
+          <h3 className="text-[12px] font-bold text-slate-800 leading-tight line-clamp-1 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
             {product.name}
           </h3>
         </Link>
         
-        <p className="text-[11px] text-slate-500 font-medium line-clamp-2 leading-relaxed mb-4">
-          {product.description || "Premium performance hardware listing."}
+        <p className="text-[10px] text-slate-400 font-medium line-clamp-1 mb-3">
+          {product.store?.name || "Official Store"}
         </p>
 
-        {/* 3. PRICE & CTA BLOCK */}
+        {/* FOOTER AREA */}
         <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
           <div className="flex flex-col">
-             <span className="text-sm font-black text-slate-900">
-                ${discountedPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-             </span>
-             {hasPromotion && (
-               <span className="text-[10px] text-slate-400 line-through font-bold">
-                 ${originalPrice.toFixed(2)}
-               </span>
-             )}
+            <span className="text-xs font-black text-slate-900">
+              ${discountedPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </span>
+            {hasPromotion && (
+              <span className="text-[8px] text-slate-400 line-through font-bold">
+                ${originalPrice.toFixed(2)}
+              </span>
+            )}
           </div>
 
           <button
             onClick={handleAddToCart}
-            className="group/btn flex items-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white p-2.5 px-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-slate-200"
+            className="w-8 h-8 flex items-center justify-center bg-slate-900 text-white rounded-lg transition-all active:scale-90 hover:bg-indigo-600 shadow-sm"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Add</span>
-            <ShoppingCart size={14} className="group-hover/btn:rotate-12 transition-transform" />
+            <ShoppingCart size={14} strokeWidth={2.5} />
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -46,7 +46,7 @@ const BecomeSellerButton = () => {
     >
       
       {/* 🐻 Bear Animation */}
-      <div className="w-[75px] h-[75px] -mb-2 z-10 pointer-events-none">
+      <div className="w-[50px] h-[50px] md:w-[75px] md:h-[75px] -mb-2 z-10 pointer-events-none transition-all">
         <DotLottieReact
           src="/animetion/Bear.lottie"
           loop
@@ -61,22 +61,22 @@ const BecomeSellerButton = () => {
         onClick={handleClick}
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95 }}
-        className="group flex items-center gap-2 bg-white p-1.5 pr-4 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white cursor-pointer relative overflow-hidden ring-1 ring-slate-100"
+        className="group flex items-center gap-1.5 md:gap-2 bg-white p-1 pr-3 md:p-1.5 md:pr-4 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white cursor-pointer relative overflow-hidden ring-1 ring-slate-100 transition-all"
       >
         {/* Icon Circle */}
-        <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-indigo-600 transition-colors relative z-10">
-          <Store className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-slate-900 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-indigo-600 transition-colors relative z-10">
+          <Store className="w-3 h-3 md:w-3.5 md:h-3.5 text-white transition-all" strokeWidth={2.5} />
         </div>
 
         {/* Text */}
-        <div className="flex flex-col leading-none relative z-10">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide group-hover:text-indigo-500 transition-colors">
+        <div className="flex flex-col leading-none relative z-10 w-full transition-all">
+          <span className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wide group-hover:text-indigo-500 transition-colors">
             Start Selling
           </span>
-          <span className="text-[12px] font-black text-slate-900 flex items-center gap-1">
+          <span className="text-[10px] md:text-[12px] font-black text-slate-900 flex items-center gap-1 transition-all">
             Join Now
             <ArrowRight
-              className="w-3 h-3 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all"
+              className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all shrink-0"
               strokeWidth={3}
             />
           </span>
