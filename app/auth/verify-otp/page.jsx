@@ -112,20 +112,17 @@ export default function VerifyOtpPage() {
                 <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                   Saby-Tinh
                 </span>
-                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mt-0.5">
-                  Management Console
-                </p>
               </Link>
             </div>
             <div className="w-full h-px bg-slate-100 my-2" />
-
+            
             {/* Icon + title */}
-            <div className="mt-5 flex flex-col items-center">
-              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-4 shadow-sm">
-                <ShieldCheck size={26} strokeWidth={2} />
+            <div className="mt-5">
+              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 mb-4 mx-auto shadow-sm">
+                <ShieldCheck size={24} strokeWidth={2} />
               </div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight">Verify your identity</h2>
-              <p className="text-[12px] text-slate-400 font-bold mt-1.5 leading-relaxed max-w-[260px]">
+              <p className="text-[12px] text-slate-400 font-bold mt-1.5 leading-relaxed max-w-[260px] mx-auto">
                 Enter the 6-digit code sent to{' '}
                 <span className="text-slate-700 font-black">{maskedEmail}</span>
               </p>
@@ -149,8 +146,8 @@ export default function VerifyOtpPage() {
                   autoFocus={index === 0}
                   className={`w-12 h-14 rounded-xl border-2 text-center text-xl font-black transition-all outline-none ${
                     digit
-                      ? 'border-indigo-500 bg-indigo-50/40 text-indigo-600'
-                      : 'border-slate-100 bg-slate-50 text-slate-900 focus:border-indigo-400 focus:bg-white'
+                      ? 'border-indigo-400 bg-white text-indigo-600 focus:ring-4 focus:ring-indigo-500/5'
+                      : 'border-slate-100 bg-slate-50 text-slate-900 focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/5'
                   }`}
                 />
               ))}
@@ -178,17 +175,7 @@ export default function VerifyOtpPage() {
             </button>
           </form>
 
-          {/* Security features */}
-          <div className="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="space-y-2">
-              {['Multi-factor authentication', 'End-to-end encrypted session', 'Real-time fraud monitoring'].map((item) => (
-                <div key={item} className="flex items-center gap-2">
-                  <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Removed security features box to match simplified minimal UI block of other pages */}
 
           {/* Resend + back */}
           <div className="mt-5 flex items-center justify-between">

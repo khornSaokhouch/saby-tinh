@@ -104,7 +104,7 @@ function StoreInvoicesContent() {
       {/* --- KPI GRID --- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" subText="Transactions" />
-        <StatCard label="Settled" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" subText="Completed" />
+        <StatCard label="Status" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" subText="Completed" />
         <StatCard label="Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="rose" subText="Net Profit" />
         <StatCard label="Volume" value="Live" icon={Activity} color="blue" subText="Real-time" />
       </div>
@@ -149,10 +149,10 @@ function StoreInvoicesContent() {
                 <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Transaction ID</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment Status</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Net Amount</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Info</th>
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Order Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
