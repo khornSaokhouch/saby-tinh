@@ -30,7 +30,7 @@ export const useBrandStore = create((set, get) => ({
       
       const formData = new FormData();
       formData.append('name', brand.name);
-      formData.append('status', brand.status); // Should be 1 or 0
+      formData.append('status', brand.status ? 1 : 0); // Map boolean to integer for backend validation
 
       // Only append image if it's a new file upload
       if (brand.image instanceof File) {

@@ -18,18 +18,19 @@ const SidebarItem = ({ item, isChecked, onToggle }) => {
     <li>
       <button
         onClick={() => onToggle(item.id)}
-        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition border ${
+        className={`w-full flex items-center justify-between gap-1 px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-[13px] transition border ${
           isChecked
-            ? "border-slate-900 text-slate-900 font-semibold bg-white"
-            : "border-transparent text-slate-600 hover:bg-slate-50"
+            ? "border-slate-900 text-slate-900 font-bold bg-slate-50"
+            : "border-transparent text-slate-500 hover:bg-slate-50 font-medium"
         }`}
       >
-        {/* Checkbox — always has a visible border */}
-        <span
-          className={`flex-shrink-0 w-4 h-4 rounded border-[1.5px] flex items-center justify-center transition-colors ${
+        <span className="truncate text-left">{item.name}</span>
+        
+        <div 
+          className={`flex-shrink-0 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded border flex items-center justify-center transition-colors ${
             isChecked
               ? "bg-slate-900 border-slate-900"
-              : "border-slate-300 group-hover:border-slate-900 bg-white"
+              : "border-slate-300 bg-white"
           }`}
         >
           {isChecked && (
@@ -43,8 +44,7 @@ const SidebarItem = ({ item, isChecked, onToggle }) => {
               />
             </svg>
           )}
-        </span>
-        <span className="truncate text-left">{item.name}</span>
+        </div>
       </button>
     </li>
   );
@@ -140,17 +140,17 @@ export default function CategoryFilterProducts() {
     priceRange.max !== "";
 
   return (
-    <div className="min-h-screen  py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-4 pb-8 bg-slate-50/20">
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
-              All Products
+            <h1 className="text-xl font-black text-slate-900 tracking-tight">
+              Collections
             </h1>
-            <p className="text-sm text-slate-500">
-              Filter and explore our complete inventory.
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              {products.length} Products Available
             </p>
           </div>
 
@@ -158,12 +158,12 @@ export default function CategoryFilterProducts() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder="Filter by name..."
               value={searchTerm}
               onChange={(e) =>
                 setSearchTerm(e.target.value)
               }
-              className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition"
+              className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition shadow-sm"
             />
             {searchTerm && (
               <button
@@ -176,12 +176,12 @@ export default function CategoryFilterProducts() {
           </div>
         </div>
 
-        {/* Layout */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        {/* Layout - Side by Side Always */}
+        <div className="flex flex-row items-start gap-2 sm:gap-8">
 
-          {/* LEFT SIDEBAR */}
-          <aside className="w-full lg:w-72 shrink-0">
-            <div className="sticky top-6 space-y-6">
+          {/* LEFT SIDEBAR - Persistent Column */}
+          <aside className="w-28 sm:w-72 shrink-0">
+            <div className="sticky top-20 sm:top-24 space-y-4 sm:space-y-6">
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-semibold text-slate-900">
@@ -198,17 +198,18 @@ export default function CategoryFilterProducts() {
                 )}
               </div>
 
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+              <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-5">
 
-                {/* Price */}
                 <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Price Range
+                  <h3 className="text-[9px] sm:text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2 sm:mb-4 flex items-center gap-1 sm:gap-2">
+                    <span className="w-0.5 sm:w-1 h-3 bg-slate-900 rounded-full"></span>
+                    <span className="hidden sm:inline">Price Range</span>
+                    <span className="sm:hidden">Price</span>
                   </h3>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
                     <input
                       type="number"
-                      placeholder="Min"
+                      placeholder="MIN"
                       value={priceRange.min}
                       onChange={(e) =>
                         setPriceRange((prev) => ({
@@ -216,11 +217,11 @@ export default function CategoryFilterProducts() {
                           min: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border rounded-lg text-sm"
+                      className="w-full px-1.5 sm:px-2 py-1 sm:py-1.5 border border-slate-200 rounded-lg text-[10px] sm:text-xs font-medium focus:border-indigo-500 outline-none"
                     />
                     <input
                       type="number"
-                      placeholder="Max"
+                      placeholder="MAX"
                       value={priceRange.max}
                       onChange={(e) =>
                         setPriceRange((prev) => ({
@@ -228,150 +229,42 @@ export default function CategoryFilterProducts() {
                           max: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border rounded-lg text-sm"
+                      className="w-full px-1.5 sm:px-2 py-1 sm:py-1.5 border border-slate-200 rounded-lg text-[10px] sm:text-xs font-medium focus:border-indigo-500 outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Categories */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Categories
-                  </h3>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
-                    <SidebarItem
-                      item={{ id: "all", name: "All" }}
-                      isChecked={selectedCategory === "all"}
-                      onToggle={() =>
-                        setSelectedCategory("all")
-                      }
-                    />
-                    {categories.map((cat) => (
+                {[
+                  { title: "Categories", data: categories, state: selectedCategory, setState: setSelectedCategory, short: "Cats" },
+                  { title: "Brands", data: brands, state: selectedBrand, setState: setSelectedBrand, short: "Brand" },
+                  { title: "Stores", data: stores, state: selectedStore, setState: setSelectedStore, short: "Store" },
+                  { title: "Colors", data: colors, state: selectedColor, setState: setSelectedColor, short: "Color" },
+                  { title: "Sizes", data: sizes, state: selectedSize, setState: setSelectedSize, short: "Size" },
+                ].map((group) => (
+                  <div key={group.title}>
+                    <h3 className="text-[9px] sm:text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2 flex items-center gap-1 sm:gap-2">
+                      <span className="w-0.5 sm:w-1 h-3 bg-slate-900 rounded-full"></span>
+                      <span className="hidden sm:inline">{group.title}</span>
+                      <span className="sm:hidden">{group.short}</span>
+                    </h3>
+                    <ul className="space-y-0.5 max-h-32 sm:max-h-48 overflow-y-auto custom-scrollbar">
                       <SidebarItem
-                        key={cat.id}
-                        item={cat}
-                        isChecked={
-                          selectedCategory === cat.id
-                        }
-                        onToggle={() =>
-                          setSelectedCategory(cat.id)
-                        }
+                        item={{ id: "all", name: "All" }}
+                        isChecked={group.state === "all"}
+                        onToggle={() => group.setState("all")}
                       />
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Brands */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Brands
-                  </h3>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
-                    <SidebarItem
-                      item={{ id: "all", name: "All" }}
-                      isChecked={selectedBrand === "all"}
-                      onToggle={() =>
-                        setSelectedBrand("all")
-                      }
-                    />
-                    {brands.map((brand) => (
-                      <SidebarItem
-                        key={brand.id}
-                        item={brand}
-                        isChecked={
-                          selectedBrand === brand.id
-                        }
-                        onToggle={() =>
-                          setSelectedBrand(brand.id)
-                        }
-                      />
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Stores */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Stores
-                  </h3>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
-                    <SidebarItem
-                      item={{ id: "all", name: "All" }}
-                      isChecked={selectedStore === "all"}
-                      onToggle={() =>
-                        setSelectedStore("all")
-                      }
-                    />
-                    {stores.map((store) => (
-                      <SidebarItem
-                        key={store.id}
-                        item={store}
-                        isChecked={
-                          selectedStore === store.id
-                        }
-                        onToggle={() =>
-                          setSelectedStore(store.id)
-                        }
-                      />
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Colors */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Colors
-                  </h3>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
-                    <SidebarItem
-                      item={{ id: "all", name: "All" }}
-                      isChecked={selectedColor === "all"}
-                      onToggle={() =>
-                        setSelectedColor("all")
-                      }
-                    />
-                    {colors.map((color) => (
-                      <SidebarItem
-                        key={color.id}
-                        item={color}
-                        isChecked={
-                          selectedColor === color.id
-                        }
-                        onToggle={() =>
-                          setSelectedColor(color.id)
-                        }
-                      />
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Sizes */}
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">
-                    Sizes
-                  </h3>
-                  <ul className="space-y-1 max-h-40 overflow-y-auto">
-                    <SidebarItem
-                      item={{ id: "all", name: "All" }}
-                      isChecked={selectedSize === "all"}
-                      onToggle={() =>
-                        setSelectedSize("all")
-                      }
-                    />
-                    {sizes.map((size) => (
-                      <SidebarItem
-                        key={size.id}
-                        item={size}
-                        isChecked={
-                          selectedSize === size.id
-                        }
-                        onToggle={() =>
-                          setSelectedSize(size.id)
-                        }
-                      />
-                    ))}
-                  </ul>
-                </div>
+                      {group.data.map((item) => (
+                        <SidebarItem
+                          key={item.id}
+                          item={item}
+                          isChecked={group.state === item.id}
+                          onToggle={() => group.setState(item.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                ))}
 
               </div>
             </div>
@@ -387,9 +280,9 @@ export default function CategoryFilterProducts() {
               {products.length > 0 ? (
                 <motion.div
                   key="products"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4"
                 >
                   {products.map((product) => (
                     <ProductCard

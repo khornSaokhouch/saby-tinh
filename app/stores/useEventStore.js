@@ -72,11 +72,12 @@ export const useEventStore = create(
           }
 
           const formData = new FormData();
-          formData.append('title', eventData.title);
+          formData.append('promotion_id', eventData.promotion_id || '');
+          formData.append('name', eventData.name);
           formData.append('description', eventData.description || '');
           formData.append('start_date', eventData.start_date || '');
           formData.append('end_date', eventData.end_date || '');
-          formData.append('status', eventData.status ? 1 : 0);
+          formData.append('status', eventData.status || 'draft');
 
           if (eventData.event_image) {
             formData.append('event_image', eventData.event_image);

@@ -59,9 +59,23 @@ export default function ProductDetails({ productSlug }) {
 
   const favorited = isFavorite(product.id);
   const activePromotion = (product?.category?.promotions || []).find(p => p.status === 1);
-  const discount = activePromotion?.discount_percentage || 0;
+  const discountType = activePromotion?.discount_type || 'none';
+  const discountValue = parseFloat(activePromotion?.discount_value || 0);
+  const hasPromotion = activePromotion && discountType !== 'none' && discountValue > 0;
+  
   const originalPrice = Number(product?.price || 0);
-  const discountedPrice = discount > 0 ? originalPrice - (originalPrice * discount / 100) : originalPrice;
+  let discountedPrice = originalPrice;
+  let discountBadge = "";
+
+  if (hasPromotion) {
+    if (discountType === 'percentage') {
+      discountedPrice = originalPrice - (originalPrice * discountValue) / 100;
+      discountBadge = `-${discountValue}%`;
+    } else if (discountType === 'fixed') {
+      discountedPrice = Math.max(0, originalPrice - discountValue);
+      discountBadge = `-$${discountValue}`;
+    }
+  }
 
   const uniqueColors = Array.from(new Set(product?.items?.flatMap(item => item.variants).map(v => v.color?.name).filter(Boolean)));
   const uniqueSizes = Array.from(new Set(product?.items?.flatMap(item => item.variants).map(v => v.size?.name).filter(Boolean)));
@@ -96,7 +110,7 @@ export default function ProductDetails({ productSlug }) {
                   />
                 </AnimatePresence>
                 <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                  {discount > 0 && <span className="bg-black text-white text-[10px] font-black px-2 py-0.5 rounded uppercase leading-none">-{discount}%</span>}
+                  {hasPromotion && <span className="bg-black text-white text-[10px] font-black px-2 py-0.5 rounded uppercase leading-none">{discountBadge}</span>}
                 </div>
               </div>
 
@@ -130,7 +144,7 @@ export default function ProductDetails({ productSlug }) {
                 <span className="text-2xl font-black text-gray-900">
                   ${discountedPrice.toLocaleString()}
                 </span>
-                {discount > 0 && (
+                {hasPromotion && (
                   <span className="text-sm text-gray-400 line-through">${originalPrice.toLocaleString()}</span>
                 )}
               </div>

@@ -9,14 +9,25 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    discount_percentage: "",
     start_date: "",
     end_date: "",
-    status: 1,
-    category_ids: [],
+    priority: 0,
+    event_type: "promotion",
+    discount_type: "none",
+    discount_value: 0,
+    category_ids: initialData?.categories?.map(c => c.id) || [],
   });
 
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+      return date.toISOString().split('T')[0];
+    } catch (e) { return ""; }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -25,9 +36,12 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
       setFormData({
         name: initialData?.name || "",
         description: initialData?.description || "",
-        discount_percentage: initialData?.discount_percentage || "",
-        start_date: initialData?.start_date ? initialData.start_date.split(' ')[0] : "",
-        end_date: initialData?.end_date ? initialData.end_date.split(' ')[0] : "",
+        priority: initialData?.priority || 0,
+        event_type: initialData?.event_type || "promotion",
+        discount_type: initialData?.discount_type || "none",
+        discount_value: initialData?.discount_value || 0,
+        start_date: formatDateForInput(initialData?.start_date),
+        end_date: formatDateForInput(initialData?.end_date),
         status: initialData?.status ?? 1,
         category_ids: initialData?.categories?.map(c => c.id) || [],
       });
@@ -68,8 +82,8 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
           </div>
 
           <form onSubmit={handleFormSubmit} className="space-y-6">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-8">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="col-span-1">
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Campaign Title</label>
                 <input
                   type="text"
@@ -80,20 +94,59 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   placeholder="e.g. Summer Blowout"
                 />
               </div>
-              <div className="col-span-4">
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Percentage</label>
-                <div className="relative">
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Event Type</label>
+                  <select
+                    value={formData.event_type}
+                    onChange={(e) => setFormData({ ...formData, event_type: e.target.value })}
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all"
+                  >
+                    <option value="promotion">Promotion</option>
+                    <option value="offer">Offer</option>
+                    <option value="seasonal">Seasonal</option>
+                    <option value="global-event">Global Event</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Priority Level</label>
                   <input
                     type="number"
-                    value={formData.discount_percentage}
-                    onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
-                    required
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
                     className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all"
-                    placeholder="20"
+                    placeholder="0"
                   />
-                  <Percent className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                 </div>
-              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Discount Type</label>
+                  <select
+                    value={formData.discount_type}
+                    onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all"
+                  >
+                    <option value="none">None</option>
+                    <option value="percentage">Percentage %</option>
+                    <option value="fixed">Fixed Amount</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Discount Value</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    disabled={formData.discount_type === 'none'}
+                    value={formData.discount_value}
+                    onChange={(e) => setFormData({ ...formData, discount_value: parseFloat(e.target.value) })}
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all disabled:opacity-50"
+                    placeholder="0.00"
+                  />
+                </div>
             </div>
 
             <div>

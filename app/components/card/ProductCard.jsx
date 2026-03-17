@@ -22,16 +22,27 @@ export default function ProductCard({ product }) {
   useEffect(() => { setIsMounted(true); }, []);
 
   // --- LOGIC (Maintained) ---
-  const storeUserId = product.store?.user_id || product.store?.user?.id;
   const promotions = (product.category?.promotions || []).filter(
-    (p) => p.user_id === storeUserId && p.status === 1
+    (p) => p.status === 1
   );
   const activePromotion = promotions[0];
-  const hasPromotion = activePromotion && (activePromotion.discount_percentage > 0);
-  const discount = hasPromotion ? activePromotion.discount_percentage : 0;
+  const discountType = activePromotion?.discount_type || 'none';
+  const discountValue = parseFloat(activePromotion?.discount_value || 0);
+  const hasPromotion = activePromotion && discountType !== 'none' && discountValue > 0;
   
   const originalPrice = parseFloat(product.price || 0);
-  const discountedPrice = hasPromotion ? originalPrice - (originalPrice * discount) / 100 : originalPrice;
+  let discountedPrice = originalPrice;
+  let discountBadge = "";
+
+  if (hasPromotion) {
+    if (discountType === 'percentage') {
+      discountedPrice = originalPrice - (originalPrice * discountValue) / 100;
+      discountBadge = `-${discountValue}%`;
+    } else if (discountType === 'fixed') {
+      discountedPrice = Math.max(0, originalPrice - discountValue);
+      discountBadge = `-$${discountValue}`;
+    }
+  }
   const isNew = Math.ceil(Math.abs(new Date() - new Date(product.created_at)) / (1000 * 60 * 60 * 24)) <= 7;
 
   const handleAddToCart = async (e) => {
@@ -73,7 +84,7 @@ export default function ProductCard({ product }) {
           )}
           {hasPromotion && (
             <span className="bg-rose-500 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shadow-lg">
-              -{discount}%
+              {discountBadge}
             </span>
           )}
         </div>

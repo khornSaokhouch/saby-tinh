@@ -157,17 +157,18 @@ export default function EventsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Event Info</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Event Detail</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Type & Discount</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Duration</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && events.length === 0 ? (
-                <tr><td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Data...</td></tr>
+                <tr><td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Data...</td></tr>
               ) : filteredEvents.length === 0 ? (
-                <tr><td colSpan="4" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No events found</td></tr>
+                <tr><td colSpan="5" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No events found</td></tr>
               ) : (
                 filteredEvents.map((event) => (
                   <tr key={event.id} className="hover:bg-slate-50/30 transition-colors group">
@@ -182,22 +183,39 @@ export default function EventsPage() {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">{event.name}</span>
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Ref: {event.id}</span>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Priority: {event.promotion?.priority || 0}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <p className="text-[10px] font-bold text-slate-500 max-w-[220px] truncate">
-                        {event.description || 'No description provided'}
-                      </p>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{event.promotion?.event_type || 'N/A'}</span>
+                        {event.promotion?.discount_type !== 'none' && (
+                          <span className="text-[9px] font-bold text-indigo-600">
+                             {event.promotion?.discount_type === 'percentage' ? `${event.promotion?.discount_value}% OFF` : `$${event.promotion?.discount_value} OFF`}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${
+                        event.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                        event.status === 'scheduled' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                        event.status === 'expired' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                        'bg-slate-50 text-slate-400 border-slate-100'
+                      }`}>
+                         <div className={`w-1 h-1 rounded-full ${event.status === 'active' ? 'bg-emerald-600 animate-pulse' : 'bg-current'}`} />
+                         {event.status}
+                      </span>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex flex-col items-center gap-1">
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-emerald-100">
-                          <Check size={10} strokeWidth={3} /> {event.start_date}
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
+                          <Calendar size={10} className="text-slate-400" />
+                          {new Date(event.start_date).toLocaleDateString()}
                         </div>
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-rose-50 text-rose-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-rose-100">
-                          <X size={10} strokeWidth={3} /> {event.end_date}
+                        <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
+                          to {new Date(event.end_date).toLocaleDateString()}
                         </div>
                       </div>
                     </td>

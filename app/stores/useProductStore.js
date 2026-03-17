@@ -112,6 +112,9 @@ export const useProductStore = create(
           maxPrice = '', 
           colorId = 'all', 
           sizeId = 'all',
+          promotionId = null,
+          promotionName = '',
+          eventName = '',
           silent = false
         } = filters;
 
@@ -129,6 +132,9 @@ export const useProductStore = create(
           if (search) queryParams.append('search', search);
           if (minPrice) queryParams.append('min_price', minPrice);
           if (maxPrice) queryParams.append('max_price', maxPrice);
+          if (promotionId) queryParams.append('promotion_id', promotionId);
+          if (promotionName) queryParams.append('promotion_name', promotionName);
+          if (eventName) queryParams.append('event_name', eventName);
           
           const fullUrl = url + (queryParams.toString() ? `?${queryParams.toString()}` : '');
 
@@ -233,6 +239,9 @@ export const useProductStore = create(
           return null;
         }
       },
+
+      // Clear all products from state
+      clearProducts: () => set({ products: [] }),
     }),
     {
       name: 'saby-tinh-products',

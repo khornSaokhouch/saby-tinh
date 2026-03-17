@@ -9,7 +9,7 @@ export default function UserLayout({ children }) {
   return (
     <div className="relative min-h-screen">
       {/* Navbar Fixed Top */}
-      <div className="flex-grow pt-24">
+      <div className="flex-grow pt-16">
         <Navbar />
       </div>
 

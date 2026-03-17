@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useEventStore } from "@/stores/useEventStore";
+import { useProductStore } from "@/stores/useProductStore";
+import ProductCard from "@/components/card/ProductCard";
 import Link from "next/link";
 import { 
   Calendar, MapPin, Share2, ArrowLeft, Clock, 
-  ChevronRight, ExternalLink, ShieldCheck, Users
+  ChevronRight, ExternalLink, ShieldCheck, Users,
+  Tag, ArrowUpRight
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,8 +21,10 @@ export default function EventDetails() {
   const { name } = useParams();
   const router = useRouter();
   const eventStore = useEventStore();
+  const productStore = useProductStore();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -29,17 +34,33 @@ export default function EventDetails() {
   };
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      const slugifiedName = name;
-      const cachedEvent = eventStore.events.find((e) => slugify(e.name) === slugifiedName);
-      if (cachedEvent) { setEvent(cachedEvent); setLoading(false); }
+    const fetchEventData = async () => {
+      setLoading(true);
+      productStore.clearProducts(); // Clear old products immediately
+      
       try {
         const data = await eventStore.fetchEventBySlug(name);
-        if (data) setEvent(data);
-      } catch (err) { console.error(err); } 
-      finally { setLoading(false); }
+        if (data) {
+          setEvent(data);
+          if (data) {
+            setProductsLoading(true);
+            await productStore.fetchProductsByFilters({ 
+              eventName: data.name,
+              silent: true 
+            });
+            setProductsLoading(false);
+          } else {
+            // Explicitly ensure products are empty if no promotion
+            productStore.clearProducts();
+          }
+        }
+      } catch (err) { 
+        console.error(err); 
+      } finally { 
+        setLoading(false); 
+      }
     };
-    fetchEvent();
+    fetchEventData();
   }, [name]);
 
   if (loading) return <LoadingScreen />;
@@ -56,111 +77,112 @@ export default function EventDetails() {
           <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
           <span className="text-[12px] font-bold">Back</span>
         </button>
-        <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert("Copied!"); }} 
-          className="p-2 bg-white rounded-lg border border-gray-100 text-gray-400 hover:text-indigo-600">
-          <Share2 className="w-4 h-4" />
-        </button>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 mt-2">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          
-          {/* Left Column */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-8 space-y-5">
-            {/* Hero - More Compact Aspect Ratio */}
-            <div className="relative aspect-[21/8] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-              <img src={event.event_image || "/placeholder.png"} alt={event.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
-              <div className="absolute bottom-4 left-5 right-5">
-                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-indigo-600 text-white text-[9px] font-bold uppercase tracking-wider rounded-md mb-2">
-                  <div className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                  Live Event
-                </div>
-                <h1 className="text-xl md:text-2xl font-extrabold text-white leading-tight">
-                  {event.name}
-                </h1>
+
+        {/* Campaign Products Section */}
+        <section className="mt-12 mb-20">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-indigo-50 rounded-full">
+                <Tag className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Featured Deals</span>
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                  Campaign Collection
+                </h2>
+                <p className="text-sm text-slate-500 mt-1 max-w-lg">
+                  Exclusive offers available during this event. Grab them before they're gone!
+                </p>
               </div>
             </div>
-
-            {/* Description - Tighter Padding */}
-            <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 tracking-tight">About this Event</h3>
-              <p className="text-gray-600 text-[13px] leading-relaxed whitespace-pre-line mb-6">
-                {event.description}
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <PerkItem icon={ShieldCheck} title="Verified" desc="Secure entry guaranteed" />
-                <PerkItem icon={Users} title="Networking" desc="Meet industry experts" />
-              </div>
+            
+            <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto">
+                {event.promotion?.end_date && (
+                    <CountdownTimer deadline={event.promotion.end_date} />
+                )}
+                
+                <Link href="/products" className="flex items-center gap-1.5 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:translate-x-1 transition-transform border-l border-slate-200 pl-6 h-8">
+                    View All Products <ChevronRight size={14} strokeWidth={3} />
+                </Link>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Right Column - Sticky Card */}
-          <motion.aside initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-4 lg:sticky lg:top-10 space-y-4">
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-indigo-50/50">
-              <div className="space-y-4">
-                <div>
-                  <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest mb-3">Event Summary</p>
-                  <div className="space-y-3.5">
-                    <DetailItem icon={Calendar} label="Date" value={`${formatDate(event.start_date)} - ${formatDate(event.end_date)}`} />
-                    <DetailItem icon={Clock} label="Schedule" value="09:00 AM - 05:00 PM" />
-                    <DetailItem icon={MapPin} label="Location" value={event.location || "Online"} highlight />
-                  </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {productsLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] rounded-2xl bg-slate-100 animate-pulse" />
+              ))
+            ) : productStore.products.length > 0 ? (
+              productStore.products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full py-20 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Tag className="w-6 h-6 text-slate-300" />
                 </div>
-
-                <div className="pt-4 border-t border-gray-50">
-                  <Link href="/register" className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all active:scale-[0.98]">
-                    Secure Your Spot <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                  <p className="text-[10px] text-gray-400 text-center mt-3">Limited availability. Register soon.</p>
-                </div>
+                <h3 className="text-sm font-bold text-slate-900">No products found</h3>
+                <p className="text-[11px] text-slate-400 mt-1">Check back later for campaign updates.</p>
               </div>
-            </div>
-
-            {/* Mini Support Widget */}
-            <div className="bg-slate-900 rounded-xl p-3.5 text-white flex items-center justify-between group cursor-pointer">
-               <div className="flex flex-col">
-                  <span className="text-[9px] text-slate-400 font-medium">Need help?</span>
-                  <span className="text-[12px] font-bold">Contact Support</span>
-               </div>
-               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-indigo-500 transition-colors">
-                  <ExternalLink className="w-3.5 h-3.5 text-white" />
-               </div>
-            </div>
-          </motion.aside>
-
-        </div>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );
 }
 
-function DetailItem({ icon: Icon, label, value, highlight }) {
-  return (
-    <div className="flex gap-2.5 items-center">
-      <div className={`p-1.5 rounded-lg ${highlight ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-50 text-gray-400'}`}>
-        <Icon className="w-3.5 h-3.5" />
-      </div>
-      <div className="flex flex-col">
-        <p className="text-[8px] font-bold text-gray-400 uppercase leading-none mb-0.5">{label}</p>
-        <p className={`text-[12px] font-bold ${highlight ? 'text-indigo-700' : 'text-gray-700'}`}>{value}</p>
-      </div>
-    </div>
-  );
+/* Helper Component for Countdown */
+function CountdownTimer({ deadline }) {
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = new Date(deadline).getTime() - now;
+            
+            if (distance < 0) {
+                clearInterval(timer);
+                return;
+            }
+
+            setTimeLeft({
+                days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                seconds: Math.floor((distance % (1000 * 60)) / 1000)
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [deadline]);
+
+    return (
+        <div className="flex items-center gap-1.5 ml-0 sm:ml-4 mt-2 sm:mt-0">
+            <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest bg-rose-50 px-2 py-1 rounded-lg">Ends In:</span>
+            <div className="flex gap-1">
+                {[
+                    { label: 'd', value: timeLeft.days },
+                    { label: 'h', value: timeLeft.hours },
+                    { label: 'm', value: timeLeft.minutes },
+                    { label: 's', value: timeLeft.seconds }
+                ].map((unit, idx) => (
+                    <div key={idx} className="flex flex-col items-center bg-slate-900 text-white min-w-[28px] py-1 rounded-lg shadow-sm border border-slate-700">
+                        <span className="text-[11px] font-black tabular-nums leading-none">
+                            {unit.value.toString().padStart(2, '0')}
+                        </span>
+                        <span className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5">{unit.label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 }
 
-function PerkItem({ icon: Icon, title, desc }) {
-  return (
-    <div className="flex items-center gap-3 p-2.5 bg-gray-50/50 rounded-lg border border-transparent hover:border-gray-100 transition-all">
-      <Icon className="w-4 h-4 text-indigo-500 shrink-0" />
-      <div>
-        <h4 className="text-[12px] font-bold text-gray-900 leading-tight">{title}</h4>
-        <p className="text-[10px] text-gray-500 leading-tight">{desc}</p>
-      </div>
-    </div>
-  );
-}
 
 function LoadingScreen() {
   return (

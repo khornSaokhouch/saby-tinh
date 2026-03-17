@@ -15,6 +15,7 @@ import {
 import { getCleanImageUrl, getUserInitial } from './utils';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function UserActions({ userProfile }) {
   const { cart, fetchCart } = useShoppingCartStore();
@@ -64,75 +65,107 @@ export default function UserActions({ userProfile }) {
 
 export function MobileBottomTabs({ userProfile }) {
   const { cart } = useShoppingCartStore();
-  const { favorites } = useFavoriteStore();
   const pathname = usePathname();
   
   const cartItemCount = cart?.items?.length || 0;
   const displayImageUrl = userProfile ? getCleanImageUrl(userProfile.profile_image_url) : null;
 
+  const tabs = [
+    { href: "/", icon: Home, label: "Home" },
+    { href: "/store", icon: Store, label: "Shops" },
+    { href: "/search", icon: Search, label: "Search" },
+    { href: "/shopping-cart", icon: ShoppingBag, label: "Cart", count: cartItemCount },
+    { 
+      href: userProfile ? "/profile" : "/auth/login", 
+      icon: User, 
+      label: userProfile ? "Profile" : "Login",
+      isProfile: true 
+    },
+  ];
+
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-1 pb-safe z-[150] shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
-      <div className="flex justify-around items-center h-14">
-        <TabItem href="/" icon={Home} label="Home" active={pathname === "/"} />
-      
-        <TabItem href="/store" icon={Store} label="Shops" active={pathname === "/store"} />
-          <TabItem href="/search" icon={Search} label="Search" active={pathname === "/search"} />
-        
-        {userProfile && (
-          <>
-            <TabItem 
-              href="/shopping-cart" 
-              icon={ShoppingBag} 
-              label="Cart" 
-              active={pathname === "/shopping-cart"} 
-              count={cartItemCount} 
-            />
-          </>
-        )}
-        
-        <TabItem 
-          href={userProfile ? "/profile" : "/auth/login"}
-          icon={!userProfile ? User : null}
-          userImage={displayImageUrl}
-          userName={userProfile?.name}
-          label={userProfile ? "Profile" : "Login"}
-          active={pathname === "/profile" || pathname === "/auth/login"}
-        />
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[100] px-6 pb-2 pointer-events-none">
+      {/* Main Container: White Background */}
+      <div className="max-w-md mx-auto bg-white/95 backdrop-blur-xl border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded-full pointer-events-auto">
+        <div className="flex justify-between items-center h-16 px-1.5 relative">
+          {tabs.map((tab) => {
+            const isActive = pathname === tab.href;
+            
+            return (
+              <Link 
+                key={tab.href} 
+                href={tab.href} 
+                className="relative flex flex-col items-center justify-center flex-1 h-full"
+              >
+                {/* 
+                   THE SLIDING PILL 
+                   This wraps both icon and text smoothly
+                */}
+                {isActive && (
+                  <motion.div 
+                    layoutId="activePillIndicator"
+                    className="absolute inset-y-2 inset-x-1 bg-indigo-600 rounded-full -z-10"
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 400, 
+                      damping: 30,
+                      mass: 0.8
+                    }}
+                  />
+                )}
+
+                <div className="flex flex-col items-center justify-center">
+                  <motion.div 
+                    animate={{ 
+                      scale: isActive ? 1 : 0.9,
+                      y: isActive ? 0 : 0 
+                    }}
+                    className="relative"
+                  >
+                    {tab.isProfile && userProfile ? (
+                      <div className={`w-6 h-6 rounded-full overflow-hidden border-2 transition-all duration-300 ${isActive ? 'border-white shadow-sm' : 'border-slate-200'}`}>
+                        {displayImageUrl ? (
+                          <Image src={displayImageUrl} alt="Profile" width={24} height={24} className="object-cover" />
+                        ) : (
+                          <div className={`w-full h-full flex items-center justify-center text-[10px] font-bold ${isActive ? 'bg-white text-indigo-600' : 'bg-slate-100 text-slate-500'}`}>
+                            {getUserInitial(userProfile.name)}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <tab.icon 
+                        size={18} 
+                        strokeWidth={isActive ? 2.5 : 2}
+                        className={`transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400'}`} 
+                      />
+                    )}
+                    
+                    {/* Notification Badge */}
+                    {tab.count > 0 && (
+                      <motion.span 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className={`absolute -top-2 -right-2 min-w-[15px] h-[15px] px-1 text-[8px] font-black rounded-full flex items-center justify-center ring-2 ${isActive ? 'bg-white text-indigo-600 ring-indigo-600' : 'bg-rose-500 text-white ring-white'}`}
+                      >
+                        {tab.count > 9 ? '9+' : tab.count}
+                      </motion.span>
+                    )}
+                  </motion.div>
+
+                  <motion.span 
+                    className={`text-[9px] mt-0.5 font-bold tracking-tight transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-500'}`}
+                  >
+                    {tab.label}
+                  </motion.span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
-
-// Sub-component for Mobile Tabs
-function TabItem({ href, icon: Icon, label, active, count, userImage, userName }) {
-  return (
-    <Link href={href} className="flex flex-col items-center justify-center flex-1 min-w-0 transition-all active:scale-90">
-      <div className={`relative flex items-center justify-center w-8 h-8 rounded-full mb-0.5 ${active ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500'}`}>
-        {userImage ? (
-          <div className={`w-6 h-6 rounded-full overflow-hidden border ${active ? 'border-indigo-500' : 'border-slate-200'}`}>
-            <Image src={userImage} alt="Profile" width={24} height={24} className="object-cover" />
-          </div>
-        ) : Icon ? (
-          <Icon size={19} />
-        ) : (
-           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
-             {getUserInitial(userName)}
-           </div>
-        )}
-        
-        {count > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-1 bg-rose-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
-            {count > 9 ? '9+' : count}
-          </span>
-        )}
-      </div>
-      <span className={`text-[9px] font-medium truncate w-full text-center px-1 ${active ? 'text-indigo-600' : 'text-slate-400'}`}>
-        {label}
-      </span>
-    </Link>
-  );
-}
-
 // Sub-component for Desktop
 function NavIconButton({ icon: Icon, href, count }) {
   return (
