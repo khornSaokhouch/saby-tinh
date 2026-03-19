@@ -39,7 +39,7 @@ const values = [
 
 export default function AboutUsPage() {
     return (
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen">
             
             {/* --- HERO SECTION --- */}
             <section className="relative p-4 overflow-hidden">
@@ -56,7 +56,7 @@ export default function AboutUsPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-4"
+                            className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-4"
                         >
                             Simplifying E-Commerce for <span className="text-indigo-600 italic">Saby-Tinh</span>
                         </motion.h1>
@@ -64,7 +64,7 @@ export default function AboutUsPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="text-base text-slate-500 font-medium leading-relaxed"
+                            className="text-sm text-slate-500 font-medium leading-relaxed"
                         >
                             Saby-Tinh is a specialized procurement platform. We bridge the gap between 
                             premium hardware suppliers and growing businesses through a high-performance 
@@ -93,7 +93,7 @@ export default function AboutUsPage() {
             <section className="max-w-5xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
-                        <h2 className="text-2xl font-black text-slate-900">Next-Gen Procurement</h2>
+                        <h2 className="text-xl font-black text-slate-900">Next-Gen Procurement</h2>
                         <p className="text-slate-500 text-sm leading-loose font-medium">
                             Traditional e-commerce is too slow for modern hardware needs. Saby-Tinh 
                             was engineered to handle bulk sourcing, complex logistics, and enterprise 
@@ -131,7 +131,7 @@ export default function AboutUsPage() {
             <section className="bg-slate-50 py-16">
                 <div className="max-w-5xl mx-auto px-6">
                     <div className="text-center mb-10">
-                        <h2 className="text-2xl font-black text-slate-900 mb-2">The Saby-Tinh Way</h2>
+                        <h2 className="text-xl font-black text-slate-900 mb-2">The Saby-Tinh Way</h2>
                         <p className="text-sm text-slate-500 font-medium">Our core principles for digital commerce.</p>
                     </div>
 
@@ -160,7 +160,7 @@ export default function AboutUsPage() {
                     <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
                     
                     <div className="relative z-10 max-w-xl mx-auto space-y-6">
-                        <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
                             Elevate your procurement today.
                         </h2>
                         <p className="text-slate-400 font-medium text-sm">

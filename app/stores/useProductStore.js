@@ -135,6 +135,7 @@ export const useProductStore = create(
           if (promotionId) queryParams.append('promotion_id', promotionId);
           if (promotionName) queryParams.append('promotion_name', promotionName);
           if (eventName) queryParams.append('event_name', eventName);
+          if (filters.hasPromotion) queryParams.append('has_promotion', '1');
           
           const fullUrl = url + (queryParams.toString() ? `?${queryParams.toString()}` : '');
 

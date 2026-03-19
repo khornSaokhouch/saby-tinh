@@ -119,7 +119,7 @@ export default function ProductsByBrandPage({ brandSlug }) {
     <div className="min-h-screen bg-slate-50/30">
       {/* PREMIUM HEADER */}
       {/* Standardized Header */}
-      <header className="container mx-auto px-6 max-w-7xl pt-12 mb-10">
+      <header className="container mx-auto px-6 max-w-[1440px] pt-12 mb-10">
         <button
           onClick={() => router.back()}
           className="group flex items-center gap-2 mb-8 text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors"
@@ -168,7 +168,7 @@ export default function ProductsByBrandPage({ brandSlug }) {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 -mt-10 relative z-20 max-w-7xl">
+      <div className="container mx-auto px-6 -mt-10 relative z-20 max-w-[1440px]">
          {/* Promotion Banner */}
          {activeBrandPromotion && <BrandPromotionBanner promotion={activeBrandPromotion} />}
 
@@ -180,7 +180,7 @@ export default function ProductsByBrandPage({ brandSlug }) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8"
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                     <div key={i} className="aspect-square bg-white rounded-3xl border border-dashed border-slate-100 animate-pulse" />
@@ -191,7 +191,7 @@ export default function ProductsByBrandPage({ brandSlug }) {
                   layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8"
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                 >
                   {productsWithPromotion.map((product) => (
                     <ProductCard key={product.id} product={product} />

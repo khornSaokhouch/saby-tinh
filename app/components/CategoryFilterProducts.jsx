@@ -141,12 +141,12 @@ export default function CategoryFilterProducts() {
 
   return (
     <div className="min-h-screen pt-4 pb-8 bg-slate-50/20">
-      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-lg font-black text-slate-900 tracking-tight">
               Collections
             </h1>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -180,7 +180,7 @@ export default function CategoryFilterProducts() {
         <div className="flex flex-row items-start gap-2 sm:gap-8">
 
           {/* LEFT SIDEBAR - Persistent Column */}
-          <aside className="w-28 sm:w-72 shrink-0">
+          <aside className="w-24 sm:w-64 shrink-0">
             <div className="sticky top-20 sm:top-24 space-y-4 sm:space-y-6">
 
               <div className="flex items-center justify-between">
@@ -282,7 +282,7 @@ export default function CategoryFilterProducts() {
                   key="products"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4"
+                  className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4"
                 >
                   {products.map((product) => (
                     <ProductCard

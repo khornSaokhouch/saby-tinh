@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { useReviewStore } from "@/app/stores/useReviewStore"
 import { toast } from "react-hot-toast"
-import { Edit2, Trash2, MessageSquare, Send, CheckCircle, Plus, X } from "lucide-react"
+import { Edit2, Trash2, Send, CheckCircle, Plus, X, MessageSquare } from "lucide-react"
 import { StarRating } from "./product-details-components/review/star-rating"
 import { ConfirmationModal } from "./product-details-components/review/confirmation-modal"
 import { formatDistanceToNow } from "date-fns"
@@ -28,7 +28,6 @@ export default function UserReviews({ orderProductId, userId }) {
     return [...reviews].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }, [reviews])
 
-  // Calculate Average for the Summary
   const averageRating = useMemo(() => {
     if (reviews.length === 0) return 0
     return (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
@@ -54,7 +53,7 @@ export default function UserReviews({ orderProductId, userId }) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-5xl mx-auto py-6">
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
@@ -68,31 +67,31 @@ export default function UserReviews({ orderProductId, userId }) {
       </ConfirmationModal>
 
       {/* --- 1. COMPACT SUMMARY HEADER --- */}
-      <section className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 pb-8 border-b border-slate-100">
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <h2 className="text-5xl font-black text-slate-900 leading-none">{averageRating}</h2>
-            <div className="mt-2">
-              <StarRating rating={Math.round(Number(averageRating))} readOnly starSize="h-4 w-4" />
+      <section className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-50">
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3">
+            <h2 className="text-3xl font-black text-gray-900 leading-none">{averageRating}</h2>
+            <div>
+              <StarRating rating={Math.round(Number(averageRating))} readOnly starSize="h-3 w-3" />
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">{reviews.length} Reviews</p>
             </div>
-            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">{reviews.length} Reviews</p>
           </div>
-          <div className="h-16 w-px bg-slate-100 hidden md:block" />
-          <div className="hidden sm:block space-y-1">
-            <h3 className="text-lg font-bold text-slate-900">Customer Feedback</h3>
-            <p className="text-sm text-slate-500 font-medium">Verified reviews from our community.</p>
+          <div className="h-8 w-px bg-gray-100 hidden sm:block" />
+          <div className="hidden md:block">
+            <h3 className="text-xs font-black text-gray-900 uppercase tracking-tight">Customer Feedback</h3>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Verified community ratings</p>
           </div>
         </div>
 
         {userId && (
           <button
             onClick={() => setShowForm(!showForm)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${
-              showForm ? "bg-slate-100 text-slate-600" : "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all ${
+              showForm ? "bg-gray-100 text-gray-500" : "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
             }`}
           >
-            {showForm ? <X size={18} /> : <Plus size={18} />}
-            {showForm ? "Close" : "Write a Review"}
+            {showForm ? <X size={14} /> : <Plus size={14} />}
+            {showForm ? "Close" : "Rate Product"}
           </button>
         )}
       </section>
@@ -104,27 +103,27 @@ export default function UserReviews({ orderProductId, userId }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden mb-10"
+            className="overflow-hidden mb-6"
           >
-            <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200">
-              <div className="flex flex-col sm:flex-row gap-6">
-                <div className="sm:w-1/3 space-y-4">
-                  <p className="text-sm font-bold text-slate-700">How would you rate it?</p>
-                  <StarRating rating={newRating} onRatingChange={setNewRating} starSize="h-6 w-6" />
+            <div className="bg-gray-50/50 rounded-2xl p-4 border border-gray-100">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Your Rating</p>
+                  <StarRating rating={newRating} onRatingChange={setNewRating} starSize="h-5 w-5" />
                 </div>
-                <div className="flex-1 space-y-4">
+                <div className="space-y-3">
                   <textarea
                     value={newReviewText}
                     onChange={(e) => setNewReviewText(e.target.value)}
-                    placeholder="Share your experience with this product..."
-                    className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:border-indigo-600 transition-all min-h-[100px]"
+                    placeholder="Describe your experience..."
+                    className="w-full p-3 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-700 outline-none focus:border-indigo-600 transition-all min-h-[80px] placeholder:text-gray-300"
                   />
                   <div className="flex justify-end">
                     <button
                       onClick={handleAddReview}
-                      className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2"
+                      className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all flex items-center gap-2"
                     >
-                      <Send size={16} /> Post Review
+                      <Send size={12} /> Submit Review
                     </button>
                   </div>
                 </div>
@@ -135,10 +134,11 @@ export default function UserReviews({ orderProductId, userId }) {
       </AnimatePresence>
 
       {/* --- 3. CLEAN REVIEW LIST --- */}
-      <div className="space-y-8">
+      <div className="space-y-5">
         {sortedReviews.length === 0 ? (
-          <div className="text-center py-10">
-            <p className="text-slate-400 font-medium">No reviews yet. Be the first to share your thoughts!</p>
+          <div className="text-center py-6 bg-gray-50/30 rounded-2xl border border-dashed border-gray-100">
+             <MessageSquare className="w-5 h-5 text-gray-200 mx-auto mb-2" />
+             <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">No feedback yet</p>
           </div>
         ) : (
           sortedReviews.map((review) => {
@@ -147,49 +147,49 @@ export default function UserReviews({ orderProductId, userId }) {
 
             return (
               <div key={review.id} className="group relative">
-                <div className="flex gap-4 sm:gap-6">
-                  {/* Avatar */}
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-slate-100 flex-shrink-0 border border-slate-200 overflow-hidden">
+                <div className="flex gap-4">
+                  {/* Avatar (Smaller) */}
+                  <div className="h-8 w-8 rounded-lg bg-gray-50 flex-shrink-0 border border-gray-100 overflow-hidden shadow-sm">
                     {review.user?.profile_image_url ? (
                       <img src={review.user.profile_image_url} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold">
-                        {review.user?.name?.[0]?.toUpperCase() || "U"}
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px] font-black uppercase">
+                        {review.user?.name?.[0] || "?"}
                       </div>
                     )}
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     {isEditing ? (
-                      <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-indigo-100">
-                        <StarRating rating={editingRating} onRatingChange={setEditingRating} />
+                      <div className="space-y-3 bg-gray-50 p-3 rounded-xl border border-indigo-100">
+                        <StarRating rating={editingRating} onRatingChange={setEditingRating} starSize="h-3 w-3" />
                         <textarea
                           value={editingReviewText}
                           onChange={(e) => setEditingReviewText(e.target.value)}
-                          className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm outline-none"
+                          className="w-full p-2 bg-white border border-gray-100 rounded-lg text-xs font-bold outline-none h-20"
                         />
                         <div className="flex gap-2">
                           <button onClick={() => {
                              updateReview(review.id, { review_text: editingReviewText, rating: editingRating })
                              setEditingReviewId(null)
-                          }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">Save</button>
-                          <button onClick={() => setEditingReviewId(null)} className="px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-lg text-xs font-bold">Cancel</button>
+                          }} className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-[9px] font-black uppercase tracking-widest">Save</button>
+                          <button onClick={() => setEditingReviewId(null)} className="px-3 py-1.5 bg-white border border-gray-100 text-gray-400 rounded-md text-[9px] font-black uppercase tracking-widest">Cancel</button>
                         </div>
                       </div>
                     ) : (
                       <>
                         <div className="flex justify-between items-start">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-slate-900 text-sm">{review.user?.name || "Customer"}</span>
-                              <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
-                                <CheckCircle size={10} /> Verified
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-gray-900 text-[11px] truncate">{review.user?.name || "Customer"}</span>
+                              <span className="flex items-center gap-0.5 text-[8px] font-black text-green-600 bg-green-50 px-1 py-0.5 rounded uppercase tracking-widest">
+                                <CheckCircle size={8} /> Verified
                               </span>
                             </div>
-                            <div className="flex items-center gap-3 mt-1">
-                              <StarRating rating={review.rating} readOnly starSize="h-3 w-3" />
-                              <span className="text-[11px] text-slate-400 font-medium">
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <StarRating rating={review.rating} readOnly starSize="h-2.5 w-2.5" />
+                              <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tight">
                                 {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                               </span>
                             </div>
@@ -199,20 +199,20 @@ export default function UserReviews({ orderProductId, userId }) {
                             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button 
                                 onClick={() => { setEditingReviewId(review.id); setEditingReviewText(review.review_text); setEditingRating(review.rating); }}
-                                className="p-2 text-slate-400 hover:text-indigo-600"
+                                className="p-1.5 text-gray-300 hover:text-indigo-600 bg-white rounded-md border border-gray-50 shadow-sm"
                               >
-                                <Edit2 size={14} />
+                                <Edit2 size={10} />
                               </button>
                               <button 
                                 onClick={() => { setReviewToDeleteId(review.id); setIsConfirmModalOpen(true); }}
-                                className="p-2 text-slate-400 hover:text-rose-600"
+                                className="p-1.5 text-gray-300 hover:text-rose-600 bg-white rounded-md border border-gray-50 shadow-sm"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={10} />
                               </button>
                             </div>
                           )}
                         </div>
-                        <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
+                        <p className="mt-2 text-gray-600 text-[11px] font-bold leading-relaxed pr-8">
                           {review.review_text}
                         </p>
                       </>

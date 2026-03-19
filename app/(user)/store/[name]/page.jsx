@@ -72,7 +72,14 @@ export default function StoreProductsPage() {
     <div className="min-h-screen">
       {/* 1. HEADER SECTION - Clean & Inviting */}
       <section className="relative pt-8 pb-20 overflow-hidden bg-slate-900">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_0%,#6366f1_0%,transparent_70%)]" />
+        {store?.store_image && (
+          <div 
+            className="absolute inset-0 z-0 bg-cover bg-center blur-2xl opacity-40 scale-110"
+            style={{ backgroundImage: `url(${store.store_image})` }}
+          />
+        )}
+        <div className="absolute inset-0 bg-slate-900/60 z-0" />
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_0%,#6366f1_0%,transparent_70%)] z-0" />
         
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
           <Link

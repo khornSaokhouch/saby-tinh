@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import {
-  Minus, Plus, Heart, ShoppingCart, ShieldCheck,
+  Minus, Plus, Heart, ShoppingCart, LayoutGrid ,
   Truck, Share2, ChevronLeft, Star, Tag, Store, Box
 } from "lucide-react";
 
@@ -16,6 +16,9 @@ import { useUserStore } from "@/stores/userStore";
 import { useFavoriteStore } from "@/stores/useFavoriteStore";
 import UserReviews from "./UserReviews";
 import ProductDiscountSection from "./ProductDiscountSection";
+import StoreLocations from "./StoreLocations";
+import SectionHeader from "./ui/SectionHeader";
+import ProductCard from "./card/ProductCard";
 
 const slugify = (text) => (text || "").toString().toLowerCase().trim()
     .replace(/\s+/g, "-").replace(/[^\w-]+/g, "").replace(/--+/g, "-");
@@ -23,7 +26,7 @@ const slugify = (text) => (text || "").toString().toLowerCase().trim()
 export default function ProductDetails({ productSlug }) {
   const router = useRouter();
   const userId = useUserStore((state) => state.user?.id);
-  const { products, fetchProductBySlug } = useProductStore();
+  const { products, fetchProductBySlug, fetchProducts } = useProductStore();
   const { addToCart } = useShoppingCartStore();
   const { toggleFavorite, isFavorite } = useFavoriteStore();
 
@@ -31,8 +34,6 @@ export default function ProductDetails({ productSlug }) {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -44,8 +45,11 @@ export default function ProductDetails({ productSlug }) {
       } catch (err) { console.error(err); } 
       finally { setLoading(false); }
     };
-    if (productSlug) fetchProduct();
-  }, [productSlug, products, fetchProductBySlug]);
+    if (productSlug) {
+      fetchProduct();
+      fetchProducts();
+    }
+  }, [productSlug, products, fetchProductBySlug, fetchProducts]);
 
   useEffect(() => {
     if (product?.images?.length > 0) {
@@ -62,6 +66,7 @@ export default function ProductDetails({ productSlug }) {
   const discountType = activePromotion?.discount_type || 'none';
   const discountValue = parseFloat(activePromotion?.discount_value || 0);
   const hasPromotion = activePromotion && discountType !== 'none' && discountValue > 0;
+  const isNew = Math.ceil(Math.abs(new Date() - new Date(product.created_at || new Date())) / (1000 * 60 * 60 * 24)) <= 7;
   
   const originalPrice = Number(product?.price || 0);
   let discountedPrice = originalPrice;
@@ -77,8 +82,6 @@ export default function ProductDetails({ productSlug }) {
     }
   }
 
-  const uniqueColors = Array.from(new Set(product?.items?.flatMap(item => item.variants).map(v => v.color?.name).filter(Boolean)));
-  const uniqueSizes = Array.from(new Set(product?.items?.flatMap(item => item.variants).map(v => v.size?.name).filter(Boolean)));
   const currentStock = product?.items?.[0]?.quantity_in_stock || 0;
 
   return (
@@ -105,12 +108,17 @@ export default function ProductDetails({ productSlug }) {
                   <motion.img
                     key={activeImage}
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    src={activeImage || "/placeholder.svg"}
+                    src={activeImage}
                     className="max-h-full max-w-full object-contain mix-blend-multiply"
                   />
                 </AnimatePresence>
                 <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                  {hasPromotion && <span className="bg-black text-white text-[10px] font-black px-2 py-0.5 rounded uppercase leading-none">{discountBadge}</span>}
+                  {isNew && (
+                    <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shadow-sm border border-slate-100 w-fit">
+                      New Drop
+                    </span>
+                  )}
+                  {hasPromotion && <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase leading-none w-fit text-center">{discountBadge}</span>}
                 </div>
               </div>
 
@@ -156,19 +164,6 @@ export default function ProductDetails({ productSlug }) {
                 <MetaItem label="Availability" value={currentStock > 0 ? "In Stock" : "Out of Stock"} isStock />
               </div>
 
-              {/* Variants */}
-              {uniqueColors.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold uppercase text-gray-400">Color</span>
-                  <div className="flex flex-wrap gap-2">
-                    {uniqueColors.map(c => (
-                      <button key={c} onClick={() => setSelectedColor(c)} className={`px-3 py-1.5 rounded-md text-[12px] font-semibold border transition-all ${selectedColor === c ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200'}`}>
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <div className="pt-2">
                 <span className="text-[11px] font-bold uppercase text-gray-400">Description</span>
@@ -195,6 +190,11 @@ export default function ProductDetails({ productSlug }) {
 
                 <button 
                   onClick={async () => {
+                    if (!userId) {
+                      toast.error("Please login to add to cart");
+                      // router.push("/auth/login");
+                      return;
+                    }
                     try {
                       await addToCart({ product_item_variant_id: product?.items?.[0]?.variants?.[0]?.id, quantity });
                       toast.success("Added to cart");
@@ -207,6 +207,8 @@ export default function ProductDetails({ productSlug }) {
                 >
                   <ShoppingCart size={16} /> Add to Cart
                 </button>
+
+                <StoreLocations userId={product?.user_id || product?.store?.user_id} variant="sidebar" />
 
                 <div className="flex items-center justify-between pt-2 border-t border-gray-50">
                   <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
@@ -226,7 +228,24 @@ export default function ProductDetails({ productSlug }) {
         {/* Supplementary */}
         <div className="mt-12 space-y-12">
            <UserReviews userId={userId} orderProductId={product?.id} />
+        
            <ProductDiscountSection />
+
+           <section className="mt-16 mb-4">
+              <SectionHeader 
+                title="Discover More" 
+                subtitle="Continue exploring our hardware and accessories" 
+                icon={LayoutGrid} 
+                color="text-slate-600 bg-slate-100"
+                count={products?.length}
+                link="/store"
+              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                 {(products || []).slice(0, 12).map((p) => (
+                   <ProductCard key={`discover-${p.id}`} product={p} />
+                 ))}
+              </div>
+           </section>
         </div>
       </main>
     </div>

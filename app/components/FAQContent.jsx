@@ -92,10 +92,10 @@ export default function FAQContent() {
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
                     <HelpCircle size={14} /> Help Center
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-4">
                     Frequently Asked Questions
                 </h1>
-                <p className="text-lg text-slate-500 font-medium">
+                <p className="text-sm text-slate-500 font-medium">
                     Everything you need to know about the product and billing. Can’t find the answer you’re looking for? Please chat to our friendly team.
                 </p>
             </div>
@@ -225,7 +225,7 @@ export default function FAQContent() {
             </div>
 
             {/* --- BOTTOM CTA --- */}
-            <div className="mt-20 bg-slate-900 rounded-[40px] p-10 sm:p-12 text-center relative overflow-hidden">
+            <div className="mt-20 border border-slate-200 rounded-[40px] p-10 sm:p-12 text-center relative overflow-hidden">
                 {/* Background Glows */}
                 <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px]" />
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-[80px]" />
@@ -234,14 +234,14 @@ export default function FAQContent() {
                     <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto text-indigo-300 border border-white/10">
                         <MessageSquare size={32} />
                     </div>
-                    <h2 className="text-3xl font-black text-white tracking-tight">Still have questions?</h2>
-                    <p className="text-slate-400 font-medium text-lg">
+                    <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Still have questions?</h2>
+                    <p className="text-slate-500 font-medium text-sm">
                         Can't find the answer you're looking for? Please chat to our friendly team.
                     </p>
                     <div className="flex justify-center gap-4 pt-4">
                         <Link
                             href="/contact-us"
-                            className="px-8 py-3.5 bg-white text-slate-900 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-slate-100 transition-all shadow-xl active:scale-95"
+                            className="px-8 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-xl active:scale-95"
                         >
                             Get in touch
                         </Link>

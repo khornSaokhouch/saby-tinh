@@ -141,7 +141,7 @@ export default function ProductsByCategoryPage({ categoryName }) {
     <div className="min-h-screen">
       {/* PREMIUM HEADER */}
       {/* Standardized Header */}
-      <header className="container mx-auto px-6 max-w-7xl pt-12 mb-10">
+      <header className="container mx-auto px-6 max-w-[1440px] pt-12 mb-10">
         <button
           onClick={() => router.back()}
           className="group flex items-center gap-2 mb-8 text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors"
@@ -177,14 +177,14 @@ export default function ProductsByCategoryPage({ categoryName }) {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 -mt-10 relative z-20 max-w-7xl">
+      <div className="container mx-auto px-6 -mt-10 relative z-20 max-w-[1440px]">
          {/* Promotion Banner */}
          {activeCategoryPromotion && <CategoryPromotionBanner promotion={activeCategoryPromotion} />}
 
          {/* MAIN GRID SECTOR */}
          <div className="py-12">
            {loading && products.length === 0 ? (
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                {[1, 2, 3, 4, 5].map(i => (
                  <div key={i} className="aspect-square bg-slate-50 rounded-3xl animate-pulse" />
                ))}
@@ -211,7 +211,7 @@ export default function ProductsByCategoryPage({ categoryName }) {
                 </Link>
              </div>
            ) : (
-             <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+             <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                {productsWithPromotion.map((product) => (
                  <ProductCard key={product.id} product={product} />
                ))}

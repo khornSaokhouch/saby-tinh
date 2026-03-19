@@ -113,10 +113,10 @@ export default function PrivacyPolicyContent() {
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
                     <ShieldCheck size={14} /> Legal Center
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-4">
                     Privacy Policy
                 </h1>
-                <p className="text-lg text-slate-500 font-medium leading-relaxed">
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">
                     Your trust is our priority. Last updated <span className="text-slate-900 font-bold underline decoration-indigo-500/30">October 3, 2025</span>. 
                     Please read how we handle and protect your data.
                 </p>
@@ -188,7 +188,7 @@ export default function PrivacyPolicyContent() {
                                 <p className="text-slate-500 text-sm font-medium mt-1">What this document covers.</p>
                             </div>
                         </div>
-                        <p className="text-slate-600 text-base leading-loose font-medium">
+                        <p className="text-slate-600 text-sm leading-loose font-medium">
                             At <span className="text-indigo-600 font-bold">Saby-Tinh</span>, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our procurement platform.
                         </p>
                     </div>
@@ -216,7 +216,7 @@ export default function PrivacyPolicyContent() {
                                 </h3>
                             </div>
                             
-                            <p className="text-slate-500 text-base leading-loose font-medium ml-14">
+                            <p className="text-slate-500 text-sm leading-loose font-medium ml-14">
                                 {section.content}
                                 {section.id === "contact" && (
                                     <Link 
@@ -241,8 +241,8 @@ export default function PrivacyPolicyContent() {
                     <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto text-indigo-300 border border-white/10">
                         <ShieldCheck size={32} />
                     </div>
-                    <h2 className="text-3xl font-black text-white tracking-tight">Need further clarification?</h2>
-                    <p className="text-slate-400 font-medium text-lg">
+                    <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">Need further clarification?</h2>
+                    <p className="text-slate-400 font-medium text-sm">
                         If you have a specific inquiry regarding GDPR, CCPA, or data processing, our privacy team is here to help.
                     </p>
                     <div className="flex justify-center gap-4 pt-4">

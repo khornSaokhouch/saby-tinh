@@ -46,7 +46,7 @@ export default function CategoryExplorerPage() {
 
   return (
     <div className="min-h-screen pt-8 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ================= HEADER ================= */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -146,7 +146,7 @@ export default function CategoryExplorerPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
             >
               {[...Array(10)].map((_, i) => (
                 <div
@@ -165,7 +165,7 @@ export default function CategoryExplorerPage() {
               key="grid"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
             >
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />

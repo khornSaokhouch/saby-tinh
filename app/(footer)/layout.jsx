@@ -6,7 +6,7 @@ import Navbar from "@/components/nabvar/Navbar";
 
 export default function UserLayout({ children }) {
   return (
-    <div className="relative min-h-screen bg-[#fcfdfe]">
+    <div className="relative min-h-screen ">
       {/* Navbar Fixed Top */}
       <div className="flex-grow pt-24">
         <Navbar />

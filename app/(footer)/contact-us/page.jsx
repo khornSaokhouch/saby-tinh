@@ -28,7 +28,7 @@ export default function ContactUsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 font-sans">
+    <div className="min-h-screen font-sans">
       
       <div className="max-w-6xl mx-auto p-4 space-y-10">
         
@@ -37,10 +37,10 @@ export default function ContactUsPage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold uppercase tracking-wider">
             <MessageSquare size={12} /> Support & Sales
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
             Get in touch with us.
           </h1>
-          <p className="text-slate-500 font-medium text-lg">
+          <p className="text-slate-500 font-medium text-sm">
             Have a question or need a custom quote? We are here to help you scale your hardware infrastructure.
           </p>
         </div>
@@ -158,11 +158,11 @@ export default function ContactUsPage() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="animate-spin" size={18} /> Sending...
+                      <Loader2 className="animate-spin" size={16} /> Sending...
                     </>
                   ) : (
                     <>
-                      <Send size={18} /> Send Message
+                      <Send size={16} /> Send Message
                     </>
                   )}
                 </button>

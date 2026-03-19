@@ -47,7 +47,7 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
-    if (!userId) return toast.error("Please log in.");
+    if (!userId) return toast.error("Please login to add to cart");
     const variantId = product.items?.[0]?.variants?.[0]?.id;
     if (!variantId) return toast.error("Unavailable");
     try { 
@@ -108,7 +108,7 @@ export default function ProductCard({ product }) {
           </span>
           <div className="flex items-center gap-0.5 text-amber-500">
              <Star size={8} fill="currentColor" stroke="none" />
-             <span className="text-[9px] font-black text-slate-900">{product.reviews_avg_rating ? Number(product.reviews_avg_rating).toFixed(1) : "5.0"}</span>
+             <span className="text-[9px] font-black text-slate-900">{product.reviews_avg_rating ? Number(product.reviews_avg_rating).toFixed(1) : "0.0"}</span>
           </div>
         </div>
 
