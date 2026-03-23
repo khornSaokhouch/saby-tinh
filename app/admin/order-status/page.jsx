@@ -9,8 +9,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOrderStatusStore } from '@/stores/useOrderStatusStore';
 import StatusFormModal from '@/components/admin/modelform/StatusFormModal';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function OrderStatusPage() {
+  const { language } = useLanguageStore();
   const { 
     orderStatuses, 
     loading, 
@@ -254,7 +257,7 @@ export default function OrderStatusPage() {
                         <Activity size={14} className="text-slate-400" />
                       </div>
                       <div className="flex flex-col text-left">
-                        <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{item.status}</span>
+                        <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{t(item.status, language)}</span>
                         <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {item.id}</span>
                       </div>
                     </div>

@@ -7,8 +7,11 @@ import { useSellerStore } from '@/stores/useSellerStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import LogoutConfirmModal from './modeldeleted/LogoutConfirmModal';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
+  const { language } = useLanguageStore();
   const { user, fetchProfile } = useUserStore();
   const { logout } = useAuthStore();
   const { pendingCount, fetchPendingCount } = useSellerStore();
@@ -71,10 +74,10 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
 
       <div className="flex flex-1 items-center justify-between">
         <div className="flex flex-col">
-          <h2 className="text-[15px] font-black text-slate-900 tracking-tight leading-none">{title}</h2>
+          <h2 className="text-[15px] font-black text-slate-900 tracking-tight leading-none">{t(title, language)}</h2>
           <div className="flex items-center gap-1.5 mt-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-[10px] font-medium text-slate-400">Live</span>
+            <span className="text-[10px] font-medium text-slate-400">{t('Live', language)}</span>
           </div>
         </div>
 
@@ -82,7 +85,7 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
           <input 
             type="text" 
-            placeholder="Search..." 
+            placeholder={t('Search...', language)}
             className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-10 pr-4 text-[12px] font-medium text-slate-700 focus:ring-2 focus:ring-blue-500/10 focus:bg-white transition-all placeholder:text-slate-400 outline-none"
           />
         </div>
@@ -128,20 +131,20 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
                   className="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100 p-1.5 z-[100] overflow-hidden"
                 >
                   <div className="px-3 py-2.5 border-b border-slate-50 mb-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Account</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">{t('Account', language)}</p>
                     <p className="text-[12px] font-bold text-slate-900 truncate tracking-tight">{user?.email}</p>
                   </div>
 
                   <DropdownItem 
                     href="/admin/account" 
                     icon={User} 
-                    label="Profile" 
+                    label={t('Profile', language)} 
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   <DropdownItem 
                     href="/admin/settings" 
                     icon={Settings} 
-                    label="Settings" 
+                    label={t('Settings', language)} 
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   
@@ -154,7 +157,7 @@ export default function AdminNavbar({ onMenuClick, title = "Dashboard" }) {
                     <div className="w-8 h-8 rounded-lg bg-slate-50 group-hover:bg-rose-100 flex items-center justify-center transition-colors">
                       <LogOut size={16} />
                     </div>
-                    <span className="text-[13px] font-bold">Sign Out</span>
+                    <span className="text-[13px] font-bold">{t('Sign Out', language)}</span>
                   </button>
                 </motion.div>
               )}

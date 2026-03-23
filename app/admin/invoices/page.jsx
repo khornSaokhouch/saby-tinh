@@ -9,8 +9,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AdminInvoices() {
+  const { language } = useLanguageStore();
   const [search, setSearch] = useState('');
   const { storeStats, stats, loading, fetchStoreStats, fetchStats } = useInvoiceStore();
 
@@ -32,13 +35,13 @@ export default function AdminInvoices() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Financial Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Financial Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">Payments</span>
+            {t('Store', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">{t('Payments', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Browse and coordinate merchant earnings and transaction settlements.
+            {t('Browse and coordinate merchant earnings and transaction settlements.', language)}
           </p>
         </div>
         
@@ -48,11 +51,11 @@ export default function AdminInvoices() {
             className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 hover:border-indigo-300 transition-all shadow-sm active:scale-95 uppercase tracking-widest"
           >
             <RefreshCw size={13} className={`${loading ? 'animate-spin text-indigo-600' : 'text-slate-400'}`} strokeWidth={3} />
-            Sync
+            {t('Sync', language)}
           </button>
           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
-            Export
+            {t('Export', language)}
           </button>
         </div>
       </div>
@@ -60,32 +63,36 @@ export default function AdminInvoices() {
       {/* --- KPI GRID (Dashboard Style) --- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
-          title="Total Sales" 
+          title={t('Total Sales', language)} 
           value={`$${(stats?.total_gmv || 0).toLocaleString()}`} 
           icon={DollarSign} 
           color="indigo" 
           trend="+12%" 
+          language={language}
         />
         <StatCard 
-          title="Paid Orders" 
+          title={t('Paid Orders', language)} 
           value={(stats?.paid_count || 0).toString()} 
           icon={CheckCircle2} 
           color="emerald" 
-          trend="Active"
+          trend={t('Active', language)}
+          language={language}
         />
         <StatCard 
-          title="Pending" 
+          title={t('Pending', language)} 
           value={`$${(stats?.pending_amount || 0).toLocaleString()}`} 
           icon={Clock} 
           color="rose" 
-          trend="Waiting"
+          trend={t('Waiting', language)}
+          language={language}
         />
         <StatCard 
-          title="Merchants" 
+          title={t('Merchants', language)} 
           value={storeStats.length.toString()} 
           icon={Store} 
           color="blue" 
-          trend="Online"
+          trend={t('Online', language)}
+          language={language}
         />
       </div>
 
@@ -107,9 +114,10 @@ export default function AdminInvoices() {
 
 <div className="flex items-center gap-2">
   <FilterSelect 
-    options={['All Merchants', 'Active', 'Top Earners']} 
-    value="All Merchants" 
+    options={[t('All Merchants', language), t('Active', language), t('Top Earners', language)]} 
+    value={t('All Merchants', language)} 
     onChange={(e) => console.log(e.target.value)}
+    language={language}
   />
 </div>
         </div>
@@ -119,11 +127,11 @@ export default function AdminInvoices() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store Profile</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Net</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Paid Orders</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Store Profile', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Total Net', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Paid Orders', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Status', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Actions', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -136,7 +144,7 @@ export default function AdminInvoices() {
               ) : filteredStores.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="py-16 text-center">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">No merchants located in registry</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">{t('No merchants located in registry', language)}</p>
                   </td>
                 </tr>
               ) : filteredStores.map((store, idx) => (
@@ -159,7 +167,7 @@ export default function AdminInvoices() {
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
                       <span className="text-xs font-black text-slate-900 tracking-tight">${parseFloat(store.total_earned || 0).toLocaleString()}</span>
-                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Accumulated Earnings</span>
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">{t('Accumulated Earnings', language)}</span>
                     </div>
                   </td>
                   <td className="px-4 py-4 text-center">
@@ -168,13 +176,13 @@ export default function AdminInvoices() {
                   <td className="px-4 py-4 text-center">
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-emerald-100 bg-emerald-50 text-emerald-600 text-[8px] font-black uppercase tracking-widest">
                       <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                      Active
+                      {t('Active', language)}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link href={`/admin/invoices/stores?store_id=${store.id}`}>
                       <button className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-sm active:scale-95 group/btn">
-                        <span>Details</span>
+                         <span>{t('Details', language)}</span>
                         <ArrowUpRight size={12} strokeWidth={3} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                       </button>
                     </Link>
@@ -193,7 +201,7 @@ export default function AdminInvoices() {
 
 // --- SHARED COMPONENT: StatCard ---
 
-function StatCard({ title, value, icon: Icon, color, trend }) {
+function StatCard({ title, value, icon: Icon, color, trend, language }) {
   const themes = {
     indigo: "bg-indigo-600 shadow-indigo-100",
     emerald: "bg-emerald-500 shadow-emerald-100",
@@ -223,7 +231,7 @@ function StatCard({ title, value, icon: Icon, color, trend }) {
 }
 
 // --- Updated Sub-component ---
-function FilterSelect({ options, value, onChange }) {
+function FilterSelect({ options, value, onChange, language }) {
   return (
     <div className="relative">
       <select 

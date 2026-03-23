@@ -9,8 +9,11 @@ import {
   LogOut, Key, FileText, Users, RefreshCw, Heart
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AdminProfilePage() {
+  const { language } = useLanguageStore();
   const { user, loading, error, fetchProfile } = useUserStore();
 
   useEffect(() => {
@@ -23,8 +26,8 @@ export default function AdminProfilePage() {
       <div className="h-[70vh] flex flex-col items-center justify-center gap-4 text-center font-sans">
         <RefreshCw className="animate-spin text-indigo-600" size={32} />
         <div className="space-y-1">
-          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Checking Credentials</h2>
-          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">Opening your profile...</p>
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Checking Credentials', language)}</h2>
+          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">{t('Opening your profile...', language)}</p>
         </div>
       </div>
     );
@@ -38,10 +41,10 @@ export default function AdminProfilePage() {
           <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Lock className="text-rose-500" size={32} />
           </div>
-          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Login Required</h2>
-          <p className="text-slate-400 text-xs font-medium mb-8">We couldn't load your profile details right now.</p>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">{t('Login Required', language)}</h2>
+          <p className="text-slate-400 text-xs font-medium mb-8">{t("We couldn't load your profile details right now.", language)}</p>
           <button onClick={() => window.location.reload()} className="w-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-600 transition-all">
-            <RefreshCw size={14} /> Try Again
+            <RefreshCw size={14} /> {t('Try Again', language)}
           </button>
         </div>
       </div>
@@ -65,10 +68,10 @@ export default function AdminProfilePage() {
           <div className="text-left">
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Administrator Account</span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Administrator Account', language)}</span>
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-              Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500 uppercase">{user.name}</span>
+              {t('Welcome back,', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500 uppercase">{user.name}</span>
             </h1>
           </div>
         </div>
@@ -78,7 +81,7 @@ export default function AdminProfilePage() {
             href="/admin/settings"
             className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 uppercase tracking-widest hover:border-indigo-300 transition-all shadow-sm"
           >
-            <Settings size={13} /> Edit Settings
+            <Settings size={13} /> {t('Edit Settings', language)}
           </Link>
           <button className="p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-md active:scale-95 transition-all">
             <LogOut size={14} strokeWidth={3} />
@@ -93,18 +96,18 @@ export default function AdminProfilePage() {
         <div className="lg:col-span-8 space-y-5">
           
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard label="My Permissions" value="Full Access" icon={Lock} color="indigo" sub="Administrator level" />
-            <StatCard label="Account Status" value="Verified" icon={ShieldCheck} color="emerald" sub="Safe and secure" />
-            <StatCard label="Recent Actions" value="24 Logs" icon={FileText} color="blue" sub="View activity history" />
+           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard label={t('My Permissions', language)} value={t('Full Access', language)} icon={Lock} color="indigo" sub={t('Administrator level', language)} language={language} />
+            <StatCard label={t('Account Status', language)} value={t('Verified', language)} icon={ShieldCheck} color="emerald" sub={t('Safe and secure', language)} language={language} />
+            <StatCard label={t('Recent Actions', language)} value={t('count Logs', language).replace('count', 24)} icon={FileText} color="blue" sub={t('View activity history', language)} language={language} />
           </div>
 
           {/* Personal Information Panel */}
           <div className="bg-white border border-slate-100 rounded-[24px] p-6 sm:p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-50">
               <div>
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Details</h3>
-                <p className="text-lg font-black text-slate-900 tracking-tight leading-none mt-1">Personal Information</p>
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Contact Details', language)}</h3>
+                <p className="text-lg font-black text-slate-900 tracking-tight leading-none mt-1">{t('Personal Information', language)}</p>
               </div>
               <button className="p-2 bg-slate-50 hover:bg-white hover:border-indigo-100 border border-transparent rounded-lg transition-all group">
                 <Edit3 size={14} className="text-slate-400 group-hover:text-indigo-600" />
@@ -112,10 +115,10 @@ export default function AdminProfilePage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <DetailItem label="Full Name" value={user.name} icon={User} />
-              <DetailItem label="Email Address" value={user.email} icon={Mail} />
-              <DetailItem label="Phone Number" value={user.phone_number || "No phone added"} icon={Phone} />
-              <DetailItem label="Primary Office" value="Main Dashboard Hub" icon={Globe} />
+              <DetailItem label={t('Full Name', language)} value={user.name} icon={User} language={language} />
+              <DetailItem label={t('Email Address', language)} value={user.email} icon={Mail} language={language} />
+              <DetailItem label={t('Phone Number', language)} value={user.phone_number || t("No phone added", language)} icon={Phone} language={language} />
+              <DetailItem label={t('Primary Office', language)} value={t("Main Dashboard Hub", language)} icon={Globe} language={language} />
             </div>
           </div>
         </div>
@@ -124,15 +127,15 @@ export default function AdminProfilePage() {
         <div className="lg:col-span-4 space-y-5">
           <div className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm flex flex-col h-full">
             <div className="mb-6">
-              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Tools</h4>
-              <p className="text-md font-black text-slate-900 tracking-tighter uppercase">Quick Links</p>
+              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{t('Tools', language)}</h4>
+              <p className="text-md font-black text-slate-900 tracking-tighter uppercase">{t('Quick Links', language)}</p>
             </div>
             
             <nav className="space-y-1.5">
-              <ShortcutLink icon={ShieldCheck} label="Security Center" href="/admin/security" />
-              <ShortcutLink icon={Users} label="Manage Team" href="/admin/users" badge="2 New" />
-              <ShortcutLink icon={Key} label="API Access" href="/admin/api" />
-              <ShortcutLink icon={Activity} label="System Health" href="/admin/system" />
+              <ShortcutLink icon={ShieldCheck} label={t('Security Center', language)} href="/admin/security" language={language} />
+              <ShortcutLink icon={Users} label={t('Manage Team', language)} href="/admin/users" badge={t('count New', language).replace('count', 2)} language={language} />
+              <ShortcutLink icon={Key} label={t('API Access', language)} href="/admin/api" language={language} />
+              <ShortcutLink icon={Activity} label={t('System Health', language)} href="/admin/system" language={language} />
             </nav>
 
             <div className="mt-auto pt-6">
@@ -140,10 +143,10 @@ export default function AdminProfilePage() {
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-2">
                        <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
-                       <span className="text-[8px] font-black uppercase tracking-widest text-rose-400">Pro Protection</span>
+                       <span className="text-[8px] font-black uppercase tracking-widest text-rose-400">{t('Pro Protection', language)}</span>
                     </div>
                     <p className="text-[10px] text-slate-400 leading-relaxed font-black uppercase tracking-widest opacity-80">
-                      Your account is protected by industry standard encryption.
+                      {t('Your account is protected by industry standard encryption.', language)}
                     </p>
                   </div>
                   <Activity className="absolute -right-4 -bottom-4 opacity-[0.05] text-white" size={80} />
@@ -159,7 +162,7 @@ export default function AdminProfilePage() {
 
 // --- SUB-COMPONENTS (Compact & Professional) ---
 
-function StatCard({ label, value, icon: Icon, color, sub }) {
+function StatCard({ label, value, icon: Icon, color, sub, language }) {
   const themes = {
     indigo: "bg-indigo-600 shadow-indigo-100",
     emerald: "bg-emerald-500 shadow-emerald-100",
@@ -177,7 +180,7 @@ function StatCard({ label, value, icon: Icon, color, sub }) {
   );
 }
 
-function DetailItem({ label, value, icon: Icon }) {
+function DetailItem({ label, value, icon: Icon, language }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center gap-2 px-1">
@@ -191,7 +194,7 @@ function DetailItem({ label, value, icon: Icon }) {
   );
 }
 
-function ShortcutLink({ icon: Icon, label, href, badge }) {
+function ShortcutLink({ icon: Icon, label, href, badge, language }) {
   return (
     <Link 
       href={href}

@@ -9,10 +9,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
 import { getCleanImageUrl } from '@/components/nabvar/utils';
 import Image from 'next/image';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { toast } from 'react-hot-toast';
 
 export default function CustomersPage() {
   const { users, loading, fetchAllUsers, updateUserRole, deleteUser } = useUserStore();
+  const { language } = useLanguageStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   
@@ -50,10 +53,10 @@ export default function CustomersPage() {
   const handleRoleChange = async (userId, newRole) => {
     try {
       await updateUserRole(userId, newRole);
-      toast.success('Role updated');
+      toast.success(t('Role updated', language));
     } catch (error) {
       console.error(error);
-      toast.error(error.message || 'Update failed');
+      toast.error(t(error.message || 'Update failed', language));
     }
   };
 
@@ -62,10 +65,10 @@ export default function CustomersPage() {
     try {
       await deleteUser(userId);
       setConfirmDeleteId(null);
-      toast.success('User deleted');
+      toast.success(t('User deleted', language));
     } catch (error) {
        console.error(error);
-       toast.error('Could not delete user');
+       toast.error(t('Could not delete user', language));
     } finally {
       setIsActionLoading(false);
     }
@@ -79,13 +82,13 @@ export default function CustomersPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Platform Governance</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Platform Governance', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Customers</span>
+            {t('Manage', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">{t('Customers', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Monitor and administer platform user accounts and permissions.
+            {t('Monitor and administer platform user accounts and permissions.', language)}
           </p>
         </div>
 
@@ -98,16 +101,16 @@ export default function CustomersPage() {
           </button>
 
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest">
-            <Download size={14} strokeWidth={3} /> Export Data
+            <Download size={14} strokeWidth={3} /> {t('Export Data', language)}
           </button>
         </div>
       </div>
 
       {/* --- STATS OVERVIEW --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Customers" value={visibleUsers.length} icon={Users} color="indigo" />
-        <MetricCard label="Active Users" value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
-        <MetricCard label="Restricted" value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" />
+        <MetricCard label={t('Total Customers', language)} value={visibleUsers.length} icon={Users} color="indigo" />
+        <MetricCard label={t('Active Users', language)} value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
+        <MetricCard label={t('Restricted', language)} value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" />
       </div>
 
       {/* --- REGISTRY TABLE --- */}
@@ -120,7 +123,7 @@ export default function CustomersPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
               <input 
                 type="text" 
-                placeholder="Search users, emails..." 
+                placeholder={t('Search users, emails...', language)} 
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -133,9 +136,9 @@ export default function CustomersPage() {
                 onChange={e => setFilterRole(e.target.value)}
                 className="w-full pl-3 pr-7 py-1 bg-white border border-slate-100 rounded-lg text-[10px] font-bold text-slate-600 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all uppercase tracking-widest"
               >
-                <option value="">All Roles</option>
-                <option value="user">USER</option>
-                <option value="owner">OWNER</option>
+                <option value="">{t('All Roles', language)}</option>
+                <option value="user">{t('USER', language)}</option>
+                <option value="owner">{t('OWNER', language)}</option>
                 {/* <option value="banned">BANNED</option> */}
               </select>
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
@@ -150,10 +153,10 @@ export default function CustomersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">User Detail</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Role</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('User Detail', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Role', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Date', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -162,7 +165,7 @@ export default function CustomersPage() {
                    <td colSpan="4" className="py-20 text-center">
                      <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading Users...</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Loading Users...', language)}</span>
                      </div>
                    </td>
                  </tr>
@@ -171,7 +174,7 @@ export default function CustomersPage() {
                     <td colSpan="4" className="py-20 text-center">
                        <div className="flex flex-col items-center gap-3 text-slate-200">
                           <Users size={40} />
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No users matching filter</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No users matching filter', language)}</p>
                        </div>
                     </td>
                  </tr>
@@ -207,9 +210,9 @@ export default function CustomersPage() {
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         className="px-2 py-1 bg-slate-50/50 border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest focus:border-indigo-100 outline-none cursor-pointer hover:bg-white transition-all min-w-[100px]"
                       >
-                        <option value="user">USER</option>
-                        <option value="owner">OWNER</option>
-                        <option value="banned">BANNED</option>
+                        <option value="user">{t('USER', language)}</option>
+                        <option value="owner">{t('OWNER', language)}</option>
+                        <option value="banned">{t('BANNED', language)}</option>
                       </select>
                     </td>
                     <td className="px-6 py-3.5">
@@ -267,10 +270,10 @@ export default function CustomersPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-            Showing: {filteredUsers.length} Users
+            {t('Showing:', language)} {filteredUsers.length} {t('Users', language)}
           </span>
           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Admin Access
+             {t('Admin Access', language)}
           </div>
         </div>
       </div>

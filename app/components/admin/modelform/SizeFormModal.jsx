@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function SizeFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting, categories }) {
   const [formData, setFormData] = useState({
     name: '',
     category_ids: [],
   });
+  const language = useLanguageStore((state) => state.language);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,13 +42,13 @@ export default function SizeFormModal({ isOpen, onClose, onSubmit, initialData, 
             className="bg-white border border-gray-100 text-gray-900 rounded-xl shadow-2xl w-full max-w-[400px] p-5 relative z-10"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Size' : 'Register Size'}
+              {initialData ? t('Update Size', language) : t('Register Size', language)}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-gray-700">Categories</label>
+                  <label className="block text-xs font-bold text-gray-700">{t('Categories', language)}</label>
                   <button
                     type="button"
                     onClick={() => {
@@ -55,7 +58,7 @@ export default function SizeFormModal({ isOpen, onClose, onSubmit, initialData, 
                     }}
                     className="text-[10px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
                   >
-                    {formData.category_ids.length === (categories || []).length ? 'Deselect All' : 'Select All'}
+                    {formData.category_ids.length === (categories || []).length ? t('Deselect All', language) : t('Select All', language)}
                   </button>
                 </div>
                 <div className="border border-gray-200 p-2 rounded-md max-h-32 overflow-y-auto grid grid-cols-2 gap-2 bg-gray-50">
@@ -72,14 +75,14 @@ export default function SizeFormModal({ isOpen, onClose, onSubmit, initialData, 
                         }}
                         className="w-3.5 h-3.5 text-black bg-white border-gray-300 rounded focus:ring-black"
                       />
-                      <span className="text-xs font-medium text-gray-700">{cat.name}</span>
+                      <span className="text-xs font-medium text-gray-700">{t(cat.name, language)}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Size Reference</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Size Reference', language)}</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -96,14 +99,14 @@ export default function SizeFormModal({ isOpen, onClose, onSubmit, initialData, 
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Add Measurement')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Add Measurement', language))}
                 </button>
               </div>
             </form>

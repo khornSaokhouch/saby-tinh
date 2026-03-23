@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }) {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialDa
     category_image: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const { language } = useLanguageStore();
 
   useEffect(() => {
     if (initialData) {
@@ -43,12 +46,12 @@ export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialDa
             className="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-[400px] p-5 relative z-10 text-gray-900"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Category' : 'Register Category'}
+              {initialData ? t('Update Category', language) : t('Register Category', language)}
             </h2>
 
             <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-3">
               <div className="flex flex-col mb-3">
-                <label className="text-xs font-bold mb-1.5 text-gray-700">Image</label>
+                <label className="text-xs font-bold mb-1.5 text-gray-700">{t('Image', language)}</label>
                 {imagePreview && (
                   <img src={imagePreview} alt="Preview" className="w-20 h-20 object-cover border border-gray-200 rounded-lg mb-2" />
                 )}
@@ -64,7 +67,7 @@ export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialDa
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Category Name</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Category Name', language)}</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -80,14 +83,14 @@ export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialDa
                   onClick={() => setFormData({ ...formData, status: true })}
                   className={`flex-1 py-1.5 px-3 border-r border-gray-200 text-xs font-bold transition-colors ${formData.status ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Visible
+                  {t('Visible', language)}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, status: false })}
                   className={`flex-1 py-1.5 px-3 text-xs font-bold transition-colors ${!formData.status ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Hidden
+                  {t('Hidden', language)}
                 </button>
               </div>
 
@@ -98,14 +101,14 @@ export default function CategoryFormModal({ isOpen, onClose, onSubmit, initialDa
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Save')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Save', language))}
                 </button>
               </div>
             </form>

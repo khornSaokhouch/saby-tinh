@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmit, isSubmitting }) {
+  const { language } = useLanguageStore();
   const [formData, setFormData] = useState({
     account_name: '',
     account_id: '',
@@ -47,13 +50,13 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
             className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[400px] p-5 relative z-10"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Gateway' : 'Register Gateway'}
+              {initialData ? t('Update Gateway', language) : t('Register Gateway', language)}
             </h2>
 
             <form onSubmit={handleFormSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Account Name</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Account Name', language)}</label>
                   <input
                     type="text"
                     value={formData.account_name}
@@ -63,7 +66,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Account ID</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Account ID', language)}</label>
                   <input
                     type="text"
                     value={formData.account_id}
@@ -73,7 +76,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Provider Type</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Provider Type', language)}</label>
                   <input
                     type="text"
                     value={formData.type_value}
@@ -83,7 +86,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">City</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('City', language)}</label>
                   <input
                     type="text"
                     value={formData.account_city}
@@ -93,7 +96,7 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Currency</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Currency', language)}</label>
                   <select
                     value={formData.currency}
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
@@ -111,14 +114,14 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   onClick={() => setFormData({ ...formData, status: 1 })}
                   className={`flex-1 py-1.5 px-3 border-r border-gray-200 text-xs font-bold transition-colors ${formData.status === 1 ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Active
+                  {t('Active', language)}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, status: 0 })}
                   className={`flex-1 py-1.5 px-3 text-xs font-bold transition-colors ${formData.status === 0 ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Offline
+                  {t('Offline', language)}
                 </button>
               </div>
 
@@ -129,16 +132,17 @@ export default function PaymentFormModal({ isOpen, onClose, initialData, onSubmi
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Register')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Register', language))}
                 </button>
               </div>
+
             </form>
           </motion.div>
         </div>

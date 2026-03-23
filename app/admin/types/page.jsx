@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTypeStore } from '@/stores/useTypeStore';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import TypeFormModal from '@/app/components/admin/modelform/TypeFormModal';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { toast } from 'react-hot-toast';
 
 export default function TypePage() {
@@ -24,6 +26,7 @@ export default function TypePage() {
   } = useTypeStore();
   
   const { categories, fetchCategories } = useCategoryStore();
+  const { language } = useLanguageStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -97,7 +100,7 @@ export default function TypePage() {
       try {
         await deleteMultipleTypes(selectedIds);
         setSelectedIds([]);
-        toast.success(`Removed ${selectedIds.length} types`);
+        toast.success(t(`Removed ${selectedIds.length} types`, language));
       } catch (error) {
         toast.error('Batch deletion failed');
       } finally {
@@ -111,7 +114,7 @@ export default function TypePage() {
     try {
       await saveType({ ...data, id: selectedItem?.id });
       setIsFormOpen(false);
-      toast.success('Type updated');
+      toast.success(t('Type updated', language));
     } catch (err) {
       console.error(err);
       toast.error('Failed to save type');
@@ -125,7 +128,7 @@ export default function TypePage() {
     try {
       await deleteType(id);
       setConfirmDeleteId(null);
-      toast.success('Type deleted');
+      toast.success(t('Type deleted', language));
     } catch (err) {
       console.error(err);
       toast.error('Failed to remove type');
@@ -149,7 +152,7 @@ export default function TypePage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Types</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Types', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -159,13 +162,13 @@ export default function TypePage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -177,10 +180,10 @@ export default function TypePage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Taxonomy Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Taxonomy Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Types</span>
+            {t('Product', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">{t('Types', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
             Organize and classify your platform's product architecture.
@@ -199,15 +202,15 @@ export default function TypePage() {
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> Create Type
+            <Plus size={14} strokeWidth={3} /> {t('Create Type', language)}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Types" value={types.length} icon={Tag} color="indigo" />
-        <MetricCard label="Registry Sync" value={categories.length} icon={Layers} color="emerald" subText="Categories" />
-        <MetricCard label="System Status" value="Unified" icon={CheckCircle2} color="purple" />
+        <MetricCard label={t('Total Types', language)} value={types.length} icon={Tag} color="indigo" />
+        <MetricCard label={t('Registry Sync', language)} value={categories.length} icon={Layers} color="emerald" subText={t('Categories', language)} />
+        <MetricCard label={t('System Status', language)} value={t('Unified', language)} icon={CheckCircle2} color="purple" />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
@@ -217,7 +220,7 @@ export default function TypePage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
               <input
                 type="text"
-                placeholder="Search types..."
+                placeholder={t('Search types...', language)}
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -230,7 +233,7 @@ export default function TypePage() {
                 onChange={(e) => setSelectedCategoryId(e.target.value)}
                 className="w-full pl-4 pr-10 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:border-blue-100 transition-all appearance-none cursor-pointer"
               >
-                <option value="all">All Categories</option>
+                <option value="all">{t('All Categories', language)}</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
@@ -239,7 +242,7 @@ export default function TypePage() {
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredTypes.length} Types Found
+            {filteredTypes.length} {t('Types Found', language)}
           </div>
         </div>
 
@@ -258,10 +261,10 @@ export default function TypePage() {
                     {selectedIds.length === filteredTypes.length && filteredTypes.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Type Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Type Detail', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">{t('Category', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">{t('Last Update', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 text-left">
@@ -273,7 +276,7 @@ export default function TypePage() {
                 </tr>
               ) : paginatedTypes.length === 0 ? (
                 <tr>
-                    <td colSpan="5" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No types matching filter</td>
+                    <td colSpan="5" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">{t('No types matching filter', language)}</td>
                 </tr>
               ) : paginatedTypes.map((type, idx) => (
                 <motion.tr 
@@ -298,7 +301,7 @@ export default function TypePage() {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{type.name}</span>
-                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {type.id}</span>
+                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">{t('UID:', language)} {type.id}</span>
                       </div>
                     </div>
                   </td>
@@ -314,7 +317,7 @@ export default function TypePage() {
                             {new Date(type.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                          at {new Date(type.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                          {t('at', language)} {new Date(type.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                     </td>
@@ -323,6 +326,7 @@ export default function TypePage() {
                       <button 
                         onClick={() => { setSelectedItem(type); setIsFormOpen(true); }} 
                         className="p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-sm active:scale-95 transition-all"
+                        title={t('Edit Type', language)}
                       >
                         <Edit3 size={14} strokeWidth={3} />
                       </button>
@@ -340,12 +344,14 @@ export default function TypePage() {
                               onClick={() => handleDelete(type.id)}
                               disabled={isActionLoading}
                               className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
+                              title={t('Confirm Delete', language)}
                             >
                               {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
                               className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
+                              title={t('Cancel Delete', language)}
                             >
                               <X size={14} strokeWidth={3} />
                             </button>
@@ -358,6 +364,7 @@ export default function TypePage() {
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(type.id)}
                             className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
+                            title={t('Delete Type', language)}
                           >
                             <Trash2 size={14} strokeWidth={3} />
                           </motion.button>
@@ -375,11 +382,11 @@ export default function TypePage() {
         <div className="p-4 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
            <div className="flex items-center gap-4 order-2 sm:order-1">
              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-               Showing {paginatedTypes.length} of {filteredTypes.length}
+               {t('Showing', language)} {paginatedTypes.length} {t('of', language)} {filteredTypes.length}
              </span>
              <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
              <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-               Page {currentPage} of {Math.max(1, totalPages)}
+               {t('Page', language)} {currentPage} {t('of', language)} {Math.max(1, totalPages)}
              </div>
            </div>
 
@@ -389,14 +396,14 @@ export default function TypePage() {
                disabled={currentPage === 1}
                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider"
              >
-               Previous
+               {t('Previous', language)}
              </button>
              <button
                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                disabled={currentPage >= totalPages}
                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider"
              >
-               Next
+               {t('Next', language)}
              </button>
            </div>
         </div>

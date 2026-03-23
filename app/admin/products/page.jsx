@@ -14,8 +14,10 @@ import { useProductStore } from '@/stores/useProductStore';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import { useBrandStore } from '@/stores/useBrandStore';
 import { useStore } from '@/stores/useStore';
-
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 function AdminProductsContent() {
+  const { language } = useLanguageStore();
   const { products, loading, fetchProducts } = useProductStore();
   const { categories, fetchCategories } = useCategoryStore();
   const { brands, fetchBrands } = useBrandStore();
@@ -84,13 +86,13 @@ function AdminProductsContent() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Catalog</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Product Catalog', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">Products</span>
+            {t('Manage', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">{t('Products', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Browse and coordinate your global product inventory.
+            {t('Browse and coordinate your global product inventory.', language)}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -102,16 +104,16 @@ function AdminProductsContent() {
           </button>
           <div className="px-3 py-1.5 bg-white border border-slate-100 rounded-lg flex items-center gap-2 shadow-sm">
             <ShieldCheck size={12} className="text-emerald-500" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin Only</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{t('Admin Only', language)}</span>
           </div>
         </div>
       </div>
  
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Products" value={stats.total} icon={Box} color="indigo" />
-        <MetricCard label="Active Products" value={stats.active} icon={CheckCircle2} color="emerald" subText={`${stats.total - stats.active} inactive`} />
-        <MetricCard label="Highest Price" value={`$${stats.topPrice.toLocaleString()}`} icon={DollarSign} color="purple" />
+        <MetricCard label={t('Total Products', language)} value={stats.total} icon={Box} color="indigo" />
+        <MetricCard label={t('Active Products', language)} value={stats.active} icon={CheckCircle2} color="emerald" subText={`${stats.total - stats.active} ${t('inactive', language)}`} />
+        <MetricCard label={t('Highest Price', language)} value={`$${stats.topPrice.toLocaleString()}`} icon={DollarSign} color="purple" />
       </div>
  
       {/* --- TABLE AREA --- */}
@@ -126,7 +128,7 @@ function AdminProductsContent() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={13} />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t('Search products...', language)}
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 focus:bg-white focus:border-emerald-100 transition-all outline-none placeholder:text-slate-400"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -139,9 +141,9 @@ function AdminProductsContent() {
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${isFilterOpen ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 shadow-sm'}`}
             >
               <SlidersHorizontal size={14} />
-              Filters
+              {t('Filters', language)}
               {hasActiveFilters && (
-                <span className="bg-emerald-500 text-white text-[8px] font-black rounded-full px-1.5 py-0.5 ml-1">SET</span>
+                <span className="bg-emerald-500 text-white text-[8px] font-black rounded-full px-1.5 py-0.5 ml-1">{t('SET', language)}</span>
               )}
             </button>
  
@@ -151,7 +153,7 @@ function AdminProductsContent() {
                 onClick={clearFilters}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-rose-100 bg-rose-50 text-rose-600 text-[9px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all"
               >
-                <X size={14} /> Reset
+                <X size={14} /> {t('Reset', language)}
               </button>
             )}
  
@@ -159,7 +161,7 @@ function AdminProductsContent() {
  
             {/* Results Count */}
             <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-              {filteredProducts.length} Products Found
+              {filteredProducts.length} {t('Products Found', language)}
             </div>
           </div>
  
@@ -176,35 +178,38 @@ function AdminProductsContent() {
                   {/* Store Filter */}
                   <FilterSelect
                     icon={Store}
-                    label="Store"
+                    label={t('Store', language)}
                     value={filterStore}
                     onChange={setFilterStore}
                     options={stores.map(s => ({ value: String(s.id), label: s.name }))}
+                    language={language}
                   />
                   {/* Category Filter */}
                   <FilterSelect
                     icon={Layers}
-                    label="Category"
+                    label={t('Category', language)}
                     value={filterCategory}
                     onChange={setFilterCategory}
                     options={categories.map(c => ({ value: String(c.id), label: c.name }))}
+                    language={language}
                   />
                   {/* Brand Filter */}
                   <FilterSelect
                     icon={Tag}
-                    label="Brand"
+                    label={t('Brand', language)}
                     value={filterBrand}
                     onChange={setFilterBrand}
                     options={brands.map(b => ({ value: String(b.id), label: b.name }))}
+                    language={language}
                   />
                   {/* Price Range */}
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                      <DollarSign size={10} className="text-emerald-500" />Price Range
+                      <DollarSign size={10} className="text-emerald-500" />{t('Price Range', language)}
                     </label>
                     <div className="flex items-center gap-2">
                        <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">MIN</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">{t('MIN', language)}</span>
                           <input
                             type="number"
                             value={minPrice}
@@ -213,7 +218,7 @@ function AdminProductsContent() {
                           />
                        </div>
                        <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">MAX</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">{t('MAX', language)}</span>
                           <input
                             type="number"
                             value={maxPrice}
@@ -234,11 +239,11 @@ function AdminProductsContent() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Category & Brand</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Price</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Product Detail', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Category & Brand', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Store', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Price', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Status', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -247,7 +252,7 @@ function AdminProductsContent() {
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="animate-spin text-emerald-500" size={24} />
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading ...</span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Loading ...', language)}</span>
                     </div>
                   </td>
                 </tr>
@@ -271,7 +276,7 @@ function AdminProductsContent() {
                       </div>
                       <div className="flex flex-col min-w-0">
                         <span className="text-[11px] font-black text-slate-900 truncate tracking-tight">{product.name}</span>
-                        <span className="text-[9px] font-black text-slate-300 tracking-widest uppercase">ID: #{product.id}</span>
+                        <span className="text-[9px] font-black text-slate-300 tracking-widest uppercase">{t('ID: #', language)}{product.id}</span>
                       </div>
                     </div>
                   </td>
@@ -279,10 +284,10 @@ function AdminProductsContent() {
                   {/* Brand & Category */}
                   <td className="px-6 py-3.5">
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Category: 
+                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">{t('Category:', language)} 
                         {product.category?.name || '—'}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400 truncate">Brands: {product.brand?.name || '—'}</span>
+                      <span className="text-[10px] font-bold text-slate-400 truncate">{t('Brands:', language)} {product.brand?.name || '—'}</span>
                     </div>
                   </td>
  
@@ -298,7 +303,7 @@ function AdminProductsContent() {
                   <td className="px-6 py-3.5">
                     <div className="flex flex-col">
                       <span className="text-[12px] font-black text-slate-900 tracking-tight">${parseFloat(product.price || 0).toLocaleString()}</span>
-                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Price</span>
+                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{t('Price', language)}</span>
                     </div>
                   </td>
  
@@ -306,7 +311,7 @@ function AdminProductsContent() {
                   <td className="px-6 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${product.status ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
-                         {product.status ? 'Active' : 'Inactive'}
+                         {product.status ? t('Active', language) : t('Inactive', language)}
                        </span>
                     </div>
                   </td>
@@ -316,10 +321,10 @@ function AdminProductsContent() {
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3 text-slate-200">
                       <Package size={40} />
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No products matching filter</p>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No products matching filter', language)}</p>
                       {hasActiveFilters && (
                         <button onClick={clearFilters} className="text-emerald-600 text-[9px] font-black uppercase tracking-widest mt-2 hover:underline">
-                          Clear Filters
+                          {t('Clear Filters', language)}
                         </button>
                       )}
                     </div>
@@ -329,29 +334,30 @@ function AdminProductsContent() {
             </tbody>
           </table>
         </div>
- 
+
         {/* Footer */}
-        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-            {filteredProducts.length} Products displayed
+            {filteredProducts.length} {t('Products displayed', language)}
           </span>
           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-            Admin View
+            {t('Admin View', language)}
           </div>
         </div>
       </div>
     </div>
   );
 }
- 
+
 export default function AdminProductsPage() {
+  const { language } = useLanguageStore();
   return (
     <Suspense fallback={
       <div className="h-[70vh] flex flex-col items-center justify-center gap-6 font-sans">
-        <Loader2 className="animate-spin text-emerald-500" size={48} />
+         <Loader2 className="animate-spin text-emerald-500" size={48} />
         <div className="text-center">
-          <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-1">Loading ...</h2>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Fetching data...</p>
+          <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-1">{t('Loading ...', language)}</h2>
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Fetching data...', language)}</p>
         </div>
       </div>
     }>
@@ -359,9 +365,9 @@ export default function AdminProductsPage() {
     </Suspense>
   );
 }
- 
+
 // --- SUB COMPONENTS ---
- 
+
 function MetricCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
@@ -385,8 +391,8 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
     </div>
   );
 }
- 
-function FilterSelect({ icon: Icon, label, value, onChange, options }) {
+
+function FilterSelect({ icon: Icon, label, value, onChange, options, language }) {
   return (
     <div className="space-y-1.5">
       <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5 ml-1">
@@ -396,9 +402,9 @@ function FilterSelect({ icon: Icon, label, value, onChange, options }) {
         <select
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-full h-10 pl-3 pr-8 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-700 focus:border-emerald-100 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all"
+           className="w-full h-10 pl-3 pr-8 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-700 focus:border-emerald-100 outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-all"
         >
-          <option value="">All</option>
+          <option value="">{t('All', language)}</option>
           {options.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}

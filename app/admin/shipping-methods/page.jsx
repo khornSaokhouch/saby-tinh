@@ -10,8 +10,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useShippingMethodStore } from '@/stores/useShippingMethodStore';
 import ShippingFormModal from '@/app/components/admin/modelform/ShippingFormModal';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function ShippingMethodsPage() {
+  const { language } = useLanguageStore();
   const { 
     shippingMethods, 
     loading, 
@@ -72,7 +75,7 @@ export default function ShippingMethodsPage() {
       try {
         await deleteMultipleShippingMethods(selectedIds);
         setSelectedIds([]);
-        toast.success(`Removed ${selectedIds.length} carriers`);
+        toast.success(t('Removed count carriers', language).replace('count', selectedIds.length));
       } catch (error) {
         toast.error('Batch delete failed');
       } finally {
@@ -122,7 +125,7 @@ export default function ShippingMethodsPage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Carriers</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Carriers', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -150,13 +153,13 @@ export default function ShippingMethodsPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Logistics Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Logistics Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Shipping <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Methods</span>
+            {t('Shipping', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">{t('Methods', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Configure transit carriers and service fee structures.
+            {t('Configure transit carriers and service fee structures.', language)}
           </p>
         </div>
 
@@ -179,17 +182,18 @@ export default function ShippingMethodsPage() {
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Transit Methods" value={shippingMethods.length} icon={Truck} color="indigo" />
+        <MetricCard label={t('Transit Methods', language)} value={shippingMethods.length} icon={Truck} color="indigo" language={language} />
         <MetricCard 
-            label="Average Cost" 
+            label={t('Average Cost', language)} 
             value={shippingMethods.length > 0 
                 ? `$${(shippingMethods.reduce((a, b) => a + Number(b.price), 0) / shippingMethods.length).toFixed(2)}` 
                 : '$0.00'} 
             icon={Banknote} 
             color="emerald" 
-            subText="Base Fee"
+            subText={t('Base Fee', language)}
+            language={language}
         />
-        <MetricCard label="System Status" value="Live" icon={Clock} color="purple" />
+        <MetricCard label={t('System Status', language)} value={t('Live', language)} icon={Clock} color="purple" language={language} />
       </div>
 
       {/* --- SHIPPING TABLE --- */}
@@ -199,14 +203,14 @@ export default function ShippingMethodsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search methods..." 
+              placeholder={t('Search methods...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredMethods.length} Carriers Found
+            {filteredMethods.length} {t('Carriers Found', language)}
           </div>
         </div>
 
@@ -225,10 +229,10 @@ export default function ShippingMethodsPage() {
                     {selectedIds.length === filteredMethods.length && filteredMethods.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Carrier Designation</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Base Fee</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Sync</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Carrier Designation', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Base Fee', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">{t('Last Sync', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 text-left">
@@ -240,7 +244,7 @@ export default function ShippingMethodsPage() {
                 </tr>
               ) : filteredMethods.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No carriers matching filter</td>
+                  <td colSpan="5" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">{t('No carriers matching filter', language)}</td>
                 </tr>
               ) : filteredMethods.map((method, idx) => (
                 <motion.tr 
@@ -265,13 +269,13 @@ export default function ShippingMethodsPage() {
                       </div>
                       <div className="flex flex-col text-left">
                         <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{method.name}</span>
-                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {method.id}</span>
+                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">{t('UID:', language)} {method.id}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-3.5 text-center">
                     <span className="px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
-                      {Number(method.price) === 0 ? 'FREE' : `$${Number(method.price).toFixed(2)}`}
+                      {Number(method.price) === 0 ? t('FREE', language) : `$${Number(method.price).toFixed(2)}`}
                     </span>
                   </td>
                   <td className="px-6 py-3.5 text-center">
@@ -280,7 +284,7 @@ export default function ShippingMethodsPage() {
                           {new Date(method.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                        at {new Date(method.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        {t('at', language)} {new Date(method.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </td>
@@ -340,10 +344,10 @@ export default function ShippingMethodsPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredMethods.length} Carriers
+             {t('Showing:', language)} {filteredMethods.length} {t('Carriers', language)}
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+             {t('Registry Sync', language)}
            </div>
         </div>
       </div>
@@ -367,7 +371,7 @@ export default function ShippingMethodsPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color, subText }) {
+function MetricCard({ label, value, icon: Icon, color, subText, language }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
     emerald: 'bg-emerald-500 shadow-emerald-100',

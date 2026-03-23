@@ -9,11 +9,14 @@ import {
 } from 'lucide-react';
 import { useStore } from '@/stores/useStore';
 import { useProductStore } from '@/stores/useProductStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { getCleanImageUrl } from '@/components/nabvar/utils';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 function StoreDetailsContent() {
+  const { language } = useLanguageStore();
   const searchParams = useSearchParams();
   const storeId = searchParams.get('storeId');
   const router = useRouter();
@@ -37,8 +40,8 @@ function StoreDetailsContent() {
       <div className="h-[70vh] flex flex-col items-center justify-center gap-4 font-sans text-center">
         <Loader2 className="animate-spin text-indigo-600" size={32} />
         <div className="space-y-1">
-          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Loading Info</h2>
-          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">Accessing store details...</p>
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">{t('Loading Info', language)}</h2>
+          <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">{t('Accessing store details...', language)}</p>
         </div>
       </div>
     );
@@ -62,7 +65,7 @@ function StoreDetailsContent() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Business Profile</span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Business Profile', language)}</span>
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
               {store.name.split(' ').map((word, i, arr) => (
@@ -77,7 +80,7 @@ function StoreDetailsContent() {
         <div className="flex items-center gap-2">
           <div className="px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center gap-2 shadow-sm">
             <ShieldCheck size={12} className="text-indigo-600" />
-            <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Verified Merchant</span>
+            <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">{t('Verified Merchant', language)}</span>
           </div>
         </div>
       </div>
@@ -99,12 +102,12 @@ function StoreDetailsContent() {
             <h3 className="text-lg font-black text-slate-900 mb-1">{store.name}</h3>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border border-emerald-100 bg-emerald-50 text-emerald-600 text-[8px] font-black uppercase tracking-widest mb-6">
                <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-               Operational
+               {t('Operational', language)}
             </span>
 
             <div className="space-y-2 text-left">
-               <InfoRow icon={Calendar} label="Member Since" value={new Date(store.created_at).toLocaleDateString()} />
-               <InfoRow icon={Layers} label="Business Category" value="Retail Store" highlight />
+               <InfoRow icon={Calendar} label={t('Member Since', language)} value={new Date(store.created_at).toLocaleDateString()} />
+               <InfoRow icon={Layers} label={t('Business Category', language)} value={t('Retail Store', language)} highlight />
             </div>
           </div>
 
@@ -112,19 +115,14 @@ function StoreDetailsContent() {
              <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-2 text-indigo-400">
                   <Activity size={14} strokeWidth={3} />
-                  <span className="text-[9px] font-black uppercase tracking-widest">Business Health</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest">{t('Business Health', language)}</span>
                 </div>
                 <div>
-                   <h3 className="text-lg font-black tracking-tight">Standard Performance</h3>
-                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Growth & Status Overview</p>
+                   <h3 className="text-lg font-black tracking-tight">{t('Standard Performance', language)}</h3>
+                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t('Growth & Status Overview', language)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                     <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Products</span>
-                     <span className="text-lg font-black">{products.length} Units</span>
-                  </div>
-                  <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                     <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Business Status</span>
                      <span className="text-lg font-black">Active</span>
                   </div>
                 </div>
@@ -140,12 +138,12 @@ function StoreDetailsContent() {
           <section className="bg-white p-6 sm:p-8 rounded-[24px] border border-slate-100 shadow-sm">
              <div className="flex items-center gap-3 mb-6">
                 <Building2 size={16} className="text-indigo-600" />
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Ownership & Business Details</h4>
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Ownership & Business Details', language)}</h4>
              </div>
 
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                   <h5 className="text-[8px] font-black text-slate-300 uppercase tracking-widest px-1">Business Owner</h5>
+                   <h5 className="text-[8px] font-black text-slate-300 uppercase tracking-widest px-1">{t('Business Owner', language)}</h5>
                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100 group transition-all hover:bg-white hover:shadow-md">
                       <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 overflow-hidden relative shadow-sm shrink-0">
                          {owner?.profile?.image_profile ? 
@@ -153,7 +151,7 @@ function StoreDetailsContent() {
                             : <span className="m-auto text-xs font-black text-slate-300">{owner?.name?.charAt(0)}</span>}
                       </div>
                       <div className="min-w-0">
-                         <p className="text-xs font-black text-slate-900 truncate uppercase">{owner?.name || 'Store Manager'}</p>
+                         <p className="text-xs font-black text-slate-900 truncate uppercase">{owner?.name || t('Store Manager', language)}</p>
                          <p className="text-[9px] font-bold text-slate-400 truncate">{owner?.email}</p>
                       </div>
                    </div>
@@ -161,12 +159,12 @@ function StoreDetailsContent() {
                      onClick={() => router.push(`/admin/company/details?userId=${owner?.id}`)}
                      className="flex items-center justify-center gap-2 text-[9px] font-black text-indigo-600 uppercase tracking-widest px-4 py-2.5 bg-indigo-50/50 rounded-xl hover:bg-indigo-600 hover:text-white transition-all w-full"
                    >
-                     Owner Profile <ArrowUpRight size={12} strokeWidth={3} />
+                     {t('Owner Profile', language)} <ArrowUpRight size={12} strokeWidth={3} />
                    </button>
                 </div>
 
                 <div className="space-y-3">
-                   <h5 className="text-[8px] font-black text-slate-300 uppercase tracking-widest px-1">Associated Company</h5>
+                   <h5 className="text-[8px] font-black text-slate-300 uppercase tracking-widest px-1">{t('Associated Company', language)}</h5>
                    {company ? (
                      <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100 group transition-all hover:bg-white hover:shadow-md">
                         <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 overflow-hidden relative shadow-sm shrink-0">
@@ -176,12 +174,12 @@ function StoreDetailsContent() {
                         </div>
                         <div className="min-w-0">
                            <p className="text-xs font-black text-slate-900 truncate uppercase">{company.company_name}</p>
-                           <p className="text-[9px] font-bold text-slate-400 truncate tracking-widest">{company.address?.province || 'Registered HQ'}</p>
+                           <p className="text-[9px] font-bold text-slate-400 truncate tracking-widest">{company.address?.province || t('Registered HQ', language)}</p>
                         </div>
                      </div>
                    ) : (
                      <div className="h-[92px] border border-dashed border-slate-200 rounded-2xl flex items-center justify-center">
-                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">No Corporate Data</p>
+                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{t('No Corporate Data', language)}</p>
                      </div>
                    )}
                 </div>
@@ -190,9 +188,9 @@ function StoreDetailsContent() {
 
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <StatCard label="Total Products" value={products.length} icon={Box} color="indigo" subText="Units" />
-             <StatCard label="Region" value={store.user?.company_info?.address?.province || 'Global'} icon={MapPin} color="emerald" />
-             <StatCard label="Accessibility" value="Online" icon={Globe} color="purple" />
+             <StatCard label={t('Total Products', language)} value={products.length} icon={Box} color="indigo" subText={t('Units', language)} />
+             <StatCard label={t('Region', language)} value={store.user?.company_info?.address?.province || t('Global', language)} icon={MapPin} color="emerald" />
+             <StatCard label={t('Accessibility', language)} value={t('Online', language)} icon={Globe} color="purple" />
           </div>
 
           {/* Product Registry Grid */}
@@ -200,18 +198,18 @@ function StoreDetailsContent() {
              <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                    <Box className="text-indigo-600" size={16} />
-                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Catalog</h3>
+                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Product Catalog', language)}</h3>
                 </div>
                 <button 
                    onClick={() => router.push(`/admin/products?storeId=${store.id}`)}
                    className="text-[9px] font-black text-indigo-600 uppercase tracking-widest hover:underline"
                 >
-                   View All Products
+                   {t('View All Products', language)}
                 </button>
              </div>
 
              {productsLoading ? (
-               <div className="py-12 text-center text-slate-400 font-black text-[9px] uppercase animate-pulse">Loading Catalog...</div>
+               <div className="py-12 text-center text-slate-400 font-black text-[9px] uppercase animate-pulse">{t('Loading Catalog...', language)}</div>
              ) : products.length > 0 ? (
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                  {products.slice(0, 6).map((product) => (
@@ -231,9 +229,9 @@ function StoreDetailsContent() {
                </div>
              ) : (
                <div className="py-12 text-center border border-dashed border-slate-100 rounded-2xl">
-                 <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">No products registered</p>
+                 <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{t('No products registered', language)}</p>
                </div>
-             )}
+            )}
           </div>
 
         </div>

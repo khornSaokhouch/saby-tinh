@@ -9,9 +9,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function OrdersPage() {
   const { orders, fetchOrders, loading, error } = useShopOrderStore();
+  const { language } = useLanguageStore();
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,13 +48,13 @@ export default function OrdersPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Registry Operations</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Registry Operations', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">Orders</span>
+            {t('Global', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">{t('Orders', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Monitor and coordinate global customer transactions.
+            {t('Monitor and coordinate global customer transactions.', language)}
           </p>
         </div>
         
@@ -63,17 +66,17 @@ export default function OrdersPage() {
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95">
-            <Download size={14} strokeWidth={3} /> Export Data
+            <Download size={14} strokeWidth={3} /> {t('Export Data', language)}
           </button>
         </div>
       </div>
 
       {/* --- KPI METRICS --- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Total Orders" value={orders.length.toLocaleString()} icon={ShoppingBag} color="indigo" />
-        <StatCard label="In-Process" value={pendingCount.toString()} icon={Clock} color="rose" />
-        <StatCard label="Gross Revenue" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="emerald" />
-        <StatCard label="Avg. Value" value={`$${avgValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={Activity} color="blue" />
+        <StatCard label={t('Total Orders', language)} value={orders.length.toLocaleString()} icon={ShoppingBag} color="indigo" />
+        <StatCard label={t('In-Process', language)} value={pendingCount.toString()} icon={Clock} color="rose" />
+        <StatCard label={t('Gross Revenue', language)} value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="emerald" />
+        <StatCard label={t('Avg. Value', language)} value={`$${avgValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={Activity} color="blue" />
       </div>
 
       {/* --- MAIN TABLE CONTAINER --- */}
@@ -85,7 +88,7 @@ export default function OrdersPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search ID or Customer..." 
+              placeholder={t('Search ID or Customer...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -94,12 +97,18 @@ export default function OrdersPage() {
 
           <div className="flex items-center gap-2">
              <FilterSelect 
-               options={['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled']} 
+               options={['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(opt => t(opt, language))} 
                value={selectedStatus} 
                onChange={setSelectedStatus}
+               language={language}
              />
              <div className="h-4 w-px bg-slate-200 mx-1"></div>
-             <FilterSelect options={['Last 30 Days', 'This Year']} value="Last 30 Days" onChange={() => {}} />
+             <FilterSelect 
+                options={[t('Last 30 Days', language), t('This Year', language)]} 
+                value={t('Last 30 Days', language)} 
+                onChange={() => {}} 
+                language={language}
+             />
           </div>
         </div>
 
@@ -108,37 +117,37 @@ export default function OrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">ORDER STATUS</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Total price</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Item</th> 
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Order ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ORDER STATUS', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Payment', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Total price', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Product Item', language)}</th> 
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Scanning Registry...</td></tr>
+                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">{t('Scanning Registry...', language)}</td></tr>
               ) : filteredOrders.map((order, idx) => (
                 <tr key={order.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-black text-indigo-600 tracking-tight">#ORD-{order.id}</span>
+                      <span className="text-xs font-black text-indigo-600 tracking-tight">{t('ORD-', language)}{order.id}</span>
                       <span className="text-[9px] font-black text-slate-300 uppercase mt-0.5">{new Date(order.created_at).toLocaleDateString()}</span>
                     </div>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-700">{order.user?.name || 'Guest'}</span>
+                      <span className="text-xs font-bold text-slate-700">{order.user?.name || t('Guest', language)}</span>
                       <span className="text-[9px] text-slate-400 font-medium truncate max-w-[120px]">{order.user?.email}</span>
                     </div>
                   </td>
                   <td className="px-4 py-4">
-                    <StatusBadge status={order.order_status?.status || 'Pending'} />
+                    <StatusBadge status={order.order_status?.status || 'Pending'} language={language} />
                   </td>
                   <td className="px-4 py-4">
-                    <PaymentBadge status={order.payment_status?.status || 'Pending'} />
+                    <PaymentBadge status={order.payment_status?.status || 'Pending'} language={language} />
                   </td>
                   <td className="px-4 py-4 text-right text-xs font-black text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString()}
@@ -148,7 +157,7 @@ export default function OrdersPage() {
                       <div className="w-8 h-8 rounded-lg border border-slate-100 bg-slate-50 shrink-0 overflow-hidden">
                         <img src={order.order_lines?.[0]?.product_item_variant?.product_item?.product?.images?.[0]?.image || '/placeholder.png'} className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[10px] font-bold text-slate-500 truncate">{order.order_lines?.[0]?.product_item_variant?.product_item?.product?.name || 'Item'}</span>
+                      <span className="text-[10px] font-bold text-slate-500 truncate">{order.order_lines?.[0]?.product_item_variant?.product_item?.product?.name || t('Item', language)}</span>
                     </div>
                   </td>
                   <td className="px-5 py-4 text-right">
@@ -169,7 +178,7 @@ export default function OrdersPage() {
 
         {/* Footer */}
         <div className="p-3 bg-slate-50/50 border-t border-slate-50 flex justify-between items-center px-6">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Page 1 of {Math.ceil(orders.length / 15) || 1} • {filteredOrders.length} Results</p>
+            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{t('Page', language)} 1 {t('of', language)} {Math.ceil(orders.length / 15) || 1} • {filteredOrders.length} {t('Results', language)}</p>
             <div className="flex gap-1">
               <button className="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><ChevronLeft size={12} /></button>
               <button className="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><ChevronRight size={12} /></button>
@@ -206,7 +215,7 @@ function StatCard({ label, value, icon: Icon, color, subText }) {
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, language }) {
   const config = {
     Pending: "bg-orange-50 text-orange-600 border-orange-100",
     Processing: "bg-indigo-50 text-indigo-600 border-indigo-100",
@@ -217,12 +226,12 @@ function StatusBadge({ status }) {
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[status] || config.Cancelled}`}>
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
-      {status}
+      {t(status, language)}
     </span>
   );
 }
 
-function PaymentBadge({ status }) {
+function PaymentBadge({ status, language }) {
   const styles = {
     Paid: "text-emerald-600 bg-emerald-50 border-emerald-100",
     Success: "text-emerald-600 bg-emerald-50 border-emerald-100",
@@ -231,12 +240,12 @@ function PaymentBadge({ status }) {
   };
   return (
     <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${styles[status] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
-      {status}
+      {t(status, language)}
     </span>
   );
 }
 
-function FilterSelect({ options, value, onChange }) {
+function FilterSelect({ options, value, onChange, language }) {
   return (
     <div className="relative">
       <select 

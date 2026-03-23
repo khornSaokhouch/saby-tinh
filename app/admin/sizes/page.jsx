@@ -9,9 +9,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSizeStore } from '@/stores/useSizeStore';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import SizeFormModal from '@/app/components/admin/modelform/SizeFormModal';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { toast } from 'react-hot-toast';
 
 export default function SizesPage() {
+  const { language } = useLanguageStore();
   const { 
     sizes, 
     loading, 
@@ -87,12 +90,12 @@ export default function SizesPage() {
   };
 
   const handleBatchDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} sizes?`)) {
+    if (window.confirm(t('Are you sure you want to delete ', language) + selectedIds.length + t(' sizes?', language))) {
       setIsActionLoading(true);
       try {
         await deleteMultipleSizes(selectedIds);
         setSelectedIds([]);
-        toast.success(`Removed ${selectedIds.length} dimension units`);
+        toast.success(t(`Removed ${selectedIds.length} sizes`, language));
       } catch (err) {
         toast.error('Batch deletion failed');
       } finally {
@@ -144,7 +147,7 @@ export default function SizesPage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Items</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Items', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -154,13 +157,13 @@ export default function SizesPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -175,10 +178,10 @@ export default function SizesPage() {
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Dimension Registry</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Sizes</span>
+            {t('Product', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">{t('Sizes', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Configure and maintain standard product measurement variants.
+            {t('Configure and maintain standard product measurement variants.', language)}
           </p>
         </div>
 
@@ -200,9 +203,9 @@ export default function SizesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Sizes" value={sizes.length} icon={Ruler} color="indigo" />
-        <MetricCard label="Dimension Check" value={sizes.filter(s => s.status === 'active').length} icon={CheckCircle2} color="emerald" subText="Verified" />
-        <MetricCard label="System Status" value="Secure" icon={Clock} color="purple" />
+        <MetricCard label={t('Total Sizes', language)} value={sizes.length} icon={Ruler} color="indigo" />
+        <MetricCard label={t('Dimension Check', language)} value={sizes.filter(s => s.status === 'active').length} icon={CheckCircle2} color="emerald" subText={t('Verified', language)} />
+        <MetricCard label={t('System Status', language)} value={t('Secure', language)} icon={Clock} color="purple" />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
@@ -234,7 +237,7 @@ export default function SizesPage() {
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredSizes.length} Sizes Found
+            {filteredSizes.length} {t('Sizes Found', language)}
           </div>
         </div>
 
@@ -253,11 +256,11 @@ export default function SizesPage() {
                     {selectedIds.length === paginatedSizes.length && paginatedSizes.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Size Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Size Detail', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">{t('Category', language)}</th>
                 {/* <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[100px]">Status</th> */}
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">{t('Last Update', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -269,7 +272,7 @@ export default function SizesPage() {
                 </tr>
               ) : paginatedSizes.length === 0 ? (
                 <tr>
-                    <td colSpan="6" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No sizes matching filter</td>
+                    <td colSpan="6" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">{t('No sizes matching filter', language)}</td>
                 </tr>
               ) : paginatedSizes.map((size, idx) => (
                 <motion.tr 
@@ -294,7 +297,7 @@ export default function SizesPage() {
                       </div>
                       <div className="flex flex-col text-left">
                         <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{size.name}</span>
-                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {size.id}</span>
+                        <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">{t('UID:', language)} {size.id}</span>
                       </div>
                     </div>
                   </td>
@@ -308,11 +311,11 @@ export default function SizesPage() {
                       ))}
                       {size.categories?.length > 2 && (
                         <div className="px-2 py-0.5 bg-slate-100 text-slate-400 rounded-lg text-[8px] font-black uppercase tracking-widest whitespace-nowrap">
-                          +{size.categories.length - 2} More
+                          +{size.categories.length - 2} {t('More', language)}
                         </div>
                       )}
                       {(!size.categories || size.categories.length === 0) && (
-                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">No Categories</span>
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">{t('No Categories', language)}</span>
                       )}
                     </div>
                   </td>
@@ -331,7 +334,7 @@ export default function SizesPage() {
                           {new Date(size.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                        at {new Date(size.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        {t('at', language)} {new Date(size.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </td>
@@ -340,6 +343,7 @@ export default function SizesPage() {
                       <button 
                         onClick={() => { setSelectedItem(size); setIsFormOpen(true); }} 
                         className="p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-sm active:scale-95 transition-all"
+                        title={t('Edit Size', language)}
                       >
                         <Edit3 size={14} strokeWidth={3} />
                       </button>
@@ -357,12 +361,14 @@ export default function SizesPage() {
                               onClick={() => handleDelete(size.id)}
                               disabled={isActionLoading}
                               className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
+                              title={t('Confirm Delete', language)}
                             >
                               {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
                               className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
+                              title={t('Cancel Delete', language)}
                             >
                               <X size={14} strokeWidth={3} />
                             </button>
@@ -375,6 +381,7 @@ export default function SizesPage() {
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setConfirmDeleteId(size.id)}
                             className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
+                            title={t('Delete Size', language)}
                           >
                             <Trash2 size={14} strokeWidth={3} />
                           </motion.button>
@@ -392,11 +399,11 @@ export default function SizesPage() {
         <div className="p-4 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
            <div className="flex items-center gap-4 order-2 sm:order-1">
              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-               Showing {paginatedSizes.length} of {filteredSizes.length}
+               {t('Showing', language)} {paginatedSizes.length} {t('of', language)} {filteredSizes.length}
              </span>
              <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
              <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-               Page {currentPage} of {Math.max(1, totalPages)}
+               {t('Page', language)} {currentPage} {t('of', language)} {Math.max(1, totalPages)}
              </div>
            </div>
 
@@ -406,14 +413,14 @@ export default function SizesPage() {
                disabled={currentPage === 1}
                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
              >
-               <ChevronLeft size={12} strokeWidth={3} /> Previous
+               <ChevronLeft size={12} strokeWidth={3} /> {t('Previous', language)}
              </button>
              <button
                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                disabled={currentPage >= totalPages}
                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
              >
-               Next <ChevronRight size={12} strokeWidth={3} />
+               {t('Next', language)} <ChevronRight size={12} strokeWidth={3} />
              </button>
            </div>
         </div>

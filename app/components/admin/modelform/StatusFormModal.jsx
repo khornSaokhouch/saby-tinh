@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function StatusFormModal({ isOpen, onClose, initialData, onSubmit, isSubmitting }) {
+  const { language } = useLanguageStore();
   const [status, setStatus] = useState('');
 
   useEffect(() => {
@@ -33,12 +36,12 @@ export default function StatusFormModal({ isOpen, onClose, initialData, onSubmit
             className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update State' : 'Register Lifecycle'}
+              {initialData ? t('Update Status', language) : t('Create Status', language)}
             </h2>
 
             <form onSubmit={handleFormSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Status Designation</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Status', language)}</label>
                 <input 
                   type="text" 
                   value={status} 
@@ -56,14 +59,14 @@ export default function StatusFormModal({ isOpen, onClose, initialData, onSubmit
                   type="button" 
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button 
                   type="submit" 
                   disabled={isSubmitting} 
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Register')}
+                  {isSubmitting ? '...' : (initialData ? t('Update', language) : t('Create', language))}
                 </button>
               </div>
             </form>

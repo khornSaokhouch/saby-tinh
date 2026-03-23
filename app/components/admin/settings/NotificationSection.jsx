@@ -1,12 +1,16 @@
 import { Bell } from 'lucide-react';
-import ToggleRow from './ToggleRow'; // See shared components
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
+import ToggleRow from './ToggleRow'; 
 
 export default function NotificationSection() {
+  const { language } = useLanguageStore();
+
   return (
     <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-50 relative z-10">
         <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-lg"><Bell size={16} strokeWidth={3} /></div>
-        <h3 className="text-base font-black text-slate-900 tracking-tighter">Event Logs</h3>
+        <h3 className="text-base font-black text-slate-900 tracking-tighter">{t('Event Logs', language)}</h3>
       </div>
       
       <div className="space-y-4 relative z-10">

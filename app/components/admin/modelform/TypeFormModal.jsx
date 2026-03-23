@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCategoryStore } from '@/stores/useCategoryStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }) {
   const { categories, fetchCategories } = useCategoryStore();
+  const { language } = useLanguageStore();
   const [formData, setFormData] = useState({
     name: '',
     category_id: '',
@@ -42,12 +45,12 @@ export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, 
             className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Type' : 'Register Type'}
+              {initialData ? t('Update Type', language) : t('Register Type', language)}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Type Label</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Type Label', language)}</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -58,17 +61,17 @@ export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, 
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Hierarchy Category</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Hierarchy Category', language)}</label>
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                   required
                   className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                 >
-                  <option value="">Select Category</option>
+                  <option value="">{t('Select Category', language)}</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {category.name}
+                      {t(category.name, language)}
                     </option>
                   ))}
                 </select>
@@ -81,14 +84,14 @@ export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, 
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Register')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Register', language))}
                 </button>
               </div>
             </form>

@@ -8,8 +8,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePromoCodeUsageStore } from '@/stores/usePromoCodeUsageStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AdminPromoCodeUsagesPage() {
+  const { language } = useLanguageStore();
   const { usages, meta, stats, fetchUsages, fetchStats, loading, error } = usePromoCodeUsageStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,20 +30,20 @@ export default function AdminPromoCodeUsagesPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Promo Code Analytics</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Promo Code Analytics', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Usage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Analytics</span>
+            {t('Usage', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">{t('Analytics', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Track and analyze promo code performance across the platform.
+            {t('Track and analyze promo code performance across the platform.', language)}
           </p>
         </div>
         
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-lg text-[10px] font-black hover:text-indigo-500 transition-all shadow-sm uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
-            <span>Export Data</span>
+            <span>{t('Export Data', language)}</span>
           </button>
         </div>
       </div>
@@ -48,27 +51,27 @@ export default function AdminPromoCodeUsagesPage() {
       {/* --- KPI METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard 
-          label="Total Usages" 
+          label={t('Total Usages', language)} 
           value={stats?.total_usages?.toLocaleString() || '0'} 
           icon={Ticket} 
           color="indigo" 
         />
         <MetricCard 
-          label="Total Savings" 
+          label={t('Total Savings', language)} 
           value={`$${parseFloat(stats?.total_discount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`} 
           icon={DollarSign} 
           color="emerald" 
         />
         <MetricCard 
-          label="Unique Users" 
+          label={t('Unique Users', language)} 
           value={stats?.unique_users?.toLocaleString() || '0'} 
           icon={Users} 
           color="purple" 
         />
         <MetricCard 
-          label="Top Promo Code" 
-          value={stats?.top_code?.code || 'None'} 
-          subText={`${stats?.top_code?.count || 0} hits`}
+          label={t('Top Promo Code', language)} 
+          value={stats?.top_code?.code || t('None', language)} 
+          subText={`${stats?.top_code?.count || 0} ${t('hits', language)}`}
           icon={Activity} 
           color="rose" 
         />
@@ -96,7 +99,7 @@ export default function AdminPromoCodeUsagesPage() {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500">
               <Calendar size={12} className="text-slate-400" />
-              <span>Timeframe</span>
+              <span>{t('Timeframe', language)}</span>
             </div>
           </div>
         </div>
@@ -106,13 +109,13 @@ export default function AdminPromoCodeUsagesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Usage ID</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Promo Code</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Discount Amount</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Date</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Usage ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Promo Code', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Discount Amount', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Order ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Date', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -125,9 +128,9 @@ export default function AdminPromoCodeUsagesPage() {
                   <td colSpan="7" className="py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                        <Ticket size={40} className="text-slate-100" />
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                         {error ? `System Error: ${error}` : 'No usages found'}
-                       </p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          {error ? `${t('System Error', language)}: ${error}` : t('No usages found', language)}
+                        </p>
                     </div>
                   </td>
                 </tr>
@@ -172,7 +175,7 @@ export default function AdminPromoCodeUsagesPage() {
                         {new Date(usage.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                        at {new Date(usage.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        {t('at', language)} {new Date(usage.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </td>
@@ -190,7 +193,7 @@ export default function AdminPromoCodeUsagesPage() {
         {/* Footer / Pagination */}
         <div className="p-3 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
           <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">
-            Showing: <span className="text-indigo-600">{usages.length}</span> of <span className="text-slate-900">{meta.total || 0}</span> Usages
+            {t('Showing:', language)} <span className="text-indigo-600">{usages.length}</span> {t('of', language)} <span className="text-slate-900">{meta.total || 0}</span> {t('Usages', language)}
           </p>
           
           <div className="flex items-center gap-1.5">

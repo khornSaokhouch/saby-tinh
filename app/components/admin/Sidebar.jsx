@@ -11,6 +11,8 @@ import { motion } from 'framer-motion';
 import { useSellerStore } from '@/stores/useSellerStore';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
 import { useEffect, useState } from 'react';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { useAuthStore } from '@/stores/authStore';
 import LogoutConfirmModal from './modeldeleted/LogoutConfirmModal';
 // Defined menu structure
@@ -86,6 +88,7 @@ const menuGroups = [
 ];
 
 export default function AdminSidebar({ onClose }) {
+  const { language } = useLanguageStore();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
   const { pendingCount } = useSellerStore();
@@ -122,7 +125,7 @@ export default function AdminSidebar({ onClose }) {
               Saby-Tinh
             </span>
             <span className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] mt-1.5">
-              Admin Panel
+              {t('Admin Panel', language)}
             </span>
           </Link>
         </div>
@@ -132,7 +135,7 @@ export default function AdminSidebar({ onClose }) {
           {menuGroups.map((group, idx) => (
             <div key={idx}>
               <h3 className="px-3 text-[9px] font-black text-slate-400 uppercase tracking-[0.18em] mb-1.5">
-                {group.title}
+                {t(group.title, language)}
               </h3>
 
               <div className="space-y-1">
@@ -163,7 +166,7 @@ export default function AdminSidebar({ onClose }) {
                           className={isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"}
                         />
                         <span className={`text-[12px] ${isActive ? "font-bold" : "font-medium"}`}>
-                          {link.name}
+                          {t(link.name, language)}
                         </span>
                       </div>
 
@@ -199,7 +202,7 @@ export default function AdminSidebar({ onClose }) {
             className="w-full flex items-center gap-2.5 px-3 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200 group"
           >
             <LogOut size={15} className="group-hover:text-rose-500 transition-colors" />
-            <span className="text-[12px] font-semibold">Sign Out</span>
+            <span className="text-[12px] font-semibold">{t('Sign Out', language)}</span>
           </button>
         </div>
       </aside>

@@ -7,10 +7,13 @@ import {
   Loader2, MapPin, ChevronDown, RefreshCw
 } from 'lucide-react';
 import { useStore } from '@/stores/useStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 export default function StoresPage() {
+  const { language } = useLanguageStore();
   const { stores, loading, fetchStores, deleteStore } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
@@ -55,13 +58,13 @@ export default function StoresPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Network Infrastructure</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Network Infrastructure', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Stores</span>
+            {t('Manage', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">{t('Stores', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Coordinate and monitor your decentralized storefront network.
+            {t('Coordinate and monitor your decentralized storefront network.', language)}
           </p>
         </div>
 
@@ -77,9 +80,9 @@ export default function StoresPage() {
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Stores" value={stores.length} icon={Store} color="indigo" />
-        <MetricCard label="Store Owners" value={new Set(stores.map(s => s.user_id)).size} icon={Users} color="purple" />
-        <MetricCard label="System Status" value="Online" icon={Clock} color="emerald" />
+        <MetricCard label={t('Total Stores', language)} value={stores.length} icon={Store} color="indigo" language={language} />
+        <MetricCard label={t('Store Owners', language)} value={new Set(stores.map(s => s.user_id)).size} icon={Users} color="purple" language={language} />
+        <MetricCard label={t('System Status', language)} value={t('Online', language)} icon={Clock} color="emerald" language={language} />
       </div>
 
       {/* --- TABLE CONTAINER --- */}
@@ -91,7 +94,7 @@ export default function StoresPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={13} />
               <input 
                 type="text" 
-                placeholder="Search stores, owners..." 
+                placeholder={t('Search stores, owners...', language)} 
                 className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,7 +108,7 @@ export default function StoresPage() {
                 onChange={e => setFilterLocation(e.target.value)}
                 className="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all truncate"
               >
-                <option value="">All Regions</option>
+                <option value="">{t('All Regions', language)}</option>
                 {locations.map(loc => (
                   <option key={loc} value={loc}>{loc}</option>
                 ))}
@@ -113,18 +116,18 @@ export default function StoresPage() {
               <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
             </div>
           </div>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">{filteredStores.length} Stores Found</span>
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">{filteredStores.length} {t('Stores Found', language)}</span>
         </div>
 
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Store Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Owner</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Store Detail', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Owner', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Location', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Date', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -133,7 +136,7 @@ export default function StoresPage() {
                    <td colSpan="5" className="px-8 py-20 text-center">
                      <div className="flex flex-col items-center gap-3">
                         <Loader2 className="animate-spin text-indigo-500" size={24} />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading Stores...</span>
+                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Loading Stores...', language)}</span>
                      </div>
                    </td>
                 </tr>
@@ -142,7 +145,7 @@ export default function StoresPage() {
                   <td colSpan="5" className="py-20 text-center">
                     <div className="flex flex-col items-center gap-3 text-slate-200">
                        <Store size={40} />
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No matching stores found</p>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No matching stores found', language)}</p>
                     </div>
                   </td>
                 </tr>
@@ -177,10 +180,10 @@ export default function StoresPage() {
                       <div className="flex items-center gap-1.5 text-slate-700">
                         <MapPin size={10} className="text-indigo-400" />
                         <span className="text-[11px] font-bold">
-                          {store.user?.company_info?.address?.province || 'Global'}
+                          {store.user?.company_info?.address?.province || t('Global', language)}
                         </span>
                       </div>
-                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.2em] mt-0.5">{store.user?.company_info?.address?.city || 'Central District'}</span>
+                      <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.2em] mt-0.5">{store.user?.company_info?.address?.city || t('Central District', language)}</span>
                     </div>
                   </td>
                   <td className="px-6 py-3.5">
@@ -207,7 +210,7 @@ export default function StoresPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color, subText }) {
+function MetricCard({ label, value, icon: Icon, color, subText, language }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
     purple: 'bg-purple-600 shadow-purple-100',

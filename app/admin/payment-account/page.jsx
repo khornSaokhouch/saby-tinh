@@ -9,8 +9,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePaymentAccountStore } from '@/stores/usePaymentAccountStore';
 import PaymentFormModal from '@/components/admin/modelform/PaymentFormModal';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function PaymentAccountsPage() {
+  const { language } = useLanguageStore();
   const { 
     paymentAccounts, 
     loading, 
@@ -69,14 +72,14 @@ export default function PaymentAccountsPage() {
   };
 
   const handleBatchDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} payment accounts?`)) {
+    if (window.confirm(t('Are you sure you want to delete count payment accounts?', language).replace('count', selectedIds.length))) {
       setIsActionLoading(true);
       const res = await deleteMultiplePaymentAccounts(selectedIds);
       if (res?.success) {
-        toast.success(`Removed ${selectedIds.length} accounts`);
+        toast.success(t('Removed count accounts', language).replace('count', selectedIds.length));
         setSelectedIds([]);
       } else {
-        toast.error(res?.message || 'Batch delete failed');
+        toast.error(res?.message || t('Batch delete failed', language));
       }
       setIsActionLoading(false);
     }
@@ -87,24 +90,25 @@ export default function PaymentAccountsPage() {
     try {
       await savePaymentAccount({ ...data, id: selectedItem?.id });
       setIsFormOpen(false);
-      toast.success(selectedItem ? 'Account updated' : 'Account created');
+      toast.success(selectedItem ? t('Account updated', language) : t('Account created', language));
     } catch (err) {
       console.error(err);
-      toast.error('Failed to save account');
+      toast.error(t('Failed to save account', language));
     } finally {
       setIsActionLoading(false);
     }
   };
+
 
   const handleDelete = async (id) => {
     setIsActionLoading(true);
     try {
       await deletePaymentAccount(id);
       setConfirmDeleteId(null);
-      toast.success('Account deleted');
+      toast.success(t('Account deleted', language));
     } catch (err) {
       console.error(err);
-      toast.error('Failed to delete account');
+      toast.error(t('Failed to delete account', language));
     } finally {
       setIsActionLoading(false);
     }
@@ -126,7 +130,7 @@ export default function PaymentAccountsPage() {
               <div className="bg-blue-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Bridges</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Bridges', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -136,13 +140,13 @@ export default function PaymentAccountsPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -154,13 +158,13 @@ export default function PaymentAccountsPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Secure Financial Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Secure Financial Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Payment <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400">Gateways</span>
+            {t('Payment', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-400">{t('Gateways', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Manage your organization's financial bridges and account configurations.
+            {t("Manage your organization's financial bridges and account configurations.", language)}
           </p>
         </div>
 
@@ -176,16 +180,16 @@ export default function PaymentAccountsPage() {
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> New Bridge
+            <Plus size={14} strokeWidth={3} /> {t('New Bridge', language)}
           </button>
         </div>
       </div>
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Active Nodes" value={paymentAccounts.length} icon={ShieldCheck} color="indigo" />
-        <MetricCard label="Operational" value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" subText="Live" />
-        <MetricCard label="Currencies" value={`${new Set(paymentAccounts.map(a => a.currency)).size} Units`} icon={Globe} color="purple" subText="Global" />
+        <MetricCard label={t('Active Nodes', language)} value={paymentAccounts.length} icon={ShieldCheck} color="indigo" language={language} />
+        <MetricCard label={t('Operational', language)} value={paymentAccounts.filter(a => a.status).length} icon={CheckCircle2} color="emerald" subText={t('Live', language)} language={language} />
+        <MetricCard label={t('Currencies', language)} value={`${new Set(paymentAccounts.map(a => a.currency)).size} ${t('Units', language)}`} icon={Globe} color="purple" subText={t('Global', language)} language={language} />
       </div>
 
       {/* --- ACCOUNTS TABLE --- */}
@@ -196,14 +200,14 @@ export default function PaymentAccountsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Filter gateway assets..." 
+              placeholder={t('Filter gateway assets...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredAccounts.length} Nodes Detected
+            {filteredAccounts.length} {t('Nodes Detected', language)}
           </div>
         </div>
 
@@ -222,11 +226,11 @@ export default function PaymentAccountsPage() {
                     {selectedIds.length === filteredAccounts.length && filteredAccounts.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Asset Identity</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Type Definition</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Regional Config</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Lifecycle</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Operations</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Asset Identity', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Type Definition', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Regional Config', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Lifecycle', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Operations', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -235,13 +239,13 @@ export default function PaymentAccountsPage() {
                   <td colSpan="6" className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                     <div className="flex flex-col items-center gap-4 text-center justify-center">
                       <Loader2 className="animate-spin text-blue-500 opacity-40" size={32} />
-                      Syncing database...
+                      {t('Syncing database...', language)}
                     </div>
                   </td>
                 </tr>
               ) : filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No nodes found in registry</td>
+                  <td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No nodes found in registry', language)}</td>
                 </tr>
               ) : (
                 filteredAccounts.map((acc, idx) => (
@@ -273,14 +277,14 @@ export default function PaymentAccountsPage() {
                         </div>
                         <div className="flex flex-col text-left">
                           <span className="text-[12px] font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase leading-none mb-1 tracking-tight">{acc.account_name}</span>
-                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-70">Node ID: {acc.account_id}</span>
+                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-70">{t('Node ID:', language)} {acc.account_id}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-left">
                       <div className="flex flex-col">
                           <span className="text-[11px] font-bold text-slate-700 uppercase leading-none mb-1">{acc.type_value}</span>
-                          <span className="text-[8px] font-black text-blue-500/50 uppercase tracking-widest italic">{acc.currency} Unit</span>
+                          <span className="text-[8px] font-black text-blue-500/50 uppercase tracking-widest italic">{acc.currency} {t('Unit', language)}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-left">
@@ -291,9 +295,9 @@ export default function PaymentAccountsPage() {
                     </td>
                     <td className="px-4 py-3.5 text-center">
                       <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-[0.15em] shadow-sm
-193:                         ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
+                        ${acc.status ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-600 border-rose-100/50'}`}>
                         <div className={`w-1 h-1 rounded-full ${acc.status ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                        {acc.status ? 'Live' : 'Static'}
+                        {acc.status ? t('Live', language) : t('Static', language)}
                       </div>
                     </td>
                     <td className="px-6 py-3.5 text-right">
@@ -353,13 +357,14 @@ export default function PaymentAccountsPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredAccounts.length} Registry Entries
+             {t('Showing:', language)} {filteredAccounts.length} {t('Registry Entries', language)}
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+             {t('Registry Sync', language)}
            </div>
         </div>
       </div>
+
 
       <PaymentFormModal 
         isOpen={isFormOpen} 
@@ -373,7 +378,7 @@ export default function PaymentAccountsPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, color }) {
+function MetricCard({ label, value, icon: Icon, color, language }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
     emerald: 'bg-emerald-500 shadow-emerald-100',

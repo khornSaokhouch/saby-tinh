@@ -7,8 +7,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSecurityStore } from '@/stores/securityStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function SecurityPage() {
+  const { language } = useLanguageStore();
   const [is2FAEnabled, setIs2FAEnabled] = useState(true);
   const [selectedIds, setSelectedIds] = useState([]);
   
@@ -19,21 +22,21 @@ export default function SecurityPage() {
   }, [fetchLoginHistory]);
 
   const handleLogoutAll = async () => {
-    if (confirm('Are you sure you want to log out from all other devices?')) {
+    if (confirm(t('Are you sure you want to log out from all other devices?', language))) {
       await logoutAllDevices();
       setSelectedIds([]);
     }
   };
 
   const handleTerminateSession = async (id) => {
-    if (confirm('Terminate this session?')) {
+    if (confirm(t('Terminate this session?', language))) {
       await terminateSession(id);
       setSelectedIds(prev => prev.filter(selectedId => selectedId !== id));
     }
   };
 
   const handleLogoutSelected = async () => {
-    if (confirm(`Terminate ${selectedIds.length} selected sessions?`)) {
+    if (confirm(t('Terminate count selected sessions?', language).replace('count', selectedIds.length))) {
       await terminateMultipleSessions(selectedIds);
       setSelectedIds([]);
     }
@@ -62,13 +65,13 @@ export default function SecurityPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">System Controls</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('System Controls', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Security <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-rose-400">Center</span>
+            {t('Security', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-rose-400">{t('Center', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Manage your account security and access protocols.
+            {t('Manage your account security and access protocols.', language)}
           </p>
         </div>
       </div>
@@ -86,8 +89,8 @@ export default function SecurityPage() {
             <span className="absolute text-[10px] font-black text-slate-900">85%</span>
           </div>
           <div className="z-10">
-            <h3 className="text-[13px] font-black text-slate-800 tracking-tight leading-none">Security Health</h3>
-            <p className="text-[9px] font-bold text-slate-400 mt-1 leading-tight uppercase tracking-widest">Your account is secure.<br/>2 recommendations.</p>
+            <h3 className="text-[13px] font-black text-slate-800 tracking-tight leading-none">{t('Security Health', language)}</h3>
+            <p className="text-[9px] font-bold text-slate-400 mt-1 leading-tight uppercase tracking-widest">{t('Your account is secure.', language)}<br/>{t('2 recommendations.', language)}</p>
           </div>
           <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out" />
         </div>
@@ -99,9 +102,9 @@ export default function SecurityPage() {
               <Smartphone size={14} strokeWidth={3} />
             </div>
             <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Two-Factor Auth</p>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('Two-Factor Auth', language)}</p>
               <h3 className="text-[13px] font-black text-slate-900 tracking-tighter leading-none">
-                {is2FAEnabled ? 'Active' : 'Disabled'}
+                {is2FAEnabled ? t('Active', language) : t('Disabled', language)}
               </h3>
             </div>
           </div>
@@ -123,8 +126,8 @@ export default function SecurityPage() {
               <Key size={14} strokeWidth={3} />
             </div>
             <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Password</p>
-              <h3 className="text-[13px] font-black text-slate-900 tracking-tighter leading-none">24 days old</h3>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('Password', language)}</p>
+              <h3 className="text-[13px] font-black text-slate-900 tracking-tighter leading-none">{t('24 days old', language)}</h3>
             </div>
           </div>
           <div className="mt-4 z-10">
@@ -144,7 +147,7 @@ export default function SecurityPage() {
           <div className="p-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <History size={12} className="text-indigo-500" strokeWidth={2.5} />
-              Recent Login Activity
+              {t('Recent Login Activity', language)}
             </h3>
             <div className="flex gap-2">
               {selectedIds.length > 0 && (
@@ -153,7 +156,7 @@ export default function SecurityPage() {
                   disabled={loadingHistory}
                   className="text-[9px] font-black text-rose-600 bg-rose-50 border border-rose-100 px-3 py-1 rounded-lg transition-all uppercase tracking-widest shadow-sm hover:bg-rose-100"
                 >
-                  Log out selected ({selectedIds.length})
+                  {t('Log out selected (count)', language).replace('count', selectedIds.length)}
                 </button>
               )}
               <button 
@@ -161,7 +164,7 @@ export default function SecurityPage() {
                 disabled={loadingHistory}
                 className="text-[9px] font-black text-slate-500 hover:text-rose-600 hover:bg-rose-50 px-3 py-1 rounded-lg transition-all border border-slate-100 uppercase tracking-widest shadow-sm bg-white disabled:opacity-50"
               >
-                Log out all devices
+                {t('Log out all devices', language)}
               </button>
             </div>
           </div>
@@ -178,10 +181,10 @@ export default function SecurityPage() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Device</th>
-                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</th>
-                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">IP Address</th>
-                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Device', language)}</th>
+                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Location', language)}</th>
+                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('IP Address', language)}</th>
+                  <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -192,8 +195,8 @@ export default function SecurityPage() {
                     </td>
                   </tr>
                 ) : loginHistory.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No activity found</td>
+                <tr>
+                    <td colSpan="5" className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No activity found', language)}</td>
                   </tr>
                 ) : loginHistory.map((session) => (
                   <tr key={session.id} className={`hover:bg-slate-50/30 transition-colors group ${selectedIds.includes(session.id) ? 'bg-indigo-50/30' : ''}`}>
@@ -212,7 +215,7 @@ export default function SecurityPage() {
                         {session.device.includes('iPhone') ? <Smartphone size={13} className="text-slate-400" strokeWidth={3} /> : <Laptop size={13} className="text-slate-400" strokeWidth={3} />}
                         <span className="text-[12px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{session.device}</span>
                         {session.status === 'current' && (
-                          <span className="px-1.5 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[8px] font-black rounded-lg uppercase tracking-widest shadow-sm">Current</span>
+                          <span className="px-1.5 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[8px] font-black rounded-lg uppercase tracking-widest shadow-sm">{t('Current', language)}</span>
                         )}
                       </div>
                     </td>
@@ -228,7 +231,7 @@ export default function SecurityPage() {
                           onClick={() => handleTerminateSession(session.id)}
                           className="text-[9px] font-black text-slate-400 hover:text-rose-600 uppercase tracking-widest px-2 py-1 hover:bg-rose-50 rounded-lg transition-all"
                         >
-                          Terminate
+                          {t('Terminate', language)}
                         </button>
                       ) : (
                         <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter mr-2">{session.time}</span>
@@ -246,17 +249,17 @@ export default function SecurityPage() {
           
           {/* API Access */}
           <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-            <h3 className="text-[9px] font-black text-slate-400 mb-4 uppercase tracking-widest">API Access Keys</h3>
+            <h3 className="text-[9px] font-black text-slate-400 mb-4 uppercase tracking-widest">{t('API Access Keys', language)}</h3>
             <div className="space-y-3 z-10 relative">
               <div className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center group/key">
                 <div>
-                   <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-0.5">Production Key</p>
+                   <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-0.5">{t('Production Key', language)}</p>
                    <p className="text-[10px] font-mono text-slate-500 font-bold">pk_live_...93xS</p>
                 </div>
-                <button className="text-[9px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest px-2 py-1 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-indigo-100">Copy</button>
+                <button className="text-[9px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest px-2 py-1 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-indigo-100">{t('Copy', language)}</button>
               </div>
               <button className="w-full py-2 border border-dashed border-slate-200 rounded-xl text-[9px] font-black text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all uppercase tracking-widest">
-                + Generate Key
+                + {t('Generate Key', language)}
               </button>
             </div>
             <div className="absolute -right-5 -bottom-5 w-20 h-20 bg-slate-50/50 rounded-full group-hover:scale-150 transition-all duration-700 ease-out opacity-50" />
@@ -264,16 +267,16 @@ export default function SecurityPage() {
 
           {/* Sensitive Actions */}
           <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-             <h3 className="text-[9px] font-black text-slate-400 mb-1 uppercase tracking-widest">Sensitive Actions</h3>
-             <p className="text-[9px] font-bold text-slate-400 mb-4 uppercase tracking-wider leading-tight">Actions usually require re-authentication</p>
+             <h3 className="text-[11px] font-black text-slate-400 mb-1 uppercase tracking-widest">{t('Sensitive Actions', language)}</h3>
+             <p className="text-[9px] font-bold text-slate-400 mb-4 uppercase tracking-wider leading-tight">{t('Actions usually require re-authentication', language)}</p>
              
              <div className="space-y-2 z-10 relative">
                <button className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group/act border border-slate-100 shadow-sm">
-                 <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Export User Data</span>
+                 <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">{t('Export User Data', language)}</span>
                  <ChevronRight size={12} className="text-slate-400 group-hover/act:text-slate-600 transition-transform group-hover/act:translate-x-1" strokeWidth={3} />
                </button>
                <button className="w-full flex items-center justify-between p-2.5 rounded-xl bg-white hover:bg-rose-50 transition-colors group/act border border-rose-100 shadow-sm">
-                 <span className="text-[9px] font-black text-rose-600 uppercase tracking-widest">Delete Account</span>
+                 <span className="text-[9px] font-black text-rose-600 uppercase tracking-widest">{t('Delete Account', language)}</span>
                  <AlertTriangle size={13} className="text-rose-400 group-hover/act:text-rose-600 group-hover/act:scale-110 transition-all" strokeWidth={2.5} />
                </button>
              </div>

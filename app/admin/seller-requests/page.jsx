@@ -8,10 +8,13 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { useSellerStore } from '@/stores/useSellerStore';
 import DeleteSellerModal from '@/app/components/admin/modeldeleted/DeleteSellerModal';
 
 export default function SellerManagementPage() {
+  const { language } = useLanguageStore();
   const { 
     sellers, 
     loading, 
@@ -78,10 +81,10 @@ export default function SellerManagementPage() {
       setActionLoading('batch');
       const res = await deleteMultipleSellers(selectedIds);
       if (res?.success) {
-        toast.success(`Removed ${selectedIds.length} requests`);
+        toast.success(t('Removed count requests', language).replace('count', selectedIds.length));
         setSelectedIds([]);
       } else {
-        toast.error(res?.message || 'Batch delete failed');
+        toast.error(res?.message || t('Batch deletion failed', language));
       }
       setActionLoading(null);
     }
@@ -91,9 +94,9 @@ export default function SellerManagementPage() {
     setActionLoading(id);
     try {
       await approveSeller(id);
-      toast.success('Merchant application approved');
+      toast.success(t('Merchant application approved', language));
     } catch (error) {
-      toast.error('Failed to approve merchant');
+      toast.error(t('Failed to approve merchant', language));
     } finally {
       setActionLoading(null);
     }
@@ -109,9 +112,9 @@ export default function SellerManagementPage() {
     try {
       await rejectSeller(selectedSeller.id);
       setIsDeleteOpen(false);
-      toast.success('Merchant application rejected');
+      toast.success(t('Merchant application rejected', language));
     } catch (error) {
-      toast.error('Failed to reject application');
+      toast.error(t('Failed to reject application', language));
     } finally {
       setActionLoading(null);
     }
@@ -133,7 +136,7 @@ export default function SellerManagementPage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Requests</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Requests', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -143,13 +146,13 @@ export default function SellerManagementPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {actionLoading === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -161,13 +164,13 @@ export default function SellerManagementPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Onboarding</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Partner Onboarding', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Seller <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Requests</span>
+            {t('Seller', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">{t('Requests', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Manage merchant applications and business licensing.
+            {t('Manage merchant applications and business licensing.', language)}
           </p>
         </div>
 
@@ -180,22 +183,23 @@ export default function SellerManagementPage() {
           </button>
           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
-            Export
+            {t('Export', language)}
           </button>
         </div>
       </div>
 
       {/* --- KPI GRID --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Requests" value={stats.total} icon={FileText} color="indigo" />
+        <StatCard label={t('Total Requests', language)} value={sellers.length} icon={FileText} color="indigo" language={language} />
         <StatCard 
-          label="Pending Review" 
-          value={stats.pending} 
+          label={t('Pending Review', language)} 
+          value={sellers.filter(s => s.status === 'pending').length} 
           icon={Clock} 
           color="rose" 
-          isWarning={stats.pending > 0} 
+          isWarning={sellers.filter(s => s.status === 'pending').length > 0} 
+          language={language}
         />
-        <StatCard label="Approved Partners" value={stats.approved} icon={CheckCircle2} color="emerald" />
+        <StatCard label={t('Approved Partners', language)} value={sellers.filter(s => s.status === 'approved').length} icon={CheckCircle2} color="emerald" language={language} />
       </div>
 
       {/* --- CONTENT SECTION --- */}
@@ -207,7 +211,7 @@ export default function SellerManagementPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search merchants..." 
+              placeholder={t('Search merchants...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -220,9 +224,9 @@ export default function SellerManagementPage() {
               onChange={e => setActiveTab(e.target.value)}
               className="w-full sm:w-auto pl-4 pr-10 h-[32px] bg-slate-50 border border-transparent rounded-lg text-[9px] font-black text-slate-500 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all min-w-[140px] uppercase tracking-widest"
             >
-              <option value="all">All Requests</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
+              <option value="all">{t('All Requests', language)}</option>
+              <option value="pending">{t('Pending', language)}</option>
+              <option value="approved">{t('Approved', language)}</option>
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <ChevronDown size={12} />
@@ -246,18 +250,18 @@ export default function SellerManagementPage() {
                     {selectedIds.length === filteredSellers.length && filteredSellers.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Business Info</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Details</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Documents</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Business Info', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Contact Details', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Documents', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Status', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Actions', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Registry...</td></tr>
+                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">{t('Scanning Registry...', language)}</td></tr>
               ) : filteredSellers.length === 0 ? (
-                <tr><td colSpan="6" className="py-16 text-center text-[10px) font-black text-slate-300 uppercase tracking-widest">No requests found</td></tr>
+                <tr><td colSpan="6" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">{t('No requests found', language)}</td></tr>
               ) : (
                 filteredSellers.map((seller) => (
                   <tr key={seller.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(seller.id) ? 'bg-indigo-50/40' : ''}`}>
@@ -277,7 +281,7 @@ export default function SellerManagementPage() {
                         <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
                           {seller.company_name}
                         </span>
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Rep: {seller.name}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('Rep:', language)} {seller.name}</span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
@@ -292,14 +296,14 @@ export default function SellerManagementPage() {
                           href={seller.document_path} target="_blank" rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md text-[9px] font-black uppercase tracking-widest border border-indigo-100 hover:bg-white transition-all"
                         >
-                          <FileText size={10} /> License <ExternalLink size={8} />
+                          <FileText size={10} /> {t('License', language)} <ExternalLink size={8} />
                         </a>
                       ) : (
-                        <span className="text-[8px] font-black text-slate-300 uppercase">Missing File</span>
+                        <span className="text-[8px] font-black text-slate-300 uppercase">{t('Missing File', language)}</span>
                       )}
                     </td>
                     <td className="px-4 py-4">
-                      <StatusBadge status={seller.status} />
+                      <StatusBadge status={seller.status} language={language} />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -334,6 +338,7 @@ export default function SellerManagementPage() {
         onConfirm={handleRejectConfirm}
         isDeleting={actionLoading === selectedSeller?.id}
         sellerName={selectedSeller?.company_name}
+        language={language}
       />
     </div>
   );
@@ -341,7 +346,7 @@ export default function SellerManagementPage() {
 
 // --- SUB COMPONENTS ---
 
-function StatCard({ label, value, icon: Icon, color, isWarning }) {
+function StatCard({ label, value, icon: Icon, color, isWarning, language }) {
   const themes = {
     indigo: 'bg-indigo-600',
     rose: 'bg-rose-500',
@@ -356,7 +361,7 @@ function StatCard({ label, value, icon: Icon, color, isWarning }) {
         </div>
         {isWarning && (
           <div className="text-[8px] font-black px-1.5 py-0.5 rounded border border-rose-100 bg-rose-50 text-rose-600 uppercase tracking-widest animate-pulse">
-            Action Req.
+            {t('Action Req.', language)}
           </div>
         )}
       </div>
@@ -368,7 +373,7 @@ function StatCard({ label, value, icon: Icon, color, isWarning }) {
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, language }) {
   const config = {
     pending: "bg-orange-50 text-orange-600 border-orange-100",
     approved: "bg-emerald-50 text-emerald-600 border-emerald-100",
@@ -376,7 +381,7 @@ function StatusBadge({ status }) {
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[status] || "bg-slate-50 text-slate-400 border-slate-100"}`}>
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
-      {status === 'approved' ? 'Partner' : 'Review'}
+      {status === 'approved' ? t('Partner', language) : t('Review', language)}
     </span>
   );
 }

@@ -13,9 +13,12 @@ import {
   Tooltip, ResponsiveContainer 
 } from 'recharts';
 
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import useDashboardStore from '@/stores/useDashboardStore';
 
 export default function AdminDashboard() {
+  const { language } = useLanguageStore();
   const [isMounted, setIsMounted] = useState(false);
   const { dashboardData, loading, fetchDashboardData } = useDashboardStore();
 
@@ -34,14 +37,14 @@ export default function AdminDashboard() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Live System Status</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Live System Status', language)}</span>
           </div>
           
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Good morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Administrator</span>
+            {t('Good morning,', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">{t('Administrator', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Here's what's happening with your platform network today.
+            {t('Here\'s what\'s happening with your platform network today.', language)}
           </p>
         </div>
 
@@ -51,7 +54,7 @@ export default function AdminDashboard() {
             className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 hover:border-indigo-300 transition-all shadow-sm active:scale-95 uppercase tracking-widest"
           >
             <RefreshCw size={13} className={`${loading ? 'animate-spin text-indigo-600' : 'text-slate-400'}`} strokeWidth={3} />
-            Sync
+            {t('Sync', language)}
           </button>
           <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95">
             <Download size={14} strokeWidth={3} />
@@ -62,36 +65,40 @@ export default function AdminDashboard() {
       {/* --- STATS GRID (Reduced Height/Padding) --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
-          title="Gross Revenue" 
+          title={t('Gross Revenue', language)} 
           value={totals?.revenue?.value || "$0.00"} 
           trend={totals?.revenue?.trend || "0%"} 
           isPositive={totals?.revenue?.isPositive ?? true} 
           icon={DollarSign} 
           color="indigo"
+          language={language}
         />
         <StatCard 
-          title="Total Orders" 
+          title={t('Total Orders', language)} 
           value={totals?.orders?.value || "0"} 
           trend={totals?.orders?.trend || "0%"} 
           isPositive={totals?.orders?.isPositive ?? true} 
           icon={ShoppingBag} 
           color="rose"
+          language={language}
         />
         <StatCard 
-          title="Customer Growth" 
+          title={t('Customer Growth', language)} 
           value={totals?.customers?.value || "0"} 
           trend={totals?.customers?.trend || "0%"} 
           isPositive={totals?.customers?.isPositive ?? true} 
           icon={Users} 
           color="emerald"
+          language={language}
         />
         <StatCard 
-          title="Inventory Sold" 
+          title={t('Inventory Sold', language)} 
           value={totals?.products_sold?.value || "0"} 
           trend={totals?.products_sold?.trend || "0%"} 
           isPositive={totals?.products_sold?.isPositive ?? false} 
           icon={Package} 
           color="blue"
+          language={language}
         />
       </div>
 
@@ -102,12 +109,12 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Performance</h3>
-              <p className="text-md font-black text-slate-900">Revenue Overview</p>
+              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Performance', language)}</h3>
+              <p className="text-md font-black text-slate-900">{t('Revenue Overview', language)}</p>
             </div>
             <div className="flex bg-slate-50 p-1 rounded-md">
-              <button className="px-2 py-1 text-[9px] font-black rounded bg-white shadow-sm text-indigo-600 uppercase">Monthly</button>
-              <button className="px-2 py-1 text-[9px] font-black rounded text-slate-400 uppercase">Weekly</button>
+              <button className="px-2 py-1 text-[9px] font-black rounded bg-white shadow-sm text-indigo-600 uppercase">{t('Monthly', language)}</button>
+              <button className="px-2 py-1 text-[9px] font-black rounded text-slate-400 uppercase">{t('Weekly', language)}</button>
             </div>
           </div>
           
@@ -144,9 +151,9 @@ export default function AdminDashboard() {
         {/* ALERTS */}
         <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Notifications</h3>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Notifications', language)}</h3>
             {alerts?.length > 0 && (
-              <span className="bg-rose-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full animate-pulse">{alerts.length} NEW</span>
+              <span className="bg-rose-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full animate-pulse">{alerts.length} {t('NEW', language)}</span>
             )}
           </div>
 
@@ -162,15 +169,15 @@ export default function AdminDashboard() {
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 flex items-center justify-between gap-4">
           <div>
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Registry</h3>
-            <p className="text-md font-black text-slate-900">Recent Transactions</p>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Registry', language)}</h3>
+            <p className="text-md font-black text-slate-900">{t('Recent Transactions', language)}</p>
           </div>
           
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
             <input 
               type="text" 
-              placeholder="Quick search..." 
+              placeholder={t('Quick search...', language)} 
               className="pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 w-48 outline-none focus:bg-white focus:border-indigo-100 transition-all"
             />
           </div>
@@ -180,13 +187,13 @@ export default function AdminDashboard() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">ID</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment Status</th>
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Order Status</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Product', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Date', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Amount', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Payment Status', language)}</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Order Status', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -198,10 +205,10 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase">{order.date}</td>
                   <td className="px-4 py-3 text-[11px] font-black text-slate-900">{order.amount}</td>
                   <td className="px-4 py-3">
-                    <PaymentBadge status={order.payment_status} />
+                    <PaymentBadge status={order.payment_status} language={language} />
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <StatusBadge status={order.status} />
+                    <StatusBadge status={order.status} language={language} />
                   </td>
                 </tr>
               ))}
@@ -215,7 +222,7 @@ export default function AdminDashboard() {
 
 // --- SUB COMPONENTS (Compact) ---
 
-function StatCard({ title, value, trend, isPositive, icon: Icon, color }) {
+function StatCard({ title, value, trend, isPositive, icon: Icon, color, language }) {
   const themes = {
     indigo: "bg-indigo-600 shadow-indigo-100",
     rose: "bg-rose-500 shadow-rose-100",
@@ -265,7 +272,7 @@ function AlertItem({ title, desc, time, type }) {
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, language }) {
   const config = {
     Pending: "bg-orange-50 text-orange-600 border-orange-100",
     Processing: "bg-indigo-50 text-indigo-600 border-indigo-100",
@@ -275,12 +282,12 @@ function StatusBadge({ status }) {
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[status] || config.Cancelled}`}>
-      {status}
+      {t(status, language)}
     </span>
   );
 }
 
-function PaymentBadge({ status }) {
+function PaymentBadge({ status, language }) {
   const styles = {
     Success: "text-emerald-600 bg-emerald-50 border-emerald-100",
     Paid: "text-emerald-600 bg-emerald-50 border-emerald-100",
@@ -290,7 +297,7 @@ function PaymentBadge({ status }) {
   };
   return (
     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${styles[status] || "bg-slate-50"}`}>
-      {status}
+      {t(status, language)}
     </span>
   );
 }

@@ -9,6 +9,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import CategoryFormModal from '@/app/components/admin/modelform/CategoryFormModal';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -23,6 +25,8 @@ export default function CategoryPage() {
     deleteCategory,
     deleteMultipleCategories 
   } = useCategoryStore();
+
+  const { language } = useLanguageStore();
 
   // --- Bulk Selection State ---
   const [selectedIds, setSelectedIds] = useState([]);
@@ -58,6 +62,7 @@ export default function CategoryPage() {
 
   // Handlers
   const handleSelectAll = () => {
+    if (filteredCategories.length === 0) return; // Prevent selecting all if no categories
     if (selectedIds.length === filteredCategories.length) {
       setSelectedIds([]);
     } else {
@@ -72,14 +77,14 @@ export default function CategoryPage() {
   };
 
   const handleBatchDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} categories?`)) {
+    if (window.confirm(t(`Are you sure you want to delete ${selectedIds.length} categories?`, language))) {
       setIsActionLoading(true);
       try {
         await deleteMultipleCategories(selectedIds);
         setSelectedIds([]);
-        toast.success(`Removed ${selectedIds.length} categories`);
+        toast.success(t('Removed count categories', language).replace('count', selectedIds.length));
       } catch (error) {
-        toast.error('Batch deletion failed');
+        toast.error(t('Batch deletion failed', language));
       } finally {
         setIsActionLoading(false);
       }
@@ -91,10 +96,10 @@ export default function CategoryPage() {
     try {
       await saveCategory({ ...formData, id: selectedItem?.id });
       setIsFormOpen(false);
-      toast.success('Category saved');
+      toast.success(t('Category saved', language));
     } catch (error) {
       console.error(error);
-      toast.error(error.message || 'Operation failed');
+      toast.error(error.message || t('Operation failed', language));
     } finally {
       setIsActionLoading(false);
     }
@@ -105,10 +110,10 @@ export default function CategoryPage() {
     try {
       await deleteCategory(id);
       setConfirmDeleteId(null);
-      toast.success('Category deleted');
+      toast.success(t('Category deleted', language));
     } catch (error) {
        console.error(error);
-       toast.error('Failed to remove category');
+       toast.error(t('Failed to remove category', language));
     } finally {
       setIsActionLoading(false);
     }
@@ -129,7 +134,7 @@ export default function CategoryPage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Items</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Items', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -139,13 +144,13 @@ export default function CategoryPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -157,13 +162,13 @@ export default function CategoryPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Inventory Architecture</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Inventory Architecture', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Product <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">Categories</span>
+            {t('Product', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-400">{t('Categories', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Structure and manage your platform's product taxonomy.
+            {t("Structure and manage your platform's product taxonomy.", language)}
           </p>
         </div>
 
@@ -171,6 +176,7 @@ export default function CategoryPage() {
           <button 
             onClick={() => fetchCategories()}
             className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
+            title={t('Refresh Categories', language)}
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
@@ -179,15 +185,15 @@ export default function CategoryPage() {
             onClick={() => { setSelectedItem(null); setIsFormOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> Create Category
+            <Plus size={14} strokeWidth={3} /> {t('Create Category', language)}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Total Categories" value={categories.length} icon={Layers} color="indigo" />
-        <MetricCard label="Active Items" value={categories.filter(c => Number(c.status) === 1).length} icon={CheckCircle2} color="emerald" subText="Live" />
-        <MetricCard label="System Integrity" value="Unified" icon={Clock} color="purple" />
+        <MetricCard label={t('Total Categories', language)} value={categories.length} icon={Layers} color="indigo" />
+        <MetricCard label={t('Active Items', language)} value={categories.filter(c => Number(c.status) === 1).length} icon={CheckCircle2} color="emerald" subText={t('Live', language)} />
+        <MetricCard label={t('System Integrity', language)} value={t('Unified', language)} icon={Clock} color="purple" />
       </div>
 
       {/* --- CATEGORY TABLE --- */}
@@ -200,7 +206,7 @@ export default function CategoryPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
               <input
                 type="text"
-                placeholder="Search categories..."
+                placeholder={t('Search categories...', language)}
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -208,7 +214,7 @@ export default function CategoryPage() {
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredCategories.length} Categories Found
+            {filteredCategories.length} {t('Categories Found', language)}
           </div>
         </div>
 
@@ -228,23 +234,23 @@ export default function CategoryPage() {
                     {selectedIds.length === filteredCategories.length && filteredCategories.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Category Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Status</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Category Detail', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">{t('Status', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">{t('Last Update', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 text-left">
               {loading && categories.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading ...</td>
+                  <td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">{t('Loading ...', language)}</td>
                 </tr>
               ) : filteredCategories.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Layers size={40} className="text-slate-100" />
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-slate-300">No categories matching filter</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-slate-300">{t('No categories matching filter', language)}</p>
                     </div>
                   </td>
                 </tr>
@@ -279,7 +285,7 @@ export default function CategoryPage() {
                         </div>
                         <div className="flex flex-col min-w-0">
                           <span className="text-[11px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate tracking-tight">{category.name}</span>
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">ID: {category.id}</span>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{t('ID:', language)} {category.id}</span>
                         </div>
                       </div>
                     </td>
@@ -290,7 +296,7 @@ export default function CategoryPage() {
                           : 'bg-rose-50 text-rose-600 border-rose-100'
                       }`}>
                         <div className={`w-1 h-1 rounded-full ${Number(category.status) === 1 ? 'bg-emerald-600 animate-pulse' : 'bg-rose-500'}`} />
-                        {Number(category.status) === 1 ? 'Live' : 'Hidden'}
+                        {Number(category.status) === 1 ? t('Live', language) : t('Hidden', language)}
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-center">
@@ -298,8 +304,8 @@ export default function CategoryPage() {
                         <span className="text-[10px] font-bold text-slate-700">
                           {new Date(category.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                          at {new Date(category.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                          {t('at', language)} {new Date(category.updated_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                     </td>
@@ -308,13 +314,14 @@ export default function CategoryPage() {
                          <Link
                           href={`/admin/categories/details?categoryId=${category.id}`}
                           className="p-1.5 bg-slate-900 text-white rounded-lg hover:bg-black shadow-sm active:scale-95 transition-all inline-flex"
-                          title="View Details"
+                          title={t('View Details', language)}
                         >
                           <ArrowUpRight size={14} strokeWidth={3} />
                         </Link>
                         <button
                           onClick={() => { setSelectedItem(category); setIsFormOpen(true); }}
                           className="p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-sm active:scale-95 transition-all"
+                          title={t('Edit Category', language)}
                         >
                           <Edit3 size={14} strokeWidth={3} />
                         </button>
@@ -332,12 +339,14 @@ export default function CategoryPage() {
                                 onClick={() => handleDelete(category.id)}
                                 disabled={isActionLoading}
                                 className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm active:scale-95 transition-all disabled:opacity-50"
+                                title={t('Confirm Delete', language)}
                               >
                                 {isActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                               </button>
                               <button
                                 onClick={() => setConfirmDeleteId(null)}
                                 className="p-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg shadow-sm active:scale-95 transition-all"
+                                title={t('Cancel Delete', language)}
                               >
                                 <X size={14} strokeWidth={3} />
                               </button>
@@ -350,6 +359,7 @@ export default function CategoryPage() {
                               exit={{ opacity: 0, scale: 0.8 }}
                               onClick={() => setConfirmDeleteId(category.id)}
                               className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
+                              title={t('Delete Category', language)}
                             >
                               <Trash2 size={14} strokeWidth={3} />
                             </motion.button>
@@ -367,10 +377,10 @@ export default function CategoryPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredCategories.length} Categories
+             {t('Showing:', language)} {filteredCategories.length} {t('Categories', language)}
            </span>
-           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+          <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
+             {t('Registry Sync', language)}
            </div>
         </div>
       </div>

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function BrandFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting, categories }) {
+  const { language } = useLanguageStore();
   const [formData, setFormData] = useState({
     name: '',
     status: true,
@@ -43,12 +46,12 @@ export default function BrandFormModal({ isOpen, onClose, onSubmit, initialData,
             className="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-[400px] p-5 relative z-10"
           >
             <h2 className="text-base font-bold mb-4 text-gray-900 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Brand' : 'Register Brand'}
+              {initialData ? t('Update Brand', language) : t('Register Brand', language)}
             </h2>
             
             <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-3">
               <div className="flex flex-col mb-3">
-                <label className="text-xs font-bold mb-1.5 text-gray-700">Logo</label>
+                <label className="text-xs font-bold mb-1.5 text-gray-700">{t('Logo', language)}</label>
                 {imagePreview && (
                   <img src={imagePreview} alt="Preview" className="w-20 h-20 object-cover border border-gray-200 rounded-lg mb-2" />
                 )}
@@ -64,22 +67,22 @@ export default function BrandFormModal({ isOpen, onClose, onSubmit, initialData,
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Category</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Category', language)}</label>
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                   className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                   required
                 >
-                  <option value="">Select Category</option>
+                  <option value="">{t('Select Category', language)}</option>
                   {(categories || []).map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    <option key={cat.id} value={cat.id}>{t(cat.name, language)}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Brand Name</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Brand Name', language)}</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -95,14 +98,14 @@ export default function BrandFormModal({ isOpen, onClose, onSubmit, initialData,
                   onClick={() => setFormData({ ...formData, status: true })}
                   className={`flex-1 py-1.5 px-3 border-r border-gray-200 text-xs font-bold transition-colors ${formData.status ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Visible
+                  {t('Visible', language)}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, status: false })}
                   className={`flex-1 py-1.5 px-3 text-xs font-bold transition-colors ${!formData.status ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Hidden
+                  {t('Hidden', language)}
                 </button>
               </div>
 
@@ -113,14 +116,14 @@ export default function BrandFormModal({ isOpen, onClose, onSubmit, initialData,
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Save')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Save', language))}
                 </button>
               </div>
             </form>

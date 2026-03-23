@@ -9,8 +9,11 @@ import {
 } from 'lucide-react';
 import { useAddressStore } from '@/stores/useAddressStore';
 import { motion } from 'framer-motion';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AdminAddressesPage() {
+  const { language } = useLanguageStore();
   const { allAddresses, fetchAllAddresses, loading, error } = useAddressStore();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -40,13 +43,13 @@ export default function AdminAddressesPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Logistics Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Logistics Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Delivery <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">Points</span>
+            {t('Delivery', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">{t('Points', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Manage global shipping endpoints and user address associations.
+            {t('Manage global shipping endpoints and user address associations.', language)}
           </p>
         </div>
 
@@ -59,16 +62,16 @@ export default function AdminAddressesPage() {
           </button>
 
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest">
-            <Download size={14} strokeWidth={3} /> Export DB
+            <Download size={14} strokeWidth={3} /> {t('Export DB', language)}
           </button>
         </div>
       </div>
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Delivery Points" value={allAddresses.length} icon={LinkIcon} color="indigo" />
-        <MetricCard label="Unique Hubs" value={[...new Set(allAddresses.map(m => m.address_id))].length} icon={MapIcon} color="purple" />
-        <MetricCard label="User Linkage" value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`} icon={Users} color="emerald" subText="Density" />
+        <MetricCard label={t('Delivery Points', language)} value={allAddresses.length} icon={LinkIcon} color="indigo" language={language} />
+        <MetricCard label={t('Unique Hubs', language)} value={[...new Set(allAddresses.map(m => m.address_id))].length} icon={MapIcon} color="purple" language={language} />
+        <MetricCard label={t('User Linkage', language)} value={`${((allAddresses.length / Math.max(1, [...new Set(allAddresses.map(m => m.user_id))].length))).toFixed(1)}x`} icon={Users} color="emerald" subText={t('Density', language)} language={language} />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
@@ -78,7 +81,7 @@ export default function AdminAddressesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search by city, user or country..." 
+              placeholder={t('Search by city, user or country...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -94,10 +97,10 @@ export default function AdminAddressesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">User Identity</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Geographic Link</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Region</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Lifecycle</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('User Identity', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Geographic Link', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Region', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Lifecycle', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -117,7 +120,7 @@ export default function AdminAddressesPage() {
                 </tr>
               ) : filteredMappings.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No addresses found</td>
+                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No addresses found', language)}</td>
                 </tr>
               ) : (
                 filteredMappings.map((mapping, idx) => (
@@ -156,7 +159,7 @@ export default function AdminAddressesPage() {
                     </td>
                     <td className="px-6 py-3.5 text-center">
                       <span className="px-2.5 py-1 bg-slate-50 text-slate-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100/50 transition-all shadow-sm">
-                        {mapping.country_name || 'Unset'}
+                        {mapping.country_name || t('Unset', language)}
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-right">
@@ -165,7 +168,7 @@ export default function AdminAddressesPage() {
                            {new Date(mapping.linked_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                          </span>
                          <div className="flex items-center gap-1 text-[8px] font-black text-emerald-500 uppercase mt-0.5 tracking-[0.2em]">
-                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> Live
+                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> {t('Live', language)}
                          </div>
                        </div>
                     </td>
@@ -179,10 +182,10 @@ export default function AdminAddressesPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredMappings.length} Endpoints
+             {t('Showing:', language)} {filteredMappings.length} {t('Endpoints', language)}
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+             {t('Registry Sync', language)}
            </div>
         </div>
       </div>
@@ -191,7 +194,7 @@ export default function AdminAddressesPage() {
   );
 }
 
-function MetricCard({ label, value, trend, icon: Icon, color, subText }) {
+function MetricCard({ label, value, trend, icon: Icon, color, subText, language }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
     emerald: 'bg-emerald-500 shadow-emerald-100',

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 // Import Sub-Components
 import SettingsHeader from './SettingsHeader';
@@ -14,6 +16,7 @@ import RegionalSection from './RegionalSection';
 import AccountRoleSection from './AccountRoleSection';
 
 export default function SettingsPage() {
+  const { language } = useLanguageStore();
   const { user, fetchProfile, loading, updateProfile } = useUserStore();
   
   // --- STATE MANAGEMENT ---
@@ -82,12 +85,12 @@ export default function SettingsPage() {
 
       if (updateProfile && user?.id) {
         await updateProfile(user.id, data);
-        toast.success('Profile updated');
+        toast.success(t('Profile updated', language));
         setFormData(prev => ({ ...prev, password: '' })); // Clear password on success
       }
     } catch (error) {
       console.error("Failed to update profile", error);
-      toast.error('Could not save changes');
+      toast.error(t('Could not save changes', language));
     } finally {
       setIsSaving(false);
     }

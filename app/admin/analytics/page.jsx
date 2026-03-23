@@ -12,8 +12,11 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import useAnalyticsStore from '@/stores/useAnalyticsStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function AnalyticsPage() {
+  const { language } = useLanguageStore();
   const { analyticsData, loading, error, fetchAnalytics } = useAnalyticsStore();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -28,7 +31,7 @@ export default function AnalyticsPage() {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Analyzing Data...</span>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Analyzing Data...', language)}</span>
       </div>
     );
   }
@@ -47,20 +50,20 @@ export default function AnalyticsPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Intelligence Engine</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Intelligence Engine', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Market <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Analytics</span>
+            {t('Market', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">{t('Analytics', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Detailed performance breakdown for your global enterprise.
+            {t('Detailed performance breakdown for your global enterprise.', language)}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 uppercase tracking-widest shadow-sm">
             <Calendar size={13} className="text-indigo-600" />
-            Last 30 Days
+            {t('Last 30 Days', language)}
           </div>
           <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-black transition-all shadow-lg shadow-slate-200 active:scale-95">
             <Download size={14} strokeWidth={3} />
@@ -71,36 +74,40 @@ export default function AnalyticsPage() {
       {/* --- KPI GRID (Dashboard StatCard Style) --- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
-          title="Total Revenue" 
+          title={t('Total Revenue', language)} 
           value={totals.revenue?.value || '$0'} 
           trend={totals.revenue?.trend} 
           isPositive={totals.revenue?.isPositive} 
           icon={DollarSign} 
           color="indigo"
+          language={language}
         />
         <StatCard 
-          title="Conversion" 
+          title={t('Conversion', language)} 
           value={totals.orders?.value || '0'} 
           trend={totals.orders?.trend} 
           isPositive={totals.orders?.isPositive} 
           icon={Zap} 
           color="rose"
+          language={language}
         />
         <StatCard 
-          title="New Users" 
+          title={t('New Users', language)} 
           value={totals.customers?.value || '0'} 
           trend={totals.customers?.trend} 
           isPositive={totals.customers?.isPositive} 
           icon={Users} 
           color="emerald"
+          language={language}
         />
         <StatCard 
-          title="Total Sold" 
+          title={t('Total Sold', language)} 
           value={totals.products_sold?.value || '0'} 
           trend={totals.products_sold?.trend} 
           isPositive={totals.products_sold?.isPositive} 
           icon={ShoppingBag} 
           color="blue"
+          language={language}
         />
       </div>
 
@@ -111,8 +118,8 @@ export default function AnalyticsPage() {
         <div className="lg:col-span-2 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Fiscal Velocity</h3>
-              <p className="text-md font-black text-slate-900">Revenue Growth</p>
+              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Fiscal Velocity', language)}</h3>
+              <p className="text-md font-black text-slate-900">{t('Revenue Growth', language)}</p>
             </div>
             <button className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-300">
               <MoreHorizontal size={16} />
@@ -157,8 +164,8 @@ export default function AnalyticsPage() {
         {/* Category Share (Small) */}
         <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="mb-4">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Distribution</h3>
-            <p className="text-md font-black text-slate-900">Sales By Category</p>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Distribution', language)}</h3>
+            <p className="text-md font-black text-slate-900">{t('Sales By Category', language)}</p>
           </div>
           
           <div className="flex-1 relative">
@@ -181,8 +188,8 @@ export default function AnalyticsPage() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-xl font-black text-slate-900 tracking-tighter">Share</span>
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Market</span>
+              <span className="text-xl font-black text-slate-900 tracking-tighter">{t('Share', language)}</span>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{t('Market', language)}</span>
             </div>
           </div>
         </div>
@@ -192,20 +199,20 @@ export default function AnalyticsPage() {
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 flex items-center justify-between gap-4">
           <div>
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Performance Tracking</h3>
-            <p className="text-md font-black text-slate-900">Top Performing Products</p>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Performance Tracking', language)}</h3>
+            <p className="text-md font-black text-slate-900">{t('Top Performing Products', language)}</p>
           </div>
-          <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Full Report</button>
+          <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">{t('Full Report', language)}</button>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Info</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Units Sold</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Total Net</th>
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Momentum</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Product Info', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Units Sold', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Total Net', language)}</th>
+                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Momentum', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -231,7 +238,7 @@ export default function AnalyticsPage() {
 
 // --- SUB COMPONENTS (Reusing Dashboard Design Patterns) ---
 
-function StatCard({ title, value, trend, isPositive, icon: Icon, color }) {
+function StatCard({ title, value, trend, isPositive, icon: Icon, color, language }) {
   const themes = {
     indigo: "bg-indigo-600 shadow-indigo-100",
     rose: "bg-rose-500 shadow-rose-100",
@@ -262,7 +269,7 @@ function CustomTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-slate-900 text-white p-2 rounded-lg shadow-xl border border-slate-800 text-[10px] font-black">
-        <p className="uppercase tracking-widest text-slate-400 mb-1">{label || 'Value'}</p>
+        <p className="uppercase tracking-widest text-slate-400 mb-1">{label || (payload[0]?.language === 'kh' ? 'តម្លៃ' : 'Value')}</p>
         <p className="text-indigo-400">
           {typeof payload[0].value === 'number' ? payload[0].value.toLocaleString() : payload[0].value}
         </p>

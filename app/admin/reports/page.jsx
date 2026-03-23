@@ -10,6 +10,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell
 } from 'recharts';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 // --- ANIMATION CONFIG ---
 const containerVariants = {
@@ -52,6 +54,7 @@ const topProducts = [
 ];
 
 export default function ReportsPage() {
+  const { language } = useLanguageStore();
   const [dateRange] = useState('Last 7 Days');
   const [isMounted, setIsMounted] = useState(false);
 
@@ -72,18 +75,18 @@ export default function ReportsPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Market Intelligence</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Market Intelligence', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Metric <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Reports</span>
+            {t('Metric', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">{t('Reports', language)}</span>
           </h1>
-          <p className="text-slate-500 text-[12px] font-medium mt-1">Real-time store metrics & predictive analytics</p>
+          <p className="text-slate-500 text-[12px] font-medium mt-1">{t('Real-time store metrics & predictive analytics', language)}</p>
         </div>
         
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 hover:border-indigo-300 transition-all shadow-sm active:scale-95 uppercase tracking-widest">
             <Calendar size={13} className="text-indigo-600" strokeWidth={3} />
-            {dateRange}
+            {t(dateRange, language)}
           </button>
           <button className="p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95">
             <Download size={14} strokeWidth={3} />
@@ -93,10 +96,10 @@ export default function ReportsPage() {
 
       {/* --- SECTION: KPI CARDS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Revenue" value="$48,290" trend="+12.5%" isPositive icon={DollarSign} color="indigo" />
-        <StatCard title="Orders" value="1,245" trend="+4.2%" isPositive icon={ShoppingBag} color="blue" />
-        <StatCard title="Customers" value="320" trend="-2.1%" isPositive={false} icon={Users} color="rose" />
-        <StatCard title="Active" value="45" trend="+8.4%" isPositive icon={Activity} color="emerald" />
+        <StatCard title={t('Revenue', language)} value="$48,290" trend="+12.5%" isPositive icon={DollarSign} color="indigo" />
+        <StatCard title={t('Orders', language)} value="1,245" trend="+4.2%" isPositive icon={ShoppingBag} color="blue" />
+        <StatCard title={t('Customers', language)} value="320" trend="-2.1%" isPositive={false} icon={Users} color="rose" />
+        <StatCard title={t('Active', language)} value="45" trend="+8.4%" isPositive icon={Activity} color="emerald" />
       </div>
 
       {/* --- SECTION: CHARTS --- */}
@@ -106,8 +109,8 @@ export default function ReportsPage() {
         <motion.div variants={itemVariants} className="lg:col-span-2 bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden">
           <div className="flex justify-between items-center mb-8 px-2">
             <div>
-              <h3 className="text-base font-black text-slate-900 tracking-tight">Financial Velocity</h3>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Revenue Flow (7D)</p>
+              <h3 className="text-base font-black text-slate-900 tracking-tight">{t('Financial Velocity', language)}</h3>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">{t('Revenue Flow (7D)', language)}</p>
             </div>
             <button className="text-slate-300 hover:text-slate-600 transition-colors"><MoreHorizontal size={20} /></button>
           </div>
@@ -135,8 +138,8 @@ export default function ReportsPage() {
         {/* Pie Chart Card */}
         <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm flex flex-col relative overflow-hidden">
           <div className="mb-8">
-            <h3 className="text-base font-black text-slate-900 tracking-tight">Market Split</h3>
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Category Distribution</p>
+            <h3 className="text-base font-black text-slate-900 tracking-tight">{t('Market Split', language)}</h3>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">{t('Category Distribution', language)}</p>
           </div>
           <div className="flex-1 relative min-h-[250px]">
             {isMounted && (
@@ -151,13 +154,13 @@ export default function ReportsPage() {
             )}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-3xl font-black text-slate-900 tracking-tighter">1,245</span>
-              <span className="text-[10px] text-slate-400 font-black uppercase">Units</span>
+              <span className="text-[10px] text-slate-400 font-black uppercase">{t('Units', language)}</span>
             </div>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-2">
             {categoryData.map((item) => (
               <div key={item.name} className="flex flex-col p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-[10px] font-bold text-slate-400 uppercase mb-1">{item.name}</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase mb-1">{t(item.name, language)}</span>
                 <span className="font-black text-slate-900 text-sm">{((item.value/1200)*100).toFixed(0)}%</span>
               </div>
             ))}
@@ -180,12 +183,12 @@ export default function ReportsPage() {
                   </div>
                   <div>
                     <p className="font-bold text-slate-800 text-sm">{p.name}</p>
-                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{p.sales} Sales</p>
+                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{p.sales} {t('Sales', language)}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-black text-slate-900">{p.revenue}</p>
-                  <p className={`text-[10px] font-black ${p.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>{p.trend} Trend</p>
+                  <p className={`text-[10px] font-black ${p.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>{p.trend} {t('Trend', language)}</p>
                 </div>
               </div>
             ))}
@@ -202,13 +205,13 @@ export default function ReportsPage() {
             <div className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-8 border border-white/20">
               <Zap size={28} className="fill-white" />
             </div>
-            <h3 className="text-4xl font-black leading-none mb-4 tracking-tighter">AI-POWERED<br/>INSIGHTS</h3>
+            <h3 className="text-4xl font-black leading-none mb-4 tracking-tighter">{t('AI-POWERED', language)}<br/>{t('INSIGHTS', language)}</h3>
             <p className="text-indigo-100 text-sm font-medium max-w-xs leading-relaxed opacity-80">
-              Unlock the neural engine to forecast demand and detect market trends automatically.
+              {t('Unlock the neural engine to forecast demand and detect market trends automatically.', language)}
             </p>
           </div>
           <button className="relative z-10 w-fit mt-10 bg-white text-indigo-600 px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-transform active:scale-95">
-            Upgrade to Pro
+            {t('Upgrade to Pro', language)}
           </button>
           {/* Abstract BG Graphics */}
           <div className="absolute top-[-20%] right-[-10%] w-72 h-72 bg-indigo-400 rounded-full blur-[100px] opacity-40 group-hover:opacity-60 transition-opacity" />

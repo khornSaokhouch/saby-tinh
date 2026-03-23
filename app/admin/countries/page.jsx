@@ -6,10 +6,13 @@ import {
   ShieldAlert, CheckCircle2 , X, Check, RefreshCw
 } from 'lucide-react';
 import { useCountryStore } from '@/stores/useCountryStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
-export default function AdminCountriesPage() {
+export default function CountriesPage() {
+  const { language } = useLanguageStore();
   const { 
     countries, 
     fetchCountries, 
@@ -66,14 +69,14 @@ export default function AdminCountriesPage() {
   };
 
   const handleBatchDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} regions?`)) {
+    if (window.confirm(t(`Are you sure you want to delete ${selectedIds.length} regions?`, language))) {
       setDeletingId('batch');
       const res = await deleteMultipleCountries(selectedIds);
       if (res?.success) {
-        toast.success(`Removed ${selectedIds.length} regions`);
+        toast.success(t('Removed count regions', language).replace('count', selectedIds.length));
         setSelectedIds([]);
       } else {
-        toast.error(res?.message || 'Batch delete failed');
+        toast.error(res?.message || t('Batch delete failed', language));
       }
       setDeletingId(null);
     }
@@ -93,9 +96,9 @@ export default function AdminCountriesPage() {
     setDeletingId(id);
     const res = await deleteCountry(id);
     if (res?.success) {
-      toast.success('Country deleted');
+      toast.success(t('Country deleted', language));
     } else {
-      toast.error(res?.message || 'Failed to delete');
+      toast.error(res?.message || t('Failed to delete', language));
     }
     setDeletingId(null);
     setConfirmDeleteId(null);
@@ -116,7 +119,7 @@ export default function AdminCountriesPage() {
               <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
                 {selectedIds.length}
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Regions</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">{t('Selected Regions', language)}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -126,13 +129,13 @@ export default function AdminCountriesPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {deletingId === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
                 className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
               >
-                Cancel
+                {t('Cancel', language)}
               </button>
             </div>
           </motion.div>
@@ -144,13 +147,13 @@ export default function AdminCountriesPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Global Reach Registry</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Global Reach Registry', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Country <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">Registry</span>
+            {t('Country', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">{t('Registry', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Maintain and manage global shipping regions and geographic data.
+            {t('Maintain and manage global shipping regions and geographic data.', language)}
           </p>
         </div>
 
@@ -166,15 +169,15 @@ export default function AdminCountriesPage() {
             onClick={handleOpenCreate}
             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Plus size={14} strokeWidth={3} /> Add Country
+            <Plus size={14} strokeWidth={3} /> {t('Add Country', language)}
           </button>
         </div>
       </div>
 
       {/* --- METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <MetricCard label="Global Registry" value={countries.length} icon={Globe} color="indigo" />
-        <MetricCard label="Registry Status" value="Stable" icon={CheckCircle2} color="emerald" subText="Verified" />
+        <MetricCard label={t('Global Registry', language)} value={countries.length} icon={Globe} color="indigo" />
+        <MetricCard label={t('Registry Status', language)} value={t('Stable', language)} icon={CheckCircle2} color="emerald" subText={t('Verified', language)} />
       </div>
 
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
@@ -184,14 +187,14 @@ export default function AdminCountriesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input
               type="text"
-              placeholder="Search by country name..."
+              placeholder={t('Search by country name...', language)}
               className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredCountries.length} Regions Traceable
+            {filteredCountries.length} {t('Regions Traceable', language)}
           </div>
         </div>
 
@@ -210,9 +213,9 @@ export default function AdminCountriesPage() {
                     {selectedIds.length === filteredCountries.length && filteredCountries.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Internal Designation</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Registration Data</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">{t('Internal Designation', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">{t('Registration Data', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 text-left">
@@ -226,13 +229,13 @@ export default function AdminCountriesPage() {
                 <tr>
                   <td colSpan="4" className="py-20 text-center">
                     <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold border border-rose-100 uppercase tracking-widest">
-                      <ShieldAlert size={14} /> Error: {error}
+                      <ShieldAlert size={14} /> {t('Error', language)}: {error}
                     </div>
                   </td>
                 </tr>
               ) : filteredCountries.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No regions found</td>
+                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('No regions found', language)}</td>
                 </tr>
               ) : (
                 filteredCountries.map((country, idx) => (
@@ -257,8 +260,8 @@ export default function AdminCountriesPage() {
                            <Globe size={14} className="text-slate-400" />
                         </div>
                         <div className="flex flex-col text-left">
-                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{country.name}</span>
-                          <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">UID: {country.id}</span>
+                          <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">{t(country.name, language)}</span>
+                          <span className="text-[9px] font-black text-slate-400 mt-0.5 tracking-widest uppercase opacity-70">{t('UID:', language)} {country.id}</span>
                         </div>
                       </div>
                     </td>
@@ -269,7 +272,7 @@ export default function AdminCountriesPage() {
                         </span>
                         {country.created_at && (
                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                            at {new Date(country.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                            {t('at', language)} {new Date(country.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         )}
                       </div>
@@ -331,10 +334,10 @@ export default function AdminCountriesPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredCountries.length} Regions
+             {t('Showing:', language)} {filteredCountries.length} {t('Regions', language)}
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+             {t('Registry Sync', language)}
            </div>
         </div>
       </div>
@@ -359,6 +362,7 @@ export default function AdminCountriesPage() {
 function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
   const [name, setName] = useState(country?.name || '');
   const [submitting, setSubmitting] = useState(false);
+  const { language } = useLanguageStore();
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
@@ -377,7 +381,7 @@ function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
         className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
       >
         <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-          {country ? 'Update Region' : 'Register Country'}
+          {country ? t('Update Region', language) : t('Register Country', language)}
         </h2>
 
         <form onSubmit={async (e) => {
@@ -386,17 +390,17 @@ function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
           setSubmitting(true);
           const res = country ? await onUpdate(country.id, { name: name.trim() }) : await onCreate({ name: name.trim() });
           if (res?.success) {
-            toast.success(country ? 'Region updated' : 'Country registered');
+            toast.success(country ? t('Region updated', language) : t('Country registered', language));
             onClose();
           } else {
-            toast.error(res?.message || 'Operation failed');
+            toast.error(res?.message || t('Operation failed', language));
           }
           setSubmitting(false);
         }} className="space-y-3">
           
           <div>
             <label className="block text-xs font-bold mb-1.5 text-gray-700">
-              Country Designation
+              {t('Country Designation', language)}
             </label>
             <input
               type="text"
@@ -416,7 +420,7 @@ function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
               disabled={submitting}
               className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              {t('Cancel', language)}
             </button>
             <button
               type="submit"
@@ -424,9 +428,9 @@ function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
               className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm flex items-center justify-center gap-2"
             >
               {submitting ? (
-                <> <Loader2 size={12} className="animate-spin" /> Saving... </>
+                <> <Loader2 size={12} className="animate-spin" /> {t('Saving...', language)} </>
               ) : (
-                country ? 'Sync Region' : 'Register'
+                country ? t('Sync Region', language) : t('Register', language)
               )}
             </button>
           </div>

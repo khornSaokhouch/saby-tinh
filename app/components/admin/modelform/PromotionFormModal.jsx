@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCategoryStore } from "@/stores/useCategoryStore";
+import { useLanguageStore } from "@/stores/useLanguageStore";
+import { t } from "@/util/translations";
 
 export default function PromotionFormModal({ isOpen, onClose, initialData, onSubmit, isSubmitting }) {
+  const { language } = useLanguageStore();
   const { categories, fetchCategories } = useCategoryStore();
   const [formData, setFormData] = useState({
     name: "",
@@ -67,12 +70,12 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
             className="bg-white border border-gray-100 text-gray-900 rounded-xl shadow-2xl w-full max-w-[550px] p-5 relative z-10 max-h-[90vh] overflow-y-auto"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Promotion' : 'New Promotion'}
+              {initialData ? t('Update Promotion', language) : t('New Promotion', language)}
             </h2>
 
             <form onSubmit={handleFormSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Campaign Title</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Campaign Title', language)}</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -84,20 +87,20 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Event Type</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Event Type', language)}</label>
                   <select
                     value={formData.event_type}
                     onChange={(e) => setFormData({ ...formData, event_type: e.target.value })}
                     className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                   >
-                    <option value="promotion">Promotion</option>
-                    <option value="offer">Offer</option>
-                    <option value="seasonal">Seasonal</option>
-                    <option value="global-event">Global Event</option>
+                    <option value="promotion">{t('Promotion', language)}</option>
+                    <option value="offer">{t('Offer', language)}</option>
+                    <option value="seasonal">{t('Seasonal', language)}</option>
+                    <option value="global-event">{t('Global Event', language)}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Priority (Order)</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Priority (Order)', language)}</label>
                   <input
                     type="number"
                     value={formData.priority}
@@ -107,19 +110,19 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Discount Type</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Discount Type', language)}</label>
                   <select
                     value={formData.discount_type}
                     onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
                     className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                   >
-                    <option value="none">None</option>
-                    <option value="percentage">Percentage %</option>
-                    <option value="fixed">Fixed Amount</option>
+                    <option value="none">{t('None', language)}</option>
+                    <option value="percentage">{t('Percentage %', language)}</option>
+                    <option value="fixed">{t('Fixed Amount', language)}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Discount Value</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Discount Value', language)}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -132,7 +135,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Description</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Description', language)}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -142,7 +145,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Starts</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Starts', language)}</label>
                   <input 
                     type="date" 
                     value={formData.start_date} 
@@ -152,7 +155,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Ends</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Ends', language)}</label>
                   <input 
                     type="date" 
                     value={formData.end_date} 
@@ -165,7 +168,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
 
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-gray-700">Categories Target</label>
+                  <label className="block text-xs font-bold text-gray-700">{t('Categories Target', language)}</label>
                   <button
                     type="button"
                     onClick={() => {
@@ -175,7 +178,7 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                     }}
                     className="text-[10px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
                   >
-                    {formData.category_ids.length === categories.length ? 'Deselect All' : 'Select All'}
+                    {formData.category_ids.length === categories.length ? t('Deselect All', language) : t('Select All', language)}
                   </button>
                 </div>
                 <div className="border border-gray-200 p-2 rounded-md max-h-24 overflow-y-auto grid grid-cols-2 gap-2 bg-gray-50">
@@ -204,14 +207,14 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   onClick={() => setFormData({ ...formData, status: 1 })}
                   className={`flex-1 py-1.5 px-3 border-r border-gray-200 text-xs font-bold transition-colors ${formData.status === 1 ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Active
+                  {t('Active', language)}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, status: 0 })}
                   className={`flex-1 py-1.5 px-3 text-xs font-bold transition-colors ${formData.status === 0 ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Disabled
+                  {t('Disabled', language)}
                 </button>
               </div>
 
@@ -222,14 +225,14 @@ export default function PromotionFormModal({ isOpen, onClose, initialData, onSub
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
                 >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Save')}
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Save', language))}
                 </button>
               </div>
             </form>

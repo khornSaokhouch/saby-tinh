@@ -9,8 +9,11 @@ import {
 import { motion } from 'framer-motion';
 import { useProductStore } from '@/stores/useProductStore';
 import { useCategoryStore } from '@/stores/useCategoryStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function ProductPromotionsPage() {
+  const { language } = useLanguageStore();
   const { 
     products, 
     loading: productLoading, 
@@ -55,13 +58,13 @@ export default function ProductPromotionsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Promotion Audit</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Promotion Audit', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Discounted <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400">Catalog</span>
+            {t('Discounted', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400">{t('Catalog', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Monitoring active product offers and merchant discounts.
+            {t('Monitoring active product offers and merchant discounts.', language)}
           </p>
         </div>
 
@@ -77,9 +80,9 @@ export default function ProductPromotionsPage() {
 
       {/* --- KPI METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Offers" value={products.length} icon={Tag} color="rose" />
-        <StatCard label="Live Merchants" value={new Set(products.map(p => p.store_id)).size} icon={StoreIcon} color="indigo" />
-        <StatCard label="Categories" value={new Set(products.map(p => p.category_id)).size} icon={LayoutGrid} color="blue" />
+        <StatCard label={t('Total Offers', language)} value={products.length} icon={Tag} color="rose" language={language} />
+        <StatCard label={t('Live Merchants', language)} value={new Set(products.map(p => p.store_id)).size} icon={StoreIcon} color="indigo" language={language} />
+        <StatCard label={t('Categories', language)} value={new Set(products.map(p => p.category_id)).size} icon={LayoutGrid} color="blue" language={language} />
       </div>
 
       {/* --- CONTENT SECTION --- */}
@@ -91,7 +94,7 @@ export default function ProductPromotionsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-500 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search offer catalog..." 
+              placeholder={t('Search offer catalog...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-rose-100 transition-all placeholder:text-slate-400"
               value={searchLocal}
               onChange={(e) => setSearchLocal(e.target.value)}
@@ -104,7 +107,7 @@ export default function ProductPromotionsPage() {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full sm:w-auto pl-4 pr-10 h-[32px] bg-slate-50 border border-transparent rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all min-w-[140px]"
             >
-              <option value="all">All Inventory</option>
+              <option value="all">{t('All Inventory', language)}</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
@@ -120,17 +123,17 @@ export default function ProductPromotionsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Discounted Item</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Merchant Info</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Price Point</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Active Campaign</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Discounted Item', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Merchant Info', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Price Point', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Active Campaign', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Scanning Catalog...</td></tr>
+                <tr><td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">{t('Scanning Catalog...', language)}</td></tr>
               ) : filteredProducts.length === 0 ? (
-                <tr><td colSpan="4" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No promotions found</td></tr>
+                <tr><td colSpan="4" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">{t('No products matching filter', language)}</td></tr>
               ) : (
                 filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-slate-50/30 transition-colors group">
@@ -140,12 +143,12 @@ export default function ProductPromotionsPage() {
                           {product.images?.[0]?.image ? (
                             <img src={product.images[0].image} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300 font-black text-[8px]">NULL</div>
+                            <div className="w-full h-full flex items-center justify-center text-slate-300 font-black text-[8px]">{t('NULL', language)}</div>
                           )}
                         </div>
                         <div className="flex flex-col min-w-0">
                           <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-rose-500 transition-colors truncate">{product.name}</span>
-                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{product.brand?.name || 'GENERIC'} • ID: {product.id}</span>
+                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{product.brand?.name || t('GENERIC', language)} • {t('ID:', language)} {product.id}</span>
                         </div>
                       </div>
                     </td>
@@ -161,7 +164,7 @@ export default function ProductPromotionsPage() {
                     <td className="px-4 py-4">
                       <div className="flex flex-col">
                         <span className="text-xs font-black text-slate-900">${Number(product.price).toLocaleString()}</span>
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{product.type?.name || 'Retail'}</span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{product.type?.name || t('Retail', language)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -169,7 +172,7 @@ export default function ProductPromotionsPage() {
                         {product.category?.promotions?.map(promo => (
                           <span key={promo.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm">
                             <TrendingUp size={9} strokeWidth={3} />
-                            {promo.discount_percentage}% OFF
+                            {promo.discount_percentage}% {t('OFF', language)}
                           </span>
                         ))}
                       </div>
@@ -183,7 +186,7 @@ export default function ProductPromotionsPage() {
 
         {/* Table Footer */}
         <div className="p-3 bg-slate-50/50 border-t border-slate-50 text-center">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Authorized Promotion Audit • {filteredProducts.length} Active Discounts</p>
+            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">{t('Authorized Promotion Audit', language)} • {filteredProducts.length} {t('Active Discounts', language)}</p>
         </div>
       </div>
     </div>
@@ -192,7 +195,7 @@ export default function ProductPromotionsPage() {
 
 // --- SUB-COMPONENTS (Dashboard/Registry Style) ---
 
-function StatCard({ label, value, icon: Icon, color }) {
+function StatCard({ label, value, icon: Icon, color, language }) {
   const themes = {
     rose: "bg-rose-500 shadow-rose-100",
     indigo: "bg-indigo-600 shadow-indigo-100",

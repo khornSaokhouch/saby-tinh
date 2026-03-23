@@ -75,7 +75,7 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
             className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[450px] p-5 relative z-10 max-h-[90vh] overflow-y-auto"
           >
             <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
-              {initialData ? 'Update Profile' : 'New Member'}
+              {initialData ? t('Update Profile', language) : t('New Member', language)}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -84,10 +84,10 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                   {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-xs font-medium text-gray-400">Avatar</span>
+                    <span className="text-xs font-medium text-gray-400">{t('Avatar', language)}</span>
                   )}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-white text-[10px] font-bold">Change</span>
+                    <span className="text-white text-[10px] font-bold">{t('Change', language)}</span>
                   </div>
                   <input 
                     type="file" 
@@ -100,7 +100,7 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Full Name</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Full Name', language)}</label>
                   <input 
                     type="text" 
                     name="name"
@@ -112,7 +112,7 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Email</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Email', language)}</label>
                   <input 
                     type="email" 
                     name="email"
@@ -124,7 +124,7 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Phone</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Phone', language)}</label>
                   <input 
                     type="tel" 
                     name="phone_number"
@@ -135,23 +135,23 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 text-gray-700">Role</label>
+                  <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Role', language)}</label>
                   <select 
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
                     className="w-full border border-gray-200 rounded-md p-2 text-xs bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Administrator</option>
-                    <option value="owner">Business Owner</option>
+                   >
+                    <option value="user">{t('User', language)}</option>
+                    <option value="admin">{t('Administrator', language)}</option>
+                    <option value="owner">{t('Business Owner', language)}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                  <label className="block text-xs font-bold mb-1.5 text-gray-700">
-                    {initialData ? 'Password (leave blank to keep)' : 'Password'}
+                    {initialData ? t('Password (leave blank to keep)', language) : t('Password', language)}
                  </label>
                 <input 
                   type="password" 
@@ -164,7 +164,7 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 text-gray-700">Biography</label>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">{t('Biography', language)}</label>
                 <textarea 
                   name="bio"
                   value={formData.bio}
@@ -180,15 +180,15 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, initialData =
                   type="button"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
+                 >
+                  {t('Cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
-                >
-                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Save')}
+                 >
+                  {isSubmitting ? t('Saving...', language) : (initialData ? t('Sync', language) : t('Save', language))}
                 </button>
               </div>
             </form>

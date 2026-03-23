@@ -11,8 +11,11 @@ import { getCleanImageUrl } from '@/components/nabvar/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function CompanyPage() {
+  const { language } = useLanguageStore();
   const { users, loading, fetchAllUsers, updateUserRole, deleteUser } = useUserStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -52,10 +55,10 @@ export default function CompanyPage() {
   const handleRoleChange = async (userId, newRole) => {
     try {
       await updateUserRole(userId, newRole);
-      toast.success('Role updated');
+      toast.success(t('Role updated', language));
     } catch (error) {
       console.error(error);
-      toast.error(error.message || 'Update failed');
+      toast.error(t(error.message || 'Update failed', language));
     }
   };
 
@@ -64,10 +67,10 @@ export default function CompanyPage() {
     try {
       await deleteUser(userId);
       setConfirmDeleteId(null);
-      toast.success('Partner deleted');
+      toast.success(t('Partner deleted', language));
     } catch (error) {
        console.error(error);
-       toast.error('Failed to delete partner');
+       toast.error(t('Failed to delete partner', language));
     } finally {
       setIsActionLoading(false);
     }
@@ -81,13 +84,13 @@ export default function CompanyPage() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Partnership Network</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Partnership Network', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">Companies</span>
+            {t('Manage', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-400">{t('Companies', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Oversee and coordinate your global enterprise partnerships.
+            {t('Oversee and coordinate your global enterprise partnerships.', language)}
           </p>
         </div>
 
@@ -100,16 +103,16 @@ export default function CompanyPage() {
           </button>
 
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-lg shadow-slate-200 hover:bg-black transition-all active:scale-95 uppercase tracking-widest">
-            <Download size={14} strokeWidth={3} /> Export Data
+            <Download size={14} strokeWidth={3} /> {t('Export Data', language)}
           </button>
         </div>
       </div>
 
       {/* --- STATS OVERVIEW --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <MetricCard label="Total Companies" value={visibleUsers.length} icon={Users} color="indigo" />
-          <MetricCard label="Active Companies" value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" />
-          <MetricCard label="Restricted" value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" />
+          <MetricCard label={t('Total Companies', language)} value={visibleUsers.length} icon={Users} color="indigo" language={language} />
+          <MetricCard label={t('Active Companies', language)} value={visibleUsers.filter(u => u.role !== 'banned').length} icon={ShieldCheck} color="emerald" language={language} />
+          <MetricCard label={t('Restricted', language)} value={visibleUsers.filter(u => u.role === 'banned').length} icon={ShieldAlert} color="purple" language={language} />
       </div>
 
       {/* --- REGISTRY TABLE --- */}
@@ -122,7 +125,7 @@ export default function CompanyPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={13} />
               <input 
                 type="text" 
-                placeholder="Search companies, emails..." 
+                placeholder={t('Search companies, emails...', language)} 
                 className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-100 transition-all placeholder:text-slate-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -130,7 +133,7 @@ export default function CompanyPage() {
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            {filteredUsers.length} Companies Found
+            {filteredUsers.length} {t('Companies Found', language)}
           </div>
         </div>
 
@@ -139,10 +142,10 @@ export default function CompanyPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Company Detail</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Role</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Date</th>
-                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Company Detail', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Role', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Date', language)}</th>
+                <th className="px-6 py-2.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -151,7 +154,7 @@ export default function CompanyPage() {
                    <td colSpan="4" className="py-20 text-center">
                      <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading Companies...</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Loading Companies...', language)}</span>
                      </div>
                    </td>
                  </tr>
@@ -197,8 +200,8 @@ export default function CompanyPage() {
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         className="px-2 py-1 bg-slate-50/50 border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest focus:border-blue-100 outline-none cursor-pointer hover:bg-white transition-all min-w-[100px]"
                       >
-                        <option value="user">USER</option>
-                        <option value="owner">OWNER</option>
+                        <option value="user">{t('USER', language)}</option>
+                        <option value="owner">{t('OWNER', language)}</option>
                       </select>
                     </td>
                     <td className="px-6 py-3.5 text-center">
@@ -267,10 +270,10 @@ export default function CompanyPage() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredUsers.length} Companies
+             {t('Showing:', language)} {filteredUsers.length} {t('Companies', language)}
            </span>
            <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Admin Access
+             {t('Admin Access', language)}
            </div>
         </div>
       </div>
@@ -278,7 +281,7 @@ export default function CompanyPage() {
   );
 }
  
-function MetricCard({ label, value, icon: Icon, color, subText }) {
+function MetricCard({ label, value, icon: Icon, color, subText, language }) {
   const themes = {
     indigo: 'bg-indigo-600 shadow-indigo-100',
     emerald: 'bg-emerald-500 shadow-emerald-100',

@@ -9,8 +9,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
 import { useStore } from '@/stores/useStore';
 import { useReportByStore } from '@/stores/useReportByStore';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
+
 
 export default function ReportByStore() {
+    const { language } = useLanguageStore();
     // Top-Level State
     const [dateRange, setDateRange] = useState(7); // default 7 days
     const [activeTab, setActiveTab] = useState('Overview');
@@ -176,10 +180,10 @@ export default function ReportByStore() {
                                 <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Calendar className="text-slate-400" size={16} />
-                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">Recent Transactions</h2>
+                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Recent Transactions', language)}</h2>
                                     </div>
                                     <button className="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 flex items-center gap-1">
-                                        View All <ArrowUpRight size={12} />
+                                        {t('View All', language)} <ArrowUpRight size={12} />
                                     </button>
                                 </div>
                                 
@@ -187,11 +191,11 @@ export default function ReportByStore() {
                                     <table className="w-full text-left border-collapse">
                                         <thead>
                                             <tr className="bg-slate-50/50">
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Order ID</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Customer</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Date</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Status</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Amount</th>
+                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Order ID', language)}</th>
+                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Customer', language)}</th>
+                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Date', language)}</th>
+                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Status', language)}</th>
+                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">{t('Amount', language)}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50 relative">
@@ -218,7 +222,7 @@ export default function ReportByStore() {
                                                             ${order.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
                                                             ['Processing', 'Pending'].includes(order.status) ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 
                                                             'bg-rose-50 text-rose-500 border-rose-100'}`}>
-                                                            {order.status}
+                                                            {t(order.status, language)}
                                                         </div>
                                                     </td>
                                                     <td className="px-5 py-4 text-right">

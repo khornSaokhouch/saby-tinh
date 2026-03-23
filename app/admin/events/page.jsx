@@ -10,8 +10,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEventStore } from '@/stores/useEventStore';
 import EventFormModal from '@/app/components/admin/modelform/EventFormModal';
 import { toast } from 'react-hot-toast';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 export default function EventsPage() {
+  const { language } = useLanguageStore();
   const { 
     events, loading, fetchEvents, search, setSearch, saveEvent, deleteEvent, deleteMultipleEvents, error
   } = useEventStore();
@@ -79,7 +82,7 @@ export default function EventsPage() {
       setDeletingId('batch');
       const res = await deleteMultipleEvents(selectedIds);
       if (res?.success) {
-        toast.success(`Removed ${selectedIds.length} events`);
+        toast.success(t('Removed count events', language).replace('count', selectedIds.length));
         setSelectedIds([]);
       } else {
         toast.error(res?.message || 'Batch delete failed');
@@ -92,7 +95,7 @@ export default function EventsPage() {
     setIsActionLoading(true);
     try {
       await saveEvent({ ...formData, id: selectedItem?.id });
-      toast.success(selectedItem ? 'Event updated' : 'Event created');
+      toast.success(selectedItem ? t('Event updated', language) : t('Event created', language));
       setIsFormOpen(false);
     } catch (err) {
       toast.error(err.message || 'Failed to save event');
@@ -140,7 +143,7 @@ export default function EventsPage() {
                 className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {deletingId === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
-                Delete Selected
+                {t('Delete Selected', language)}
               </button>
               <button 
                 onClick={() => setSelectedIds([])}
@@ -158,13 +161,13 @@ export default function EventsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Events Manager</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Events Manager', language)}</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Events</span>
+            {t('Store', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">{t('Events', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Create and manage promotional campaigns for your store.
+            {t('Create and manage promotional campaigns for your store.', language)}
           </p>
         </div>
 
@@ -180,16 +183,16 @@ export default function EventsPage() {
             className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95"
           >
             <Plus size={14} strokeWidth={3} />
-            Create Event
+            {t('Create Event', language)}
           </button>
         </div>
       </div>
 
       {/* --- KPI METRICS --- */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Events" value={events.length} icon={LayoutGrid} color="indigo" />
-        <StatCard label="Active Search" value={filteredEvents.length} icon={Search} color="blue" />
-        <StatCard label="System Status" value="Online" icon={Timer} color="emerald" />
+        <StatCard label={t('Total Events', language)} value={events.length} icon={LayoutGrid} color="indigo" language={language} />
+        <StatCard label={t('Active Search', language)} value={filteredEvents.length} icon={Search} color="blue" language={language} />
+        <StatCard label={t('System Status', language)} value={t('Online', language)} icon={Timer} color="emerald" language={language} />
       </div>
 
       {/* --- CONTENT TABLE --- */}
@@ -201,7 +204,7 @@ export default function EventsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
             <input 
               type="text" 
-              placeholder="Search events..." 
+              placeholder={t('Search events...', language)} 
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -214,10 +217,10 @@ export default function EventsPage() {
               onChange={e => setActiveTab(e.target.value)}
               className="w-full sm:w-auto pl-4 pr-10 h-[32px] bg-slate-50 border border-transparent rounded-lg text-[9px] font-black text-slate-500 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all min-w-[140px] uppercase tracking-widest"
             >
-              <option value="all">All Events</option>
-              <option value="active">Active</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="past">Past</option>
+              <option value="all">{t('All Events', language)}</option>
+              <option value="active">{t('Active', language)}</option>
+              <option value="upcoming">{t('Upcoming', language)}</option>
+              <option value="past">{t('Past', language)}</option>
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <ChevronDown size={12} />
@@ -241,18 +244,18 @@ export default function EventsPage() {
                     {selectedIds.length === filteredEvents.length && filteredEvents.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
                   </div>
                 </th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Event Detail</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Type & Discount</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Duration</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Event Detail', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Type & Discount', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Status', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Duration', language)}</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Actions', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && events.length === 0 ? (
-                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Data...</td></tr>
+                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">{t('Scanning Data...', language)}</td></tr>
               ) : filteredEvents.length === 0 ? (
-                <tr><td colSpan="6" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No events found</td></tr>
+                <tr><td colSpan="6" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">{t('No events found', language)}</td></tr>
               ) : (
                 filteredEvents.map((event) => (
                   <tr key={event.id} className={`hover:bg-slate-50/30 transition-colors group ${selectedIds.includes(event.id) ? 'bg-indigo-50/40' : ''}`}>
@@ -278,7 +281,7 @@ export default function EventsPage() {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">{event.name}</span>
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Priority: {event.promotion?.priority || 0}</span>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('Priority:', language)} {event.promotion?.priority || 0}</span>
                         </div>
                       </div>
                     </td>
@@ -287,7 +290,7 @@ export default function EventsPage() {
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{event.promotion?.event_type || 'N/A'}</span>
                         {event.promotion?.discount_type !== 'none' && (
                           <span className="text-[9px] font-bold text-indigo-600">
-                             {event.promotion?.discount_type === 'percentage' ? `${event.promotion?.discount_value}% OFF` : `$${event.promotion?.discount_value} OFF`}
+                             {event.promotion?.discount_type === 'percentage' ? `${event.promotion?.discount_value}% ${t('OFF', language)}` : `$${event.promotion?.discount_value} ${t('OFF', language)}`}
                           </span>
                         )}
                       </div>
@@ -304,15 +307,15 @@ export default function EventsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
-                          <Clock size={10} className="text-slate-400" />
-                          {new Date(event.start_date).toLocaleDateString()}
+                        <div className=" flex flex-col items-center gap-1">
+                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
+                            <Clock size={10} className="text-slate-400" />
+                            {new Date(event.start_date).toLocaleDateString()}
+                          </div>
+                          <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
+                            {t('to', language)} {new Date(event.end_date).toLocaleDateString()}
+                          </div>
                         </div>
-                        <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
-                          to {new Date(event.end_date).toLocaleDateString()}
-                        </div>
-                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -369,7 +372,7 @@ export default function EventsPage() {
 
 // --- SUB COMPONENTS ---
 
-function StatCard({ label, value, icon: Icon, color }) {
+function StatCard({ label, value, icon: Icon, color, language }) {
   const themes = {
     indigo: 'bg-indigo-600',
     rose: 'bg-rose-500',
