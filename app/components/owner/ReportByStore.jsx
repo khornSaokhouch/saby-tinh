@@ -58,18 +58,20 @@ export default function ReportByStore() {
         return (
             <div className="flex flex-col items-center justify-center p-20 text-slate-500 gap-3">
                 <Package size={48} className="text-slate-200" />
-                <p className="font-bold text-[13px]">No store associated with your account.</p>
+                <p className="font-bold text-[13px]">{t('No store associated with your account.', language)}</p>
             </div>
+
         );
     }
 
     const ranges = [
-        { label: '7 Days', val: 7 },
-        { label: '15 Days', val: 15 },
-        { label: '1 Month', val: 30 },
-        { label: '6 Months', val: 180 },
-        { label: '1 Year', val: 365 }
+        { label: t('7 Days', language), val: 7 },
+        { label: t('15 Days', language), val: 15 },
+        { label: t('1 Month', language), val: 30 },
+        { label: t('6 Months', language), val: 180 },
+        { label: t('1 Year', language), val: 365 }
     ];
+
 
     return (
         <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
@@ -79,14 +81,15 @@ export default function ReportByStore() {
                 <div className="text-left">
                     <div className="flex items-center gap-2 mb-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Store Analytics</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Store Analytics', language)}</span>
                     </div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-                        Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">Reports</span>
+                        {t('Performance', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">{t('Reports', language)}</span>
                     </h1>
                     <p className="text-slate-500 text-[12px] font-medium mt-1">
-                        Monitor your store's sales, orders, and customer activity.
+                        {t("Monitor your store's sales, orders, and customer activity.", language)}
                     </p>
+
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -111,8 +114,9 @@ export default function ReportByStore() {
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-32 rounded-[30px] bg-slate-50/50 border border-slate-100">
                     <Loader2 className="w-8 h-8 text-indigo-400 animate-spin mx-auto mb-4" />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Compiling Reports...</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('Compiling Reports...', language)}</p>
                 </div>
+
             ) : error ? (
                 <div className="p-6 bg-rose-50 border border-rose-100 rounded-2xl text-center">
                     <p className="text-rose-600 font-bold text-sm">{error}</p>
@@ -129,26 +133,27 @@ export default function ReportByStore() {
                         {/* --- METRICS --- */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <MetricCard 
-                                label="Total Revenue" 
+                                label={t('Total Revenue', language)} 
                                 value={`$${(stats?.revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} 
                                 trend={stats?.revenueGrowth} 
                                 icon={DollarSign} 
                                 color="indigo" 
                             />
                             <MetricCard 
-                                label="Total Orders" 
+                                label={t('Total Orders', language)} 
                                 value={(stats?.orders || 0).toLocaleString()} 
                                 trend={stats?.ordersGrowth} 
                                 icon={Package} 
                                 color="emerald" 
                             />
                             <MetricCard 
-                                label="Avg. Order Value" 
+                                label={t('Avg. Order Value', language)} 
                                 value={`$${(stats?.avgOrderValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} 
                                 trend={stats?.aovGrowth} 
                                 icon={BarChart3} 
                                 color="rose" 
                             />
+
                         </div>
 
                         {/* --- TAB NAVIGATION --- */}
@@ -161,7 +166,8 @@ export default function ReportByStore() {
                                         activeTab === tab ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
                                     }`}
                                 >
-                                    {tab}
+                                    {t(tab, language)}
+
                                     {activeTab === tab && (
                                         <motion.div 
                                             layoutId="activeTabIndicator"
@@ -209,8 +215,9 @@ export default function ReportByStore() {
                                                 >
                                                     <td className="px-5 py-4">
                                                         <span className="text-[11px] font-black text-indigo-600 uppercase tracking-wider">{order.id}</span>
-                                                        <div className="text-[9px] font-bold text-slate-400 mt-0.5">{order.items} items</div>
+                                                        <div className="text-[9px] font-bold text-slate-400 mt-0.5">{order.items} {t('items', language)}</div>
                                                     </td>
+ Kinder
                                                     <td className="px-5 py-4 min-w-[120px]">
                                                         <span className="text-[11px] font-bold text-slate-800">{order.customer}</span>
                                                     </td>
@@ -234,8 +241,9 @@ export default function ReportByStore() {
                                                     <td colSpan="5" className="px-8 py-20 text-center">
                                                         <div className="flex flex-col items-center gap-2">
                                                             <Package size={32} className="text-slate-200" />
-                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">No recent orders.</p>
+                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{t('No recent orders.', language)}</p>
                                                         </div>
+
                                                     </td>
                                                 </tr>
                                             )}
@@ -249,8 +257,9 @@ export default function ReportByStore() {
                                 <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="text-slate-400" size={16} />
-                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">Top Products</h2>
+                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Top Products', language)}</h2>
                                     </div>
+
                                 </div>
                                 
                                 <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
@@ -268,22 +277,25 @@ export default function ReportByStore() {
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="text-[11px] font-black text-slate-900 truncate" title={product.name}>{product.name}</h4>
                                                 <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="text-[9px] font-bold text-slate-400 max-w-[80px] truncate">{product.category}</span>
+                                                    <span className="text-[9px] font-bold text-slate-400 max-w-[80px] truncate">{t(product.category, language)}</span>
                                                     <span className="text-slate-300">•</span>
-                                                    <span className="text-[9px] font-black text-indigo-600 whitespace-nowrap">{product.sales} sold</span>
+                                                    <span className="text-[9px] font-black text-indigo-600 whitespace-nowrap">{product.sales} {t('sold', language)}</span>
                                                 </div>
+
                                             </div>
                                             <div className="text-right shrink-0">
                                                 <div className="text-[11px] font-black text-slate-900">${Number(product.revenue).toLocaleString()}</div>
                                                 <div className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${product.inventory > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                                    {product.inventory > 0 ? `${product.inventory} in stock` : 'Out of stock'}
+                                                    {product.inventory > 0 ? `${product.inventory} ${t('in stock', language)}` : t('Out of stock', language)}
                                                 </div>
+
                                             </div>
                                         </motion.div>
                                     )) : (
                                         <div className="flex flex-col items-center justify-center p-12 h-full gap-2">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mt-8">Not enough data.</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mt-8">{t('Not enough data.', language)}</p>
                                         </div>
+
                                     )}
                                 </div>
                             </div>

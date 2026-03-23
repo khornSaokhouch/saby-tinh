@@ -615,6 +615,22 @@ export const km = {
   'Syncing database...': 'កំពុងធ្វើសមកាលកម្មទិន្នន័យ...',
   'No nodes found in registry': 'រកមិនឃើញថ្នាំងនៅក្នុងបញ្ជីទេ',
   'Node ID:': 'លេខសម្គាល់ថ្នាំង៖',
+  'No store associated with your account.': 'មិនមានហាងដែលពាក់ព័ន្ធនឹងគណនីរបស់អ្នកទេ។',
+  '7 Days': '7 ថ្ងៃ',
+  '15 Days': '15 ថ្ងៃ',
+  '1 Month': '1 ខែ',
+  '6 Months': '6 ខែ',
+  '1 Year': '1 ឆ្នាំ',
+  'Store Analytics': 'ការវិភាគហាង',
+  'Compiling Reports...': 'កំពុងចងក្រងរបាយការណ៍...',
+  'items': 'មុខ',
+  'No recent orders.': 'មិនមានការបញ្ជាទិញថ្មីៗទេ។',
+  'Top Products': 'ផលិតផលពេញនិយម',
+  'sold': 'លក់ដាច់',
+  'in stock': 'ក្នុងស្តុក',
+  'Out of stock': 'អស់ពីស្តុក',
+  'Not enough data.': 'មិនមានទិន្នន័យគ្រប់គ្រាន់ទេ។',
 };
+
 
 

@@ -520,6 +520,22 @@ export const en = {
   'Syncing database...': 'Syncing database...',
   'No nodes found in registry': 'No nodes found in registry',
   'Node ID:': 'Node ID:',
+  'No store associated with your account.': 'No store associated with your account.',
+  '7 Days': '7 Days',
+  '15 Days': '15 Days',
+  '1 Month': '1 Month',
+  '6 Months': '6 Months',
+  '1 Year': '1 Year',
+  'Store Analytics': 'Store Analytics',
+  'Compiling Reports...': 'Compiling Reports...',
+  'items': 'items',
+  'No recent orders.': 'No recent orders.',
+  'Top Products': 'Top Products',
+  'sold': 'sold',
+  'in stock': 'in stock',
+  'Out of stock': 'Out of stock',
+  'Not enough data.': 'Not enough data.',
 };
+
 
 
