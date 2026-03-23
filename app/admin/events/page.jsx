@@ -6,14 +6,14 @@ import {
   Loader2, Check, X, LayoutGrid, Timer, Image as ImageIcon,
   RefreshCw, MapPin, Calendar, ArrowUpRight, ChevronDown
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEventStore } from '@/stores/useEventStore';
-import EventFormModal from '@/components/admin/modelform/EventFormModal';
+import EventFormModal from '@/app/components/admin/modelform/EventFormModal';
 import { toast } from 'react-hot-toast';
 
 export default function EventsPage() {
   const { 
-    events, loading, fetchEvents, search, setSearch, saveEvent, deleteEvent, error
+    events, loading, fetchEvents, search, setSearch, saveEvent, deleteEvent, deleteMultipleEvents, error
   } = useEventStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -23,15 +23,23 @@ export default function EventsPage() {
   const [deletingId, setDeletingId] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
+
   useEffect(() => {
     fetchEvents();
     const interval = setInterval(() => fetchEvents(), 30000);
     return () => clearInterval(interval);
   }, [fetchEvents]);
 
+  // Reset selection on search or tab change
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [search, activeTab]);
+
   const filteredEvents = useMemo(() => {
     return events.filter(ev => {
-      const matchSearch = ev.name.toLowerCase().includes(search.toLowerCase()) ||
+      const matchSearch = (ev.name || '').toLowerCase().includes(search.toLowerCase()) ||
         (ev.description || '').toLowerCase().includes(search.toLowerCase());
       
       let matchTab = true;
@@ -50,6 +58,35 @@ export default function EventsPage() {
       return matchSearch && matchTab;
     });
   }, [events, search, activeTab]);
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredEvents.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredEvents.map(ev => ev.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} events?`)) {
+      setDeletingId('batch');
+      const res = await deleteMultipleEvents(selectedIds);
+      if (res?.success) {
+        toast.success(`Removed ${selectedIds.length} events`);
+        setSelectedIds([]);
+      } else {
+        toast.error(res?.message || 'Batch delete failed');
+      }
+      setDeletingId(null);
+    }
+  };
 
   const handleSave = async (formData) => {
     setIsActionLoading(true);
@@ -78,8 +115,44 @@ export default function EventsPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
       
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Events</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={deletingId === 'batch'}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {deletingId === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -153,11 +226,22 @@ export default function EventsPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Event Detail</th>
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredEvents.length && filteredEvents.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredEvents.length && filteredEvents.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Event Detail</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Type & Discount</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Duration</th>
@@ -166,13 +250,24 @@ export default function EventsPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && events.length === 0 ? (
-                <tr><td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Data...</td></tr>
+                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Data...</td></tr>
               ) : filteredEvents.length === 0 ? (
-                <tr><td colSpan="5" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No events found</td></tr>
+                <tr><td colSpan="6" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No events found</td></tr>
               ) : (
                 filteredEvents.map((event) => (
-                  <tr key={event.id} className="hover:bg-slate-50/30 transition-colors group">
-                    <td className="px-6 py-4">
+                  <tr key={event.id} className={`hover:bg-slate-50/30 transition-colors group ${selectedIds.includes(event.id) ? 'bg-indigo-50/40' : ''}`}>
+                    <td className="pl-6 py-4">
+                      <div 
+                        onClick={() => toggleSelectId(event.id)}
+                        className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                        selectedIds.includes(event.id) 
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                      }`}>
+                        {selectedIds.includes(event.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
                            {event.event_image ? (
@@ -211,7 +306,7 @@ export default function EventsPage() {
                     <td className="px-4 py-4">
                       <div className="flex flex-col items-center gap-1">
                         <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
-                          <Calendar size={10} className="text-slate-400" />
+                          <Clock size={10} className="text-slate-400" />
                           {new Date(event.start_date).toLocaleDateString()}
                         </div>
                         <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
@@ -271,8 +366,6 @@ export default function EventsPage() {
     </div>
   );
 }
-
-// --- SUB COMPONENTS ---
 
 // --- SUB COMPONENTS ---
 

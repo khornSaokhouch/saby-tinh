@@ -2,53 +2,18 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Plus, Trash2, Search, RefreshCw, Edit3, Check, X, Loader2,
-  Percent, Tag, ArrowUpRight, CheckCircle2, Box, Layers, SlidersHorizontal
+  Search, RefreshCw, Percent, Tag, CheckCircle2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { usePromotionStore } from '@/stores/usePromotionStore';
-import PromotionFormModal from '@/components/admin/modelform/PromotionFormModal';
-import { toast } from 'react-hot-toast';
 
 export default function OwnerPromotionsPage() {
-  const { promotions, loading, fetchPromotions, savePromotion, deletePromotion } = usePromotionStore();
+  const { promotions, loading, fetchPromotions } = usePromotionStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editData, setEditData] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [isActionLoading, setIsActionLoading] = useState(false);
 
   useEffect(() => {
     fetchPromotions();
   }, [fetchPromotions]);
-
-  const handleSubmit = async (formData) => {
-    setIsSubmitting(true);
-    try {
-      await savePromotion({ ...formData, id: editData?.id });
-      toast.success(editData ? 'Promotion updated' : 'Promotion created');
-      setModalOpen(false);
-      setEditData(null);
-    } catch {
-      toast.error('Failed to save promotion');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    setIsActionLoading(true);
-    try {
-      await deletePromotion(id);
-      setConfirmDeleteId(null);
-      toast.success('Promotion deleted');
-    } catch {
-      toast.error('Failed to delete promotion');
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
 
   const filtered = useMemo(() => {
     return promotions.filter(p =>
@@ -78,21 +43,15 @@ export default function OwnerPromotionsPage() {
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Marketing Campaigns</span>
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-            Active <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">Promotions</span>
+            Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-500">Promotions</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
-            Manage your store discounts and offers.
+            View active store discounts and marketing offers.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => fetchPromotions()} className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
-          </button>
-          <button
-            onClick={() => { setEditData(null); setModalOpen(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black shadow-md hover:bg-slate-800 transition-all active:scale-95 uppercase tracking-widest"
-          >
-            <Plus size={14} strokeWidth={3} /> New Promo
           </button>
         </div>
       </div>
@@ -134,14 +93,13 @@ export default function OwnerPromotionsPage() {
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Timeline</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Scope</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Condition</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading && promotions.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-20 text-center">
-                    <div className="flex flex-col items-center gap-3">
+                  <td colSpan="5" className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-3 text-center justify-center">
                       <RefreshCw className="animate-spin text-indigo-500" size={24} />
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Syncing ...</span>
                     </div>
@@ -191,37 +149,10 @@ export default function OwnerPromotionsPage() {
                         {promo.status === 1 ? 'Active' : 'Paused'}
                     </div>
                   </td>
-                  <td className="px-6 py-3.5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => { setEditData(promo); setModalOpen(true); }}
-                        className="p-1.5 bg-indigo-500 text-white hover:bg-indigo-600 rounded-lg shadow-sm active:scale-95 transition-all"
-                      >
-                        <Edit3 size={14} strokeWidth={3} />
-                      </button>
-
-                      <AnimatePresence mode="wait" initial={false}>
-                        {confirmDeleteId === promo.id ? (
-                          <motion.div key="confirm" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="flex items-center gap-1">
-                            <button onClick={() => handleDelete(promo.id)} className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm">
-                              <Check size={12} strokeWidth={3} />
-                            </button>
-                            <button onClick={() => setConfirmDeleteId(null)} className="p-1.5 bg-slate-100 text-slate-400 rounded-lg">
-                              <X size={12} strokeWidth={3} />
-                            </button>
-                          </motion.div>
-                        ) : (
-                          <button onClick={() => setConfirmDeleteId(promo.id)} className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95">
-                            <Trash2 size={14} strokeWidth={3} />
-                          </button>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </td>
                 </motion.tr>
               )) : (
                 <tr>
-                  <td colSpan="6" className="py-20 text-center">
+                  <td colSpan="5" className="py-20 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <Tag size={40} className="text-slate-100" />
                       <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">Zero promos found.</p>
@@ -233,15 +164,6 @@ export default function OwnerPromotionsPage() {
           </table>
         </div>
       </div>
-
-      {/* MODAL */}
-      <PromotionFormModal
-        isOpen={modalOpen}
-        onClose={() => { setModalOpen(false); setEditData(null); }}
-        initialData={editData}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-      />
     </div>
   );
 }
@@ -254,7 +176,7 @@ function MetricCard({ label, value, icon: Icon, color, subText }) {
   };
 
   return (
-    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
+    <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden text-left">
         <div className={`w-8 h-8 rounded-xl ${themes[color] || themes.indigo} text-white shadow-lg flex items-center justify-center transition-transform group-hover:scale-110 mb-3 relative z-10`}>
             <Icon size={14} strokeWidth={3} />
         </div>

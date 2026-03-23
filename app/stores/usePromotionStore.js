@@ -87,4 +87,23 @@ export const usePromotionStore = create((set, get) => ({
       throw err;
     }
   },
+
+  /* =========================
+     Delete multiple promotions
+     ========================= */
+  deleteMultiplePromotions: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/promotions/${id}`, 'DELETE')));
+      await get().fetchPromotions();
+      set({ loading: false });
+      return { success: true };
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Failed to delete promotions',
+        loading: false,
+      });
+      return { success: false, message: err.message };
+    }
+  },
 }));

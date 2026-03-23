@@ -31,7 +31,7 @@ const menuGroups = [
    {
     title: "Marketing",
     items: [
-      { name: 'Promotions', href: '/owner/promotions', icon: Tag },
+       { name: 'Promotions', href: '/owner/promotions', icon: Tag },
       { name: 'Promo Categories', href: '/owner/promotion-categories', icon: Layers },
       { name: 'Promo Codes', href: '/owner/promo-codes', icon: Ticket },
     ]

@@ -10,12 +10,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 export default function AdminCountriesPage() {
-  const { countries, fetchCountries, createCountry, updateCountry, deleteCountry, loading, error } = useCountryStore();
+  const { 
+    countries, 
+    fetchCountries, 
+    createCountry, 
+    updateCountry, 
+    deleteCountry, 
+    deleteMultipleCountries,
+    loading, 
+    error 
+  } = useCountryStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingCountry, setEditingCountry] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     fetchCountries();
@@ -27,11 +39,45 @@ export default function AdminCountriesPage() {
     return () => clearInterval(interval);
   }, [fetchCountries]);
 
+  // Reset selection on search
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [searchTerm]);
+
   const filteredCountries = useMemo(() => {
     return countries.filter(c =>
       String(c.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [countries, searchTerm]);
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredCountries.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredCountries.map(c => c.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} regions?`)) {
+      setDeletingId('batch');
+      const res = await deleteMultipleCountries(selectedIds);
+      if (res?.success) {
+        toast.success(`Removed ${selectedIds.length} regions`);
+        setSelectedIds([]);
+      } else {
+        toast.error(res?.message || 'Batch delete failed');
+      }
+      setDeletingId(null);
+    }
+  };
 
   const handleOpenCreate = () => {
     setEditingCountry(null);
@@ -56,7 +102,43 @@ export default function AdminCountriesPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Regions</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={deletingId === 'batch'}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {deletingId === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
@@ -116,22 +198,33 @@ export default function AdminCountriesPage() {
         <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50">
+              <tr className="bg-slate-50/50 text-left">
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredCountries.length && filteredCountries.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredCountries.length && filteredCountries.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Internal Designation</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Registration Data</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 text-left">
               {loading && countries.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="py-20 text-center">
+                  <td colSpan="4" className="py-20 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="3" className="py-20 text-center">
+                  <td colSpan="4" className="py-20 text-center">
                     <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold border border-rose-100 uppercase tracking-widest">
                       <ShieldAlert size={14} /> Error: {error}
                     </div>
@@ -139,15 +232,26 @@ export default function AdminCountriesPage() {
                 </tr>
               ) : filteredCountries.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No regions found</td>
+                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">No regions found</td>
                 </tr>
               ) : (
                 filteredCountries.map((country, idx) => (
                   <motion.tr 
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
-                    key={country.id} className="group hover:bg-slate-50/30 transition-colors"
+                    key={country.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(country.id) ? 'bg-indigo-50/40' : ''}`}
                   >
-                    <td className="px-6 py-3.5">
+                    <td className="pl-6 py-3.5">
+                      <div 
+                        onClick={() => toggleSelectId(country.id)}
+                        className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                        selectedIds.includes(country.id) 
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                      }`}>
+                        {selectedIds.includes(country.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5 text-left">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden shrink-0 transition-transform group-hover:scale-105">
                            <Globe size={14} className="text-slate-400" />
@@ -263,79 +367,70 @@ function CountryFormModal({ country, onClose, onCreate, onUpdate }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
       />
       
       <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        initial={{ scale: 0.95, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-slate-100"
+        exit={{ scale: 0.95, opacity: 0, y: 10 }}
+        className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
       >
-        <div className="p-8 font-sans">
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-100">
-               <Globe size={24} strokeWidth={2.5} />
-            </div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">
-              {country ? 'Update Region' : 'Register Country'}
-            </h2>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Geographic identity</p>
+        <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
+          {country ? 'Update Region' : 'Register Country'}
+        </h2>
+
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          if (!name.trim()) return toast.error('Designation is required');
+          setSubmitting(true);
+          const res = country ? await onUpdate(country.id, { name: name.trim() }) : await onCreate({ name: name.trim() });
+          if (res?.success) {
+            toast.success(country ? 'Region updated' : 'Country registered');
+            onClose();
+          } else {
+            toast.error(res?.message || 'Operation failed');
+          }
+          setSubmitting(false);
+        }} className="space-y-3">
+          
+          <div>
+            <label className="block text-xs font-bold mb-1.5 text-gray-700">
+              Country Designation
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={submitting}
+              placeholder="e.g. Cambodia"
+              className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+            />
           </div>
 
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            if (!name.trim()) return toast.error('Designation is required');
-            setSubmitting(true);
-            const res = country ? await onUpdate(country.id, { name: name.trim() }) : await onCreate({ name: name.trim() });
-            if (res?.success) {
-              toast.success(country ? 'Region updated' : 'Country registered');
-              onClose();
-            } else {
-              toast.error(res?.message || 'Operation failed');
-            }
-            setSubmitting(false);
-          }} className="space-y-6">
-            
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">
-                Country Designation
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={submitting}
-                placeholder="e.g. Cambodia"
-                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all placeholder:text-slate-400"
-              />
-            </div>
-
-            <div className="flex items-center gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={submitting}
-                className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
-              >
-                Back
-              </button>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-[2] py-3.5 bg-emerald-500 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 transition-all active:scale-[0.95] hover:bg-emerald-600"
-              >
-                {submitting ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Check size={14} strokeWidth={3} />
-                )}
-                {country ? 'Sync Region' : 'Register Region'}
-              </button>
-            </div>
-          </form>
-        </div>
+          <div className="flex justify-end gap-2 pt-4 mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm flex items-center justify-center gap-2"
+            >
+              {submitting ? (
+                <> <Loader2 size={12} className="animate-spin" /> Saving... </>
+              ) : (
+                country ? 'Sync Region' : 'Register'
+              )}
+            </button>
+          </div>
+        </form>
       </motion.div>
     </div>
   );

@@ -30,14 +30,16 @@ export const useBrandStore = create((set, get) => ({
       
       const formData = new FormData();
       formData.append('name', brand.name);
+      formData.append('category_id', brand.category_id);
       formData.append('status', brand.status ? 1 : 0); // Map boolean to integer for backend validation
 
       // Only append image if it's a new file upload
-      if (brand.image instanceof File) {
-        formData.append('image', brand.image);
+      const imageFile = brand.brand_image || brand.image;
+      if (imageFile instanceof File) {
+        formData.append('brand_image', imageFile);
       }
 
-      await request(url, 'POST', formData, true); 
+      await request(url, 'POST', formData); 
       
       // Critical: Refetch to sync UI with DB
       await get().fetchBrands();
@@ -56,6 +58,21 @@ export const useBrandStore = create((set, get) => ({
         brands: state.brands.filter((b) => b.id !== id)
       }));
     } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteMultipleBrands: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/brands/${id}`, 'DELETE')));
+      await get().fetchBrands();
+      set({ loading: false });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Failed to delete brands',
+        loading: false,
+      });
       throw err;
     }
   }

@@ -110,6 +110,27 @@ export const useTypeStore = create(
         }
       },
 
+      deleteMultipleTypes: async (ids) => {
+        set({ loading: true, error: null });
+        try {
+          await Promise.all(ids.map(id => request(`/types/${id}`, 'DELETE')));
+          
+          if (get().selectedCategoryId) {
+            await get().fetchTypesByCategory(get().selectedCategoryId);
+          } else {
+            await get().fetchTypes();
+          }
+          
+          set({ loading: false });
+        } catch (err) {
+          set({
+            error: err.response?.data?.message || err.message || 'Failed to delete multiple types',
+            loading: false,
+          });
+          throw err;
+        }
+      },
+
       /* =========================
          Toggle status
          ========================= */

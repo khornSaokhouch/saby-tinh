@@ -3,11 +3,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { 
   Palette, Search, Plus, Edit3, Trash2, Clock, 
-  Loader2, CheckCircle2, X, Check, RefreshCw
+  Loader2, CheckCircle2, Layers, ChevronLeft, ChevronRight, X, Check, RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useColorStore } from '@/stores/useColorStore';
-import ColorFormModal from '@/components/admin/modelform/ColorFormModal';
+import { useCategoryStore } from '@/stores/useCategoryStore';
+import ColorFormModal from '@/app/components/admin/modelform/ColorFormModal';
 import { toast } from 'react-hot-toast';
 
 export default function ColorsPage() {
@@ -18,29 +19,87 @@ export default function ColorsPage() {
     search, 
     setSearch, 
     saveColor, 
-    deleteColor 
+    deleteColor,
+    deleteMultipleColors 
   } = useColorStore();
+
+  const { categories, fetchCategories } = useCategoryStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
 
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // --- Pagination & Filter State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
+  const pageSize = 10;
+
   useEffect(() => {
     fetchColors();
+    fetchCategories();
 
     const interval = setInterval(() => {
       fetchColors();
+      fetchCategories();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [fetchColors]);
+  }, [fetchColors, fetchCategories]);
+
+  // Reset selection and pagination on search or filter change
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+  }, [search, selectedCategoryId]);
 
   const filteredColors = useMemo(() => {
-    return colors.filter(c => 
-      (c.name || '').toLowerCase().includes(search.toLowerCase())
+    return (colors || []).filter(color => {
+      const matchesSearch = (color?.name || '').toLowerCase().includes((search || '').toLowerCase());
+      const matchesCategory = selectedCategoryId === 'all' || 
+        color.categories?.some(cat => cat.id === Number(selectedCategoryId));
+      return matchesSearch && matchesCategory;
+    });
+  }, [colors, search, selectedCategoryId]);
+
+  const paginatedColors = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredColors.slice(start, start + pageSize);
+  }, [filteredColors, currentPage]);
+
+  const totalPages = Math.ceil(filteredColors.length / pageSize);
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedColors.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedColors.map(c => c.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
-  }, [colors, search]);
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} colors?`)) {
+      setIsActionLoading(true);
+      try {
+        await deleteMultipleColors(selectedIds);
+        setSelectedIds([]);
+        toast.success(`Removed ${selectedIds.length} chromatic units`);
+      } catch (err) {
+        toast.error('Batch deletion failed');
+      } finally {
+        setIsActionLoading(false);
+      }
+    }
+  };
 
   const handleSave = async (data) => {
     setIsActionLoading(true);
@@ -71,7 +130,43 @@ export default function ColorsPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Items</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={isActionLoading}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
@@ -125,6 +220,20 @@ export default function ColorsPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+
+            <div className="relative w-full sm:w-48 group text-left">
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                className="w-full pl-4 pr-10 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:border-blue-100 transition-all appearance-none cursor-pointer"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              <Layers className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} />
+            </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
             {filteredColors.length} Colors Found
@@ -135,8 +244,20 @@ export default function ColorsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
+                <th className="pl-6 w-10 py-3">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === paginatedColors.length && paginatedColors.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === paginatedColors.length && paginatedColors.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Color Detail</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[100px]">Status</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
+                {/* <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[100px]">Status</th> */}
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
@@ -144,21 +265,32 @@ export default function ColorsPage() {
             <tbody className="divide-y divide-slate-50">
               {loading && colors.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center">
+                  <td colSpan="6" className="py-20 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
                   </td>
                 </tr>
-              ) : filteredColors.length === 0 ? (
+              ) : paginatedColors.length === 0 ? (
                 <tr>
-                    <td colSpan="4" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No colors matching filter</td>
+                    <td colSpan="6" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No colors matching filter</td>
                 </tr>
-              ) : filteredColors.map((color, idx) => (
+              ) : paginatedColors.map((color, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
-                  key={color.id} className="group hover:bg-slate-50/30 transition-colors"
+                  key={color.id} className={`group hover:bg-indigo-50/20 transition-all ${selectedIds.includes(color.id) ? 'bg-indigo-50/40' : ''}`}
                 >
+                  <td className="pl-6 py-3.5">
+                    <div 
+                      onClick={() => toggleSelectId(color.id)}
+                      className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                      selectedIds.includes(color.id) 
+                        ? 'bg-indigo-600 border-indigo-600' 
+                        : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                    }`}>
+                      {selectedIds.includes(color.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                    </div>
+                  </td>
                   <td className="px-6 py-3.5">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 text-left">
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-white shadow-sm overflow-hidden shrink-0 transition-transform group-hover:scale-105" style={{ backgroundColor: color.hex_code || '#fff' }}>
                         {!color.hex_code && <Palette className="w-4 h-4 text-slate-300" />}
                       </div>
@@ -168,7 +300,25 @@ export default function ColorsPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-3.5 text-center">
+                  <td className="px-6 py-3.5">
+                    <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-[220px] mx-auto">
+                      {(color.categories || []).slice(0, 2).map(cat => (
+                        <div key={cat.id} className="flex items-center gap-1 px-2 py-0.5 bg-white border border-slate-100 text-slate-600 rounded-lg text-[8px] font-black uppercase tracking-widest whitespace-nowrap shadow-sm">
+                          <Layers size={9} className="text-slate-400" strokeWidth={3} />
+                          {cat.name}
+                        </div>
+                      ))}
+                      {color.categories?.length > 2 && (
+                        <div className="px-2 py-0.5 bg-slate-100 text-slate-400 rounded-lg text-[8px] font-black uppercase tracking-widest whitespace-nowrap">
+                          +{color.categories.length - 2} More
+                        </div>
+                      )}
+                      {(!color.categories || color.categories.length === 0) && (
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">No Categories</span>
+                      )}
+                    </div>
+                  </td>
+                  {/* <td className="px-6 py-3.5 text-center">
                     <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
                       color.status === 'active' 
                       ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
@@ -176,7 +326,7 @@ export default function ColorsPage() {
                     }`}>
                       {color.status}
                     </span>
-                  </td>
+                  </td> */}
                   <td className="px-6 py-3.5 text-center">
                     <div className="flex flex-col items-center">
                       <span className="text-[10px] font-bold text-slate-700">
@@ -241,12 +391,32 @@ export default function ColorsPage() {
         </div>
         
         {/* Footer */}
-        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredColors.length} Colors
-           </span>
-           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+        <div className="p-4 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
+           <div className="flex items-center gap-4 order-2 sm:order-1">
+             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+               Showing {paginatedColors.length} of {filteredColors.length}
+             </span>
+             <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
+             <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+               Page {currentPage} of {Math.max(1, totalPages)}
+             </div>
+           </div>
+
+           <div className="flex items-center gap-2 order-1 sm:order-2">
+             <button
+               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+               disabled={currentPage === 1}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
+             >
+               <ChevronLeft size={12} strokeWidth={3} /> Previous
+             </button>
+             <button
+               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+               disabled={currentPage >= totalPages}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
+             >
+               Next <ChevronRight size={12} strokeWidth={3} />
+             </button>
            </div>
         </div>
       </div>
@@ -257,6 +427,7 @@ export default function ColorsPage() {
         initialData={selectedItem} 
         onSubmit={handleSave}
         isSubmitting={isActionLoading}
+        categories={categories}
       />
     </div>
   );

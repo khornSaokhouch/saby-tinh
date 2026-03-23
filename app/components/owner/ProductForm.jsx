@@ -52,6 +52,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
   const [localError, setLocalError] = useState(null);
 
   const fileInputRef = useRef(null);
+  const primaryInputRef = useRef(null);
   
   const displayError = storeError || localError;
 
@@ -65,14 +66,39 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
     if (!user) fetchUser();
   }, [fetchCategories, fetchBrands, fetchTypes, fetchStores, fetchColors, fetchSizes, fetchUser, user]);
 
+  // --- Auto-assign store from logged in user ---
   const filteredStores = useMemo(() => 
     stores.filter(s => user?.id && String(s.user_id) === String(user.id)),
     [stores, user?.id]
   );
 
+  // Auto-set store_id when user's store is loaded
+  useEffect(() => {
+    if (filteredStores.length > 0 && !formData.store_id) {
+      setFormData(prev => ({ ...prev, store_id: filteredStores[0].id }));
+    }
+  }, [filteredStores, formData.store_id]);
+
+  // --- Filter brand/type by selected category ---
+  const filteredBrands = useMemo(() => 
+    brands.filter(b => formData.category_id && String(b.category_id) === String(formData.category_id)),
+    [brands, formData.category_id]
+  );
+
   const filteredTypes = useMemo(() => 
     types.filter(t => formData.category_id && String(t.category_id) === String(formData.category_id)),
     [types, formData.category_id]
+  );
+
+  // Colors & sizes use many-to-many: filter by checking categories array
+  const filteredColors = useMemo(() =>
+    colors.filter(c => formData.category_id && (c.categories || []).some(cat => String(cat.id) === String(formData.category_id))),
+    [colors, formData.category_id]
+  );
+
+  const filteredSizes = useMemo(() =>
+    sizes.filter(s => formData.category_id && (s.categories || []).some(cat => String(cat.id) === String(formData.category_id))),
+    [sizes, formData.category_id]
   );
 
   useEffect(() => {
@@ -97,14 +123,12 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
     }
   }, [initialData]);
 
+  // Reset dependent fields when category changes
   useEffect(() => {
-    if (formData.category_id && !initialData) {
-       const isValidType = filteredTypes.some(t => String(t.id) === String(formData.type_id));
-       if (!isValidType && formData.type_id !== '') {
-         setFormData(prev => ({ ...prev, type_id: '' }));
-       }
+    if (!initialData) {
+      setFormData(prev => ({ ...prev, brand_id: '', type_id: '', color_id: '', size_id: '' }));
     }
-  }, [formData.category_id, filteredTypes, initialData, formData.type_id]);
+  }, [formData.category_id, initialData]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -112,6 +136,19 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
       ...prev, 
       [name]: type === 'checkbox' ? checked : value 
     }));
+  };
+
+  const handlePrimaryFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // Replace first preview and first imageFile
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviews(prev => [reader.result, ...prev.slice(1)]);
+    };
+    reader.readAsDataURL(file);
+    setImageFiles(prev => [file, ...prev.slice(1)]);
+    e.target.value = '';
   };
 
   const handleFileChange = (e) => {
@@ -204,7 +241,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
               <motion.div 
                 whileHover={{ y: -2 }}
                 className="aspect-[4/3] bg-slate-50 border border-dashed border-slate-200 rounded-[16px] overflow-hidden flex items-center justify-center relative group cursor-pointer" 
-                onClick={() => fileInputRef.current.click()}
+                onClick={() => primaryInputRef.current.click()}
               >
                 {previews[0] ? (
                   <img src={previews[0]} className="w-full h-full object-cover" alt="Main" />
@@ -217,10 +254,20 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
                     <p className="text-[8px] font-bold text-slate-300 mt-1 uppercase">PNG, JPG, WEBP · Max 5MB</p>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
                     <div className="bg-white px-3 py-1.5 rounded-lg text-[9px] font-black text-slate-900 uppercase tracking-widest shadow-lg">Change Photo</div>
+                    {previews[0] && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); removePreview(0); }}
+                        className="bg-rose-500 p-1.5 rounded-lg text-white shadow-lg hover:bg-rose-600 transition-all"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                 </div>
               </motion.div>
+              <input type="file" hidden ref={primaryInputRef} onChange={handlePrimaryFileChange} accept="image/*" />
 
               <div className="grid grid-cols-3 gap-3">
                 <AnimatePresence>
@@ -304,14 +351,26 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <SelectField label="Store" name="store_id" icon={Warehouse} value={formData.store_id} onChange={handleInputChange} options={filteredStores.map(s => ({ value: s.id, label: s.name }))} required />
+                  {/* Auto store display — read-only */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-1.5 ml-1">
+                      <Warehouse size={11} className="text-slate-400" />
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Store</label>
+                    </div>
+                    <div className="w-full h-11 px-4 bg-slate-100 border border-slate-100 rounded-xl text-[13px] font-bold text-slate-600 flex items-center gap-2">
+                      <span className="truncate">{filteredStores[0]?.name || 'Loading store...'}</span>
+                      <span className="ml-auto text-[8px] font-black text-slate-400 uppercase tracking-widest shrink-0">Auto</span>
+                    </div>
+                  </div>
                   <SelectField label="Category" name="category_id" icon={Layers} value={formData.category_id} onChange={handleInputChange} options={categories.map(c => ({ value: c.id, label: c.name }))} required />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <SelectField label="Brand" name="brand_id" icon={ShoppingBag} value={formData.brand_id} onChange={handleInputChange} options={brands.map(b => ({ value: b.id, label: b.name }))} required />
-                  <SelectField label="Product Type" name="type_id" icon={AppWindow} value={formData.type_id} onChange={handleInputChange} options={filteredTypes.map(t => ({ value: t.id, label: t.name }))} required />
-                </div>
+                {formData.category_id && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <SelectField label="Brand" name="brand_id" icon={ShoppingBag} value={formData.brand_id} onChange={handleInputChange} options={filteredBrands.map(b => ({ value: b.id, label: b.name }))} required />
+                    <SelectField label="Product Type" name="type_id" icon={AppWindow} value={formData.type_id} onChange={handleInputChange} options={filteredTypes.map(t => ({ value: t.id, label: t.name }))} required />
+                  </div>
+                )}
             </div>
 
             {/* --- INVENTORY --- */}
@@ -326,10 +385,12 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
                   <InputField label="Stock Quantity" name="quantity" type="number" value={formData.quantity} icon={Box} onChange={handleInputChange} placeholder="e.g. 100" required />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <SelectField label="Color Variant" name="color_id" icon={Palette} value={formData.color_id} onChange={handleInputChange} options={colors.map(c => ({ value: c.id, label: c.name }))} />
-                  <SelectField label="Size Variant" name="size_id" icon={Ruler} value={formData.size_id} onChange={handleInputChange} options={sizes.map(s => ({ value: s.id, label: s.name }))} />
-                </div>
+                {formData.category_id && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <SelectField label="Color Variant" name="color_id" icon={Palette} value={formData.color_id} onChange={handleInputChange} options={filteredColors.map(c => ({ value: c.id, label: c.name }))} />
+                    <SelectField label="Size Variant" name="size_id" icon={Ruler} value={formData.size_id} onChange={handleInputChange} options={filteredSizes.map(s => ({ value: s.id, label: s.name }))} />
+                  </div>
+                )}
             </div>
 
             {/* --- DESCRIPTION --- */}

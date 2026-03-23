@@ -1,4 +1,3 @@
-import { X, Check, Loader2, Database, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCategoryStore } from '@/stores/useCategoryStore';
@@ -28,52 +27,43 @@ export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, 
   return (
     <AnimatePresence>
       {isOpen && (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-      />
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-slate-100"
-      >
-        <div className="p-8 font-sans">
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-100">
-               <Database size={24} strokeWidth={2.5} />
-            </div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">
-              {initialData ? 'Update Taxonomy' : 'Register Type'}
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+            className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
+          >
+            <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
+              {initialData ? 'Update Type' : 'Register Type'}
             </h2>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Taxonomy Profile</p>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Reference Label</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all placeholder:text-slate-400"
-                placeholder="e.g. Core Processor"
-              />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">Type Label</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+                />
+              </div>
 
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">Hierarchy Segment</label>
-              <div className="relative">
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">Hierarchy Category</label>
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                   required
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all appearance-none cursor-pointer"
+                  className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                 >
                   <option value="">Select Category</option>
                   {categories.map((category) => (
@@ -82,37 +72,28 @@ export default function TypeFormModal({ isOpen, onClose, onSubmit, initialData, 
                     </option>
                   ))}
                 </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <ChevronDown size={14} />
-                </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-3 pt-4 border-t border-slate-50">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
-              >
-                Back
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-[2] py-3.5 bg-emerald-500 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 transition-all active:scale-[0.95] hover:bg-emerald-600"
-              >
-                {isSubmitting ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Check size={14} strokeWidth={3} />
-                )}
-                {initialData ? 'Sync Node' : 'Register Type'}
-              </button>
-            </div>
-          </form>
+              <div className="flex justify-end gap-2 pt-4 mt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                  className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
+                >
+                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Register')}
+                </button>
+              </div>
+            </form>
+          </motion.div>
         </div>
-      </motion.div>
-    </div>
       )}
     </AnimatePresence>
   );

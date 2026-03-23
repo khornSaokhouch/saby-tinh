@@ -19,7 +19,8 @@ export default function TypePage() {
     search, 
     setSearch, 
     saveType, 
-    deleteType 
+    deleteType,
+    deleteMultipleTypes 
   } = useTypeStore();
   
   const { categories, fetchCategories } = useCategoryStore();
@@ -28,6 +29,14 @@ export default function TypePage() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // --- Pagination & Filter State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
+  const pageSize = 10;
 
   useEffect(() => {
     fetchTypes();
@@ -41,15 +50,60 @@ export default function TypePage() {
     return () => clearInterval(interval);
   }, [fetchTypes, fetchCategories]);
 
+  // Reset pagination and selection on search or filter change
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+  }, [search, selectedCategoryId]);
+
   const filteredTypes = useMemo(() => {
-    return types.filter(type => 
-      (type.name || '').toLowerCase().includes(search.toLowerCase())
-    );
-  }, [types, search]);
+    return types.filter(type => {
+      const matchesSearch = (type.name || '').toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = selectedCategoryId === 'all' || type.category_id === Number(selectedCategoryId);
+      return matchesSearch && matchesCategory;
+    });
+  }, [types, search, selectedCategoryId]);
+
+  const paginatedTypes = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredTypes.slice(start, start + pageSize);
+  }, [filteredTypes, currentPage]);
+
+  const totalPages = Math.ceil(filteredTypes.length / pageSize);
 
   const getCategoryName = (categoryId) => {
     const category = categories.find(c => c.id === categoryId);
     return category ? category.name : 'Unknown';
+  };
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredTypes.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredTypes.map(t => t.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} types?`)) {
+      setIsActionLoading(true);
+      try {
+        await deleteMultipleTypes(selectedIds);
+        setSelectedIds([]);
+        toast.success(`Removed ${selectedIds.length} types`);
+      } catch (error) {
+        toast.error('Batch deletion failed');
+      } finally {
+        setIsActionLoading(false);
+      }
+    }
   };
 
   const handleSave = async (data) => {
@@ -81,7 +135,43 @@ export default function TypePage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Types</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={isActionLoading}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
@@ -133,6 +223,20 @@ export default function TypePage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+
+            <div className="relative w-full sm:w-48 group text-left">
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                className="w-full pl-4 pr-10 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:border-blue-100 transition-all appearance-none cursor-pointer"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              <Layers className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} />
+            </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
             {filteredTypes.length} Types Found
@@ -142,29 +246,51 @@ export default function TypePage() {
         <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50">
+              <tr className="bg-slate-50/50 text-left">
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredTypes.length && filteredTypes.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredTypes.length && filteredTypes.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Type Detail</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 text-left">
               {loading && types.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center">
+                  <td colSpan="5" className="py-20 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
                   </td>
                 </tr>
-              ) : filteredTypes.length === 0 ? (
+              ) : paginatedTypes.length === 0 ? (
                 <tr>
-                    <td colSpan="4" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No types matching filter</td>
+                    <td colSpan="5" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No types matching filter</td>
                 </tr>
-              ) : filteredTypes.map((type, idx) => (
+              ) : paginatedTypes.map((type, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
-                  key={type.id} className="group hover:bg-slate-50/30 transition-colors"
+                  key={type.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(type.id) ? 'bg-indigo-50/40' : ''}`}
                 >
+                  <td className="pl-6 py-3.5">
+                    <div 
+                      onClick={() => toggleSelectId(type.id)}
+                      className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                      selectedIds.includes(type.id) 
+                        ? 'bg-indigo-600 border-indigo-600' 
+                        : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                    }`}>
+                      {selectedIds.includes(type.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                    </div>
+                  </td>
                   <td className="px-6 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden relative shrink-0 transition-transform group-hover:scale-105">
@@ -182,7 +308,7 @@ export default function TypePage() {
                         {getCategoryName(type.category_id)}
                       </div>
                     </td>
-                    <td className="px-6 py-3.5 center">
+                    <td className="px-6 py-3.5 text-center">
                       <div className="flex flex-col items-center">
                         <span className="text-[10px] font-bold text-slate-700">
                             {new Date(type.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -246,12 +372,32 @@ export default function TypePage() {
         </div>
         
         {/* Footer */}
-        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredTypes.length} Types
-           </span>
-           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+        <div className="p-4 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
+           <div className="flex items-center gap-4 order-2 sm:order-1">
+             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+               Showing {paginatedTypes.length} of {filteredTypes.length}
+             </span>
+             <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
+             <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+               Page {currentPage} of {Math.max(1, totalPages)}
+             </div>
+           </div>
+
+           <div className="flex items-center gap-2 order-1 sm:order-2">
+             <button
+               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+               disabled={currentPage === 1}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider"
+             >
+               Previous
+             </button>
+             <button
+               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+               disabled={currentPage >= totalPages}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider"
+             >
+               Next
+             </button>
            </div>
         </div>
       </div>

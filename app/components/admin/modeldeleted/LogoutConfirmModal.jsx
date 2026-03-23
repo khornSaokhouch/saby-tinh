@@ -12,58 +12,51 @@ export default function LogoutConfirmModal({ isOpen, onClose, onConfirm, isLoggi
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
           />
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            initial={{ scale: 0.95, opacity: 0, y: 10 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="bg-white rounded-[32px] shadow-2xl w-full max-w-sm relative z-10 overflow-hidden border border-slate-100"
+            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+            className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
           >
-            <div className="p-8 font-sans">
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-rose-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-rose-100">
-                  <LogOut size={24} strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                  Sign Out?
-                </h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Session Termination</p>
-              </div>
+            <h2 className="text-base font-bold mb-3 border-b border-gray-100 pb-2 flex items-center gap-2 text-rose-600">
+              <LogOut size={16} strokeWidth={2.5} />
+              Sign Out?
+            </h2>
 
-              <div className="space-y-4 mb-8">
-                <p className="text-[13px] font-medium text-slate-500 text-center leading-relaxed">
-                  Are you sure you want to sign out of your administrative session?
+            <div className="space-y-4 mb-4">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Are you sure you want to sign out of your administrative session?
+              </p>
+
+              <div className="p-3 bg-red-50 rounded-md border border-red-100 flex gap-2 items-start">
+                <AlertTriangle className="text-red-500 shrink-0 mt-0.5" size={14} />
+                <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest leading-normal">
+                  Any unsaved changes in current forms may be lost.
                 </p>
-
-                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3">
-                  <AlertTriangle className="text-amber-600 shrink-0" size={16} />
-                  <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest leading-normal">
-                    Any unsaved changes in current forms may be lost.
-                  </p>
-                </div>
               </div>
+            </div>
 
-              <div className="flex items-center gap-3 pt-4 border-t border-slate-50">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={onConfirm}
-                  disabled={isLoggingOut}
-                  className="flex-[2] py-3.5 bg-rose-500 text-white rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-rose-100 flex items-center justify-center gap-2 transition-all active:scale-[0.95] hover:bg-rose-600"
-                >
-                  {isLoggingOut ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    "Confirm Sign Out"
-                  )}
-                </button>
-              </div>
+            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 mt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={onConfirm}
+                disabled={isLoggingOut}
+                className="px-4 py-1.5 rounded-md bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
+                {isLoggingOut ? (
+                  <><Loader2 size={12} className="animate-spin" /> Signing Out...</>
+                ) : (
+                  "Confirm Sign Out"
+                )}
+              </button>
             </div>
           </motion.div>
         </div>

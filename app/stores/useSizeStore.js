@@ -41,7 +41,10 @@ export const useSizeStore = create((set, get) => ({
         method = 'POST';
       }
 
-      await request(url, method, { name: size.name });
+      await request(url, method, { 
+        name: size.name,
+        category_ids: size.category_ids 
+      });
       await get().fetchSizes();
     } catch (err) {
       throw err;
@@ -60,6 +63,24 @@ export const useSizeStore = create((set, get) => ({
     } catch (err) {
       set({
         error: err.response?.data?.message || err.message || 'Failed to delete size',
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  /* =========================
+     Delete multiple sizes
+     ========================= */
+  deleteMultipleSizes: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/sizes/${id}`, 'DELETE')));
+      await get().fetchSizes();
+      set({ loading: false });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Failed to delete multiple sizes',
         loading: false,
       });
       throw err;

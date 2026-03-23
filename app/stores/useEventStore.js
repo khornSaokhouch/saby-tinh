@@ -112,6 +112,25 @@ export const useEventStore = create(
       },
 
       /* =========================
+         Delete multiple events
+         ========================= */
+      deleteMultipleEvents: async (ids) => {
+        set({ loading: true, error: null });
+        try {
+          await Promise.all(ids.map(id => request(`/events/${id}`, 'DELETE')));
+          await get().fetchEvents();
+          set({ loading: false });
+          return { success: true };
+        } catch (err) {
+          set({
+            error: err.response?.data?.message || err.message || 'Failed to delete events',
+            loading: false,
+          });
+          return { success: false, message: err.message };
+        }
+      },
+
+      /* =========================
          Toggle status
          ========================= */
       toggleEventStatus: async (id) => {

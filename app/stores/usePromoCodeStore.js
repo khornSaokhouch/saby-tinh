@@ -75,6 +75,22 @@ export const usePromoCodeStore = create((set, get) => ({
     }
   },
 
+  deleteMultiplePromoCodes: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/promo-codes/${id}`, 'DELETE')));
+      await get().fetchPromoCodes();
+      set({ loading: false });
+      return { success: true };
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Failed to delete promo codes',
+        loading: false,
+      });
+      return { success: false, message: err.message };
+    }
+  },
+
   validatePromoCode: async (code, order_total) => {
     set({ loading: true, error: null });
     try {

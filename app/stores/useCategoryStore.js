@@ -66,6 +66,18 @@ export const useCategoryStore = create(
         }
       },
 
+      deleteMultipleCategories: async (ids) => {
+        set({ loading: true, error: null });
+        try {
+          await Promise.all(ids.map(id => request(`/categories/${id}`, 'DELETE')));
+          await get().fetchCategories();
+          set({ loading: false });
+        } catch (err) {
+          set({ error: err.response?.data?.message || err.message || 'Failed to delete categories', loading: false });
+          throw err;
+        }
+      },
+
       toggleCategoryStatus: async (id) => {
         try {
           await request(`/categories/${id}/toggle-status`, 'PATCH');

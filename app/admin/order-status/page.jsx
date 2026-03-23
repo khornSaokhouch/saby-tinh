@@ -18,13 +18,17 @@ export default function OrderStatusPage() {
     search, 
     setSearch, 
     saveOrderStatus, 
-    deleteOrderStatus 
+    deleteOrderStatus,
+    deleteMultipleOrderStatus 
   } = useOrderStatusStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     fetchOrderStatuses();
@@ -36,10 +40,45 @@ export default function OrderStatusPage() {
     return () => clearInterval(interval);
   }, [fetchOrderStatuses]);
 
+  // Reset selection on search change
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [search]);
+
   // Filters based on the 'status' column from your table
   const filteredStatuses = orderStatuses.filter(s => 
-    s.status.toLowerCase().includes(search.toLowerCase())
+    (s.status || '').toLowerCase().includes(search.toLowerCase())
   );
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredStatuses.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredStatuses.map(s => s.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} states?`)) {
+      setIsActionLoading(true);
+      try {
+        await deleteMultipleOrderStatus(selectedIds);
+        setSelectedIds([]);
+        toast.success(`Removed ${selectedIds.length} states`);
+      } catch (error) {
+        toast.error('Batch deletion failed');
+      } finally {
+        setIsActionLoading(false);
+      }
+    }
+  };
 
   const handleSave = async (data) => {
     setIsActionLoading(true);
@@ -69,7 +108,43 @@ export default function OrderStatusPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected States</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={isActionLoading}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
@@ -129,28 +204,50 @@ export default function OrderStatusPage() {
         <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50">
+              <tr className="bg-slate-50/50 text-left">
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredStatuses.length && filteredStatuses.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredStatuses.length && filteredStatuses.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Internal Designation</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 text-left">
               {loading && orderStatuses.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="py-20 text-center">
+                  <td colSpan="4" className="py-20 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 opacity-20" />
                   </td>
                 </tr>
               ) : filteredStatuses.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No states matching filter</td>
+                  <td colSpan="4" className="py-20 text-center text-sm font-bold text-slate-400 uppercase tracking-wider">No states matching filter</td>
                 </tr>
               ) : filteredStatuses.map((item, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
-                  key={item.id} className="group hover:bg-slate-50/30 transition-colors"
+                  key={item.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(item.id) ? 'bg-indigo-50/40' : ''}`}
                 >
+                  <td className="pl-6 py-3.5">
+                    <div 
+                      onClick={() => toggleSelectId(item.id)}
+                      className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                      selectedIds.includes(item.id) 
+                        ? 'bg-indigo-600 border-indigo-600' 
+                        : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                    }`}>
+                      {selectedIds.includes(item.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                    </div>
+                  </td>
                   <td className="px-6 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden shrink-0 transition-transform group-hover:scale-105">

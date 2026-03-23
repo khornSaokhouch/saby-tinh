@@ -229,7 +229,7 @@ export default function ProductDetails({ productSlug }) {
         <div className="mt-12 space-y-12">
            <UserReviews userId={userId} orderProductId={product?.id} />
         
-           <ProductDiscountSection />
+           {hasPromotion && <ProductDiscountSection />}
 
            <section className="mt-16 mb-4">
               <SectionHeader 

@@ -80,4 +80,22 @@ export const useOrderStatusStore = create((set, get) => ({
       throw err;
     }
   },
+
+  /* =========================
+     Batch Delete
+     ========================= */
+  deleteMultipleOrderStatus: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/order-statuses/${id}`, 'DELETE')));
+      await get().fetchOrderStatuses();
+      set({ loading: false });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Batch delete failed',
+        loading: false,
+      });
+      throw err;
+    }
+  },
 }));

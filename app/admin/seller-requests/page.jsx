@@ -4,14 +4,22 @@ import { useState, useEffect, useMemo } from 'react';
 import { 
   Building2, Search, Filter, Mail, Phone, 
   ShieldAlert, Download, Trash2, CheckCircle2, FileText, 
-  ExternalLink, Loader2, Clock, RefreshCw, ChevronDown
+  ExternalLink, Loader2, Clock, RefreshCw, ChevronDown, Check, X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useSellerStore } from '@/stores/useSellerStore';
 import DeleteSellerModal from '@/app/components/admin/modeldeleted/DeleteSellerModal';
 
 export default function SellerManagementPage() {
-  const { sellers, loading, fetchSellers, approveSeller, rejectSeller } = useSellerStore();
+  const { 
+    sellers, 
+    loading, 
+    fetchSellers, 
+    approveSeller, 
+    rejectSeller,
+    deleteMultipleSellers 
+  } = useSellerStore();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all'); 
@@ -19,18 +27,26 @@ export default function SellerManagementPage() {
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
 
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
+
   useEffect(() => {
     fetchSellers();
     const interval = setInterval(() => fetchSellers(), 30000);
     return () => clearInterval(interval);
   }, [fetchSellers]);
 
+  // Reset selection on search or tab change
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [searchTerm, activeTab]);
+
   const filteredSellers = useMemo(() => {
     return sellers.filter(seller => {
       const matchesSearch = 
-        seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seller.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seller.email.toLowerCase().includes(searchTerm.toLowerCase());
+        (seller.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (seller.company_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (seller.email || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesTab = activeTab === 'all' || seller.status === activeTab;
       return matchesSearch && matchesTab;
     });
@@ -41,6 +57,35 @@ export default function SellerManagementPage() {
     pending: sellers.filter(s => s.status === 'pending').length,
     approved: sellers.filter(s => s.status === 'approved').length,
   }), [sellers]);
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredSellers.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredSellers.map(s => s.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} seller requests?`)) {
+      setActionLoading('batch');
+      const res = await deleteMultipleSellers(selectedIds);
+      if (res?.success) {
+        toast.success(`Removed ${selectedIds.length} requests`);
+        setSelectedIds([]);
+      } else {
+        toast.error(res?.message || 'Batch delete failed');
+      }
+      setActionLoading(null);
+    }
+  };
 
   const handleApprove = async (id) => {
     setActionLoading(id);
@@ -73,8 +118,44 @@ export default function SellerManagementPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
       
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Requests</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={actionLoading === 'batch'}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {actionLoading === 'batch' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -154,7 +235,18 @@ export default function SellerManagementPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Business Info</th>
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredSellers.length && filteredSellers.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredSellers.length && filteredSellers.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Business Info</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Details</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Documents</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</th>
@@ -163,13 +255,24 @@ export default function SellerManagementPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="5" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Registry...</td></tr>
+                <tr><td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse italic">Scanning Registry...</td></tr>
               ) : filteredSellers.length === 0 ? (
-                <tr><td colSpan="5" className="py-16 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">No requests found</td></tr>
+                <tr><td colSpan="6" className="py-16 text-center text-[10px) font-black text-slate-300 uppercase tracking-widest">No requests found</td></tr>
               ) : (
                 filteredSellers.map((seller) => (
-                  <tr key={seller.id} className="group hover:bg-slate-50/30 transition-colors">
-                    <td className="px-6 py-4">
+                  <tr key={seller.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(seller.id) ? 'bg-indigo-50/40' : ''}`}>
+                    <td className="pl-6 py-4">
+                      <div 
+                        onClick={() => toggleSelectId(seller.id)}
+                        className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                        selectedIds.includes(seller.id) 
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                      }`}>
+                        {selectedIds.includes(seller.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <div className="flex flex-col">
                         <span className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
                           {seller.company_name}

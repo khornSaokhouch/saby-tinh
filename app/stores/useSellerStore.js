@@ -173,4 +173,21 @@ export const useSellerStore = create((set, get) => ({
       set({ error: "Failed to delete seller record", loading: false });
     }
   },
+
+  // 🔹 Delete multiple sellers
+  deleteMultipleSellers: async (ids) => {
+    set({ loading: true, error: null, success: null });
+    try {
+      await Promise.all(ids.map(id => request(`/sellers/${id}`, "DELETE")));
+      set((state) => ({
+        sellers: state.sellers.filter((s) => !ids.includes(s.id)),
+        loading: false,
+        success: `${ids.length} seller records deleted successfully!`
+      }));
+      return { success: true };
+    } catch (error) {
+      set({ error: "Failed to delete seller records", loading: false });
+      return { success: false, message: error.message };
+    }
+  },
 }));

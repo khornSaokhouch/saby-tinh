@@ -3,10 +3,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { 
   Briefcase, Search, Plus, Edit3, Trash2, Clock, 
-  Loader2, CheckCircle2, ChevronRight, X, Check, RefreshCw
+  Loader2, CheckCircle2, Layers, ChevronLeft, ChevronRight, X, Check, RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrandStore } from '@/stores/useBrandStore';
+import { useCategoryStore } from '@/stores/useCategoryStore';
 import BrandFormModal from '@/app/components/admin/modelform/BrandFormModal';
 import { toast } from 'react-hot-toast';
 
@@ -18,29 +19,92 @@ export default function BrandsPage() {
     search, 
     setSearch, 
     saveBrand, 
-    deleteBrand 
+    deleteBrand,
+    deleteMultipleBrands 
   } = useBrandStore();
+
+  const { categories, fetchCategories } = useCategoryStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
 
+  // --- Bulk Selection State ---
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // --- Pagination & Filter State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
+  const pageSize = 10;
+
   useEffect(() => {
     fetchBrands();
+    fetchCategories();
 
     const interval = setInterval(() => {
       fetchBrands();
+      fetchCategories();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [fetchBrands]);
+  }, [fetchBrands, fetchCategories]);
+
+  // Reset pagination and selection on search or filter change
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+  }, [search, selectedCategoryId]);
 
   const filteredBrands = useMemo(() => {
-    return (brands || []).filter(b => 
-      (b?.name || '').toLowerCase().includes((search || '').toLowerCase())
+    return (brands || []).filter(brand => {
+      const matchesSearch = (brand?.name || '').toLowerCase().includes((search || '').toLowerCase());
+      const matchesCategory = selectedCategoryId === 'all' || brand.category_id === Number(selectedCategoryId);
+      return matchesSearch && matchesCategory;
+    });
+  }, [brands, search, selectedCategoryId]);
+
+  const paginatedBrands = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredBrands.slice(start, start + pageSize);
+  }, [filteredBrands, currentPage]);
+
+  const totalPages = Math.ceil(filteredBrands.length / pageSize);
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : 'Unassigned';
+  };
+
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredBrands.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredBrands.map(b => b.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
-  }, [brands, search]);
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} brands?`)) {
+      setIsActionLoading(true);
+      try {
+        await deleteMultipleBrands(selectedIds);
+        setSelectedIds([]);
+        toast.success(`Removed ${selectedIds.length} brands`);
+      } catch (error) {
+        toast.error('Batch deletion failed');
+      } finally {
+        setIsActionLoading(false);
+      }
+    }
+  };
 
   const handleSave = async (data) => {
     setIsActionLoading(true);
@@ -71,7 +135,43 @@ export default function BrandsPage() {
   };
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Brands</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBatchDelete}
+                disabled={isActionLoading}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
@@ -111,7 +211,7 @@ export default function BrandsPage() {
       </div>
 
       {/* --- BRANDS TABLE --- */}
-      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
         {/* Table Controls */}
         <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -125,6 +225,20 @@ export default function BrandsPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+
+            <div className="relative w-full sm:w-48 group text-left">
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                className="w-full pl-4 pr-10 py-1.5 bg-white border border-slate-100 rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:border-blue-100 transition-all appearance-none cursor-pointer"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              <Layers className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} />
+            </div>
           </div>
           <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
             {filteredBrands.length} Brands Found
@@ -134,45 +248,74 @@ export default function BrandsPage() {
         <div className="overflow-x-auto no-scrollbar min-h-[300px]">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50">
+              <tr className="bg-slate-50/50 text-left">
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div 
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                    selectedIds.length === filteredBrands.length && filteredBrands.length > 0
+                      ? 'bg-indigo-600 border-indigo-600' 
+                      : 'bg-white border-slate-200 hover:border-indigo-400'
+                  }`}>
+                    {selectedIds.length === filteredBrands.length && filteredBrands.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-left">Brand Detail</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Category</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[120px]">Status</th>
-                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest min-w-[140px]">Last Update</th>
+                <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center min-w-[140px]">Last Update</th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 text-left">
               {loading && brands.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading ...</td>
+                  <td colSpan="6" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Loading ...</td>
                 </tr>
-              ) : filteredBrands.length === 0 ? (
+              ) : paginatedBrands.length === 0 ? (
                 <tr>
-                    <td colSpan="4" className="py-20 text-center">
+                    <td colSpan="6" className="py-20 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <Briefcase size={40} className="text-slate-100" />
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No brands matching filter</p>
                       </div>
                     </td>
                 </tr>
-              ) : filteredBrands.map((brand, idx) => (
+              ) : paginatedBrands.map((brand, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.02 }}
-                  key={brand.id} className="group hover:bg-slate-50/30 transition-colors"
+                  key={brand.id} className={`group hover:bg-slate-50/30 transition-colors ${selectedIds.includes(brand.id) ? 'bg-indigo-50/40' : ''}`}
                 >
-                  <td className="px-6 py-3.5">
+                  <td className="pl-6 py-3.5">
+                    <div 
+                      onClick={() => toggleSelectId(brand.id)}
+                      className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                      selectedIds.includes(brand.id) 
+                        ? 'bg-indigo-600 border-indigo-600' 
+                        : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                    }`}>
+                      {selectedIds.includes(brand.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                    </div>
+                  </td>
+                   <td className="px-6 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center border border-white shadow-sm overflow-hidden relative shrink-0 transition-transform group-hover:scale-105">
-                         {brand.image ? (
+                         {brand.brand_image ? (
                             <motion.img 
                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                               src={brand.image} className="w-full h-full object-contain p-2" 
+                               src={brand.brand_image} className="w-full h-full object-contain p-2" 
                             />
                          ) : (
                             <Briefcase className="w-5 h-5 text-slate-400" />
                          )}
                       </div>
                       <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">{brand.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3.5 text-center">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[8px] font-black uppercase tracking-widest">
+                      <Layers size={10} className="text-slate-400" strokeWidth={3} />
+                      {getCategoryName(brand.category_id)}
                     </div>
                   </td>
                   <td className="px-6 py-3.5 text-center">
@@ -185,7 +328,7 @@ export default function BrandsPage() {
                       {Number(brand.status) === 1 ? 'Live' : 'Hidden'}
                     </span>
                   </td>
-                  <td className="px-6 py-3.5 center">
+                  <td className="px-6 py-3.5 text-center">
                     <div className="flex flex-col items-center">
                       <span className="text-[10px] font-bold text-slate-700">
                         {new Date(brand.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -249,12 +392,32 @@ export default function BrandsPage() {
         </div>
         
         {/* Footer */}
-        <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-             Showing: {filteredBrands.length} Brands
-           </span>
-           <div className="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-widest shadow-sm">
-             Registry Sync
+        <div className="p-4 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
+           <div className="flex items-center gap-4 order-2 sm:order-1">
+             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+               Showing {paginatedBrands.length} of {filteredBrands.length}
+             </span>
+             <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
+             <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+               Page {currentPage} of {Math.max(1, totalPages)}
+             </div>
+           </div>
+
+           <div className="flex items-center gap-2 order-1 sm:order-2">
+             <button
+               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+               disabled={currentPage === 1}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
+             >
+               <ChevronLeft size={12} strokeWidth={3} /> Previous
+             </button>
+             <button
+               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+               disabled={currentPage >= totalPages}
+               className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:text-indigo-600 disabled:opacity-30 disabled:hover:text-slate-600 transition-all shadow-sm uppercase tracking-wider flex items-center gap-1"
+             >
+               Next <ChevronRight size={12} strokeWidth={3} />
+             </button>
            </div>
         </div>
       </div>
@@ -265,6 +428,7 @@ export default function BrandsPage() {
         initialData={selectedItem} 
         onSubmit={handleSave}
         isSubmitting={isActionLoading}
+        categories={categories}
       />
     </div>
   );

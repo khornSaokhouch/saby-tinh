@@ -84,4 +84,22 @@ export const useShippingMethodStore = create((set, get) => ({
       throw err;
     }
   },
+
+  /* =========================
+     Batch Delete
+     ========================= */
+  deleteMultipleShippingMethods: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/shipping-methods/${id}`, 'DELETE')));
+      await get().fetchShippingMethods();
+      set({ loading: false });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Batch delete failed',
+        loading: false,
+      });
+      throw err;
+    }
+  },
 }));

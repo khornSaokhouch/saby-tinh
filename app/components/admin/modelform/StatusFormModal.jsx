@@ -1,6 +1,4 @@
-'use client';
 import { useState, useEffect } from 'react';
-import { X, Activity, Loader2 ,Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function StatusFormModal({ isOpen, onClose, initialData, onSubmit, isSubmitting }) {
@@ -21,68 +19,54 @@ export default function StatusFormModal({ isOpen, onClose, initialData, onSubmit
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
-            onClick={onClose} 
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
           />
-          <motion.div 
-            initial={{ scale: 0.95, opacity: 0, y: 20 }} 
-            animate={{ scale: 1, opacity: 1, y: 0 }} 
-            exit={{ scale: 0.95, opacity: 0, y: 20 }} 
-            className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative z-10 overflow-hidden border border-slate-100"
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+            className="bg-white border text-gray-900 border-gray-100 rounded-xl shadow-2xl w-full max-w-[350px] p-5 relative z-10"
           >
-            <div className="p-8 font-sans">
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-100">
-                  <Activity size={24} strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                  {initialData ? 'Update State' : 'Register Lifecycle'}
-                </h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Status Profile</p>
+            <h2 className="text-base font-bold mb-4 border-b border-gray-100 pb-2">
+              {initialData ? 'Update State' : 'Register Lifecycle'}
+            </h2>
+
+            <form onSubmit={handleFormSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-gray-700">Status Designation</label>
+                <input 
+                  type="text" 
+                  value={status} 
+                  onChange={(e) => setStatus(e.target.value)} 
+                  required 
+                  disabled={isSubmitting}
+                  className="w-full border border-gray-200 rounded-md p-2 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all" 
+                />
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1">
-                    Workflow Designation
-                  </label>
-                  <input 
-                    type="text" 
-                    value={status} 
-                    onChange={(e) => setStatus(e.target.value)} 
-                    required 
-                    disabled={isSubmitting}
-                    placeholder="e.g. Processing"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-900 focus:bg-white focus:border-indigo-600 outline-none transition-all placeholder:text-slate-400" 
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 pt-4">
-                  <button 
-                    onClick={onClose} 
-                    disabled={isSubmitting} 
-                    type="button" 
-                    className="flex-1 py-3.5 rounded-2xl text-[10px] font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 uppercase tracking-widest transition-all active:scale-95"
-                  >
-                    Back
-                  </button>
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting} 
-                    className="flex-[2] py-3.5 bg-emerald-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 transition-all active:scale-95 hover:bg-emerald-600"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <Check size={14} strokeWidth={3} />
-                    )}
-                    {initialData ? 'Sync Life-Cycle' : 'Register Lifecycle'}
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="flex justify-end gap-2 pt-4 mt-2">
+                <button 
+                  onClick={onClose} 
+                  disabled={isSubmitting} 
+                  type="button" 
+                  className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="px-4 py-1.5 rounded-md bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
+                >
+                  {isSubmitting ? 'Saving...' : (initialData ? 'Sync' : 'Register')}
+                </button>
+              </div>
+            </form>
           </motion.div>
         </div>
       )}

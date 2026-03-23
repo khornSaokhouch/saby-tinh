@@ -41,7 +41,10 @@ export const useColorStore = create((set, get) => ({
         method = 'POST';
       }
 
-      await request(url, method, { name: color.name });
+      await request(url, method, { 
+        name: color.name,
+        category_ids: color.category_ids 
+      });
       await get().fetchColors();
     } catch (err) {
       throw err;
@@ -60,6 +63,25 @@ export const useColorStore = create((set, get) => ({
     } catch (err) {
       set({
         error: err.response?.data?.message || err.message || 'Failed to delete color',
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  /* =========================
+     Delete multiple colors
+     ========================= */
+  deleteMultipleColors: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      // Assuming sequential deletion as fallback if bulk endpoint is missing
+      await Promise.all(ids.map(id => request(`/colors/${id}`, 'DELETE')));
+      await get().fetchColors();
+      set({ loading: false });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || err.message || 'Failed to delete multiple colors',
         loading: false,
       });
       throw err;

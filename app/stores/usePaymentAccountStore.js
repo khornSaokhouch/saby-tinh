@@ -84,4 +84,21 @@ export const usePaymentAccountStore = create((set, get) => ({
       throw err;
     }
   },
+
+  /* =========================
+     Delete multiple payment accounts
+     ========================= */
+  deleteMultiplePaymentAccounts: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request('/payment-accounts/batch-delete', 'POST', { ids });
+      await get().fetchPaymentAccounts();
+      set({ loading: false });
+      return { success: true, message: res?.message || 'Deleted successfully' };
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Batch delete failed';
+      set({ error: msg, loading: false });
+      return { success: false, message: msg };
+    }
+  },
 }));

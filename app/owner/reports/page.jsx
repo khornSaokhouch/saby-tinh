@@ -1,7 +1,12 @@
+'use client';
+
+import React from 'react';
+import ReportByStore from '@/components/owner/ReportByStore';
+
 export default function OwnerReportsPage() {
     return (
         <div>
-            <h1>Owner Reports Page</h1>
+            <ReportByStore />
         </div>
     );
 }

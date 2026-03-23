@@ -81,4 +81,20 @@ export const useCountryStore = create((set) => ({
       return { success: false, message: msg };
     }
   },
+
+  deleteMultipleCountries: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      await Promise.all(ids.map(id => request(`/countries/${id}`, "DELETE")));
+      set((state) => ({
+        countries: state.countries.filter((c) => !ids.includes(c.id)),
+        loading: false,
+      }));
+      return { success: true };
+    } catch (err) {
+      const msg = extractError(err);
+      set({ error: msg, loading: false });
+      return { success: false, message: msg };
+    }
+  },
 }));

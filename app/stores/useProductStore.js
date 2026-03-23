@@ -230,6 +230,23 @@ export const useProductStore = create(
         }
       },
 
+      // Delete multiple products
+      deleteMultipleProducts: async (ids) => {
+        set({ loading: true, error: null });
+        try {
+          const res = await request('/products/batch-delete', 'POST', { ids });
+          set((state) => ({
+            products: state.products.filter((p) => !ids.includes(p.id)),
+            loading: false,
+          }));
+          return { success: true, message: res?.message || 'Deleted successfully' };
+        } catch (err) {
+          const msg = err.response?.data?.message || err.message || 'Batch delete failed';
+          set({ error: msg, loading: false });
+          return { success: false, message: msg };
+        }
+      },
+
       // Fetch a category by ID
       fetchCategoryById: async (categoryId) => {
         try {
