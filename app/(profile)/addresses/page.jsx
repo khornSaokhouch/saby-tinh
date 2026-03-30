@@ -5,22 +5,18 @@ import { useAddressStore } from "@/app/stores/useAddressStore";
 import { request } from "@/util/request";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  MapPin, Home, Hash, Check, Loader2,
-  Globe, Map as MapIcon, Plus, Pencil, Trash2, Search, ArrowLeft, Navigation
+  MapPin, Globe, Map as MapIcon, Plus, Pencil, Trash2, Search, ArrowLeft, Navigation, Loader2, Check
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
-// ──────────────────────────────────────────────
-// Root page — wraps everything in Suspense
-// ──────────────────────────────────────────────
 export default function AddressesPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <Loader2 className="animate-spin text-indigo-600 w-8 h-8 mb-4" />
-        <p className="text-sm font-medium text-slate-500">Loading your addresses...</p>
+      <div className="min-h-[400px] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="animate-spin text-indigo-600 w-6 h-6" />
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Syncing Logistics...</p>
       </div>
     }>
       <AddressesContent />
@@ -28,25 +24,21 @@ export default function AddressesPage() {
   );
 }
 
-// ──────────────────────────────────────────────
-// Main content
-// ──────────────────────────────────────────────
 function AddressesContent() {
   const searchParams = useSearchParams();
   const action = searchParams.get("action");
   const editId = searchParams.get("editId");
-
   const showForm = action === "new" || action === "edit";
 
   return (
-    <div className="min-h-[600px] p-4 md:p-10 max-w-5xl mx-auto">
+    <div className="min-h-[500px] p-5 md:p-8 max-w-4xl mx-auto">
       <AnimatePresence mode="wait">
         {showForm ? (
-          <motion.div key="form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+          <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <AddressForm editId={editId} />
           </motion.div>
         ) : (
-          <motion.div key="list" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+          <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <AddressList />
           </motion.div>
         )}
@@ -55,106 +47,73 @@ function AddressesContent() {
   );
 }
 
-// ──────────────────────────────────────────────
-// Address LIST view
-// ──────────────────────────────────────────────
 function AddressList() {
   const { userAddresses, fetchUserAddresses, deleteAddress, loading } = useAddressStore();
   const [deletingId, setDeletingId] = useState(null);
 
-  useEffect(() => {
-    fetchUserAddresses();
-  }, [fetchUserAddresses]);
+  useEffect(() => { fetchUserAddresses(); }, [fetchUserAddresses]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to remove this address?")) return;
+    if (!window.confirm("Remove this endpoint?")) return;
     setDeletingId(id);
     const res = await deleteAddress(id);
-    if (res?.success) toast.success("Address removed successfully");
-    else toast.error(res?.message || "Could not remove address");
+    if (res?.success) toast.success("Removed");
     setDeletingId(null);
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-            Shipping Addresses
-          </h1>
-          <p className="text-slate-500 font-medium">
-            Manage your delivery locations for a faster checkout.
-          </p>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-0.5">
+          <h1 className="text-xl font-black text-slate-900 tracking-tight">Shipping Addresses</h1>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">Managed Delivery Endpoints</p>
         </div>
-
-        <Link
-          href="/addresses?action=new"
-          className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 whitespace-nowrap"
-        >
-          <Plus size={18} />
-          Add New Address
+        <Link href="/addresses?action=new" className="w-fit flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg shadow-slate-100">
+          <Plus size={14} /> New Address
         </Link>
       </div>
 
-      {/* List */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-24">
-          <Loader2 className="animate-spin text-indigo-600 w-8 h-8 mb-4" />
-        </div>
+        <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-indigo-600 w-6 h-6" /></div>
       ) : userAddresses.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-3">
           {userAddresses.map((addr, i) => (
-            <motion.div
-              key={addr.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="group bg-white border border-slate-200 rounded-[24px] p-6 hover:border-indigo-600 transition-all hover:shadow-xl hover:shadow-slate-200/50"
+            <motion.div key={addr.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+              className="group bg-white border border-slate-100 rounded-2xl p-4 hover:border-indigo-500 transition-all shadow-sm"
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0">
-                    <MapPin size={24} className="text-indigo-600" />
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <MapPin size={18} />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-lg">
-                      {[addr.house_number, addr.street].filter(Boolean).join(", ") || "Untitled Location"}
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-sm text-slate-900 truncate">
+                      {[addr.house_number, addr.street].filter(Boolean).join(", ") || "Pinned Location"}
                     </h3>
-                    <p className="text-sm text-slate-500 font-medium mt-1">
+                    <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
                       {[addr.commune, addr.district, addr.province].filter(Boolean).join(", ")}
                     </p>
-                    <div className="flex items-center gap-3 mt-3">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">
-                        {addr.country?.name || "Cambodia"}
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                          {addr.country?.name || "Cambodia"}
                         </span>
                         {addr.latitude && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
-                                <Navigation size={10} /> Pinned on Map
-                            </span>
+                          <span className="flex items-center gap-1 text-[9px] font-black text-indigo-500 uppercase tracking-widest">
+                            <Navigation size={10} /> Active Pin
+                          </span>
                         )}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/addresses?action=edit&editId=${addr.id}`}
-                    className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition-all"
-                  >
-                    <Pencil size={18} />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Link href={`/addresses?action=edit&editId=${addr.id}`} className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+                    <Pencil size={14} />
                   </Link>
-                  <button
-                    onClick={() => handleDelete(addr.id)}
-                    disabled={deletingId === addr.id}
-                    className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-rose-50 hover:text-rose-600 transition-all disabled:opacity-50"
-                  >
-                    {deletingId === addr.id
-                      ? <Loader2 size={18} className="animate-spin" />
-                      : <Trash2 size={18} />
-                    }
+                  <button onClick={() => handleDelete(addr.id)} disabled={deletingId === addr.id} className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-rose-50 hover:text-rose-600 transition-all">
+                    {deletingId === addr.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>
               </div>
@@ -168,55 +127,32 @@ function AddressList() {
 
 function EmptyState() {
   return (
-    <div className="bg-white rounded-[40px] border border-slate-200 p-16 flex flex-col items-center justify-center text-center shadow-sm">
-      <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6">
-        <Search size={32} className="text-slate-300" />
-      </div>
-      <h3 className="text-xl font-bold text-slate-900">No addresses found</h3>
-      <p className="text-slate-500 font-medium mt-2 mb-8 max-w-xs">
-        Add a delivery address so we know where to send your items.
-      </p>
-      <Link
-        href="/addresses?action=new"
-        className="flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all"
-      >
-        <Plus size={20} />
-        Add your first address
+    <div className="bg-slate-50/50 rounded-[24px] border border-slate-100 p-12 flex flex-col items-center text-center">
+      <Search size={24} className="text-slate-200 mb-4" />
+      <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight">Archive Empty</h3>
+      <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 mb-6">No delivery addresses found.</p>
+      <Link href="/addresses?action=new" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-md shadow-indigo-100">
+        New Endpoint
       </Link>
     </div>
   );
 }
 
-// ──────────────────────────────────────────────
-// Address FORM
-// ──────────────────────────────────────────────
 function AddressForm({ editId }) {
   const { addAddress, updateAddress, fetchUserAddresses, loading } = useAddressStore();
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const mapLat = searchParams.get("lat");
   const mapLng = searchParams.get("lng");
 
-  const [formData, setFormData] = useState({
-    house_number: "",
-    street: "",
-    commune: "",
-    district: "",
-    province: "",
-    country_id: "",
-    latitude: "",
-    longitude: "",
-  });
+  const [formData, setFormData] = useState({ house_number: "", street: "", commune: "", district: "", province: "", country_id: "", latitude: "", longitude: "" });
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
     request("/countries", "GET").then((res) => {
       const list = res?.data || res || [];
       setCountries(list);
-      if (list.length > 0) {
-        setFormData(prev => ({ ...prev, country_id: prev.country_id || list[0].id }));
-      }
+      if (list.length > 0) setFormData(prev => ({ ...prev, country_id: prev.country_id || list[0].id }));
     });
   }, []);
 
@@ -224,126 +160,75 @@ function AddressForm({ editId }) {
     if (editId) {
       fetchUserAddresses().then(() => {
         const addr = useAddressStore.getState().userAddresses.find(a => String(a.id) === String(editId));
-        if (addr) {
-          setFormData({
-            house_number: addr.house_number || "",
-            street: addr.street || "",
-            commune: addr.commune || "",
-            district: addr.district || "",
-            province: addr.province || "",
-            country_id: addr.country_id || 1,
-            latitude: mapLat || addr.latitude || "",
-            longitude: mapLng || addr.longitude || "",
-          });
-        }
+        if (addr) setFormData({ house_number: addr.house_number || "", street: addr.street || "", commune: addr.commune || "", district: addr.district || "", province: addr.province || "", country_id: addr.country_id || 1, latitude: mapLat || addr.latitude || "", longitude: mapLng || addr.longitude || "" });
       });
-    } else if (mapLat && mapLng) {
-      setFormData(prev => ({ ...prev, latitude: mapLat, longitude: mapLng }));
-    }
+    } else if (mapLat && mapLng) setFormData(prev => ({ ...prev, latitude: mapLat, longitude: mapLng }));
   }, [editId, fetchUserAddresses, mapLat, mapLng]);
 
   const handleField = (key) => (e) => setFormData({ ...formData, [key]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      ...formData,
-      country_id: parseInt(formData.country_id, 10) || 1,
-      latitude: formData.latitude !== "" ? parseFloat(formData.latitude) : null,
-      longitude: formData.longitude !== "" ? parseFloat(formData.longitude) : null,
-    };
-
+    const payload = { ...formData, country_id: parseInt(formData.country_id, 10) || 1, latitude: formData.latitude !== "" ? parseFloat(formData.latitude) : null, longitude: formData.longitude !== "" ? parseFloat(formData.longitude) : null };
     const res = editId ? await updateAddress(editId, payload) : await addAddress(payload);
-
-    if (res?.success) {
-      toast.success(editId ? "Address updated!" : "New address saved!");
-      router.push("/addresses");
-    } else {
-      toast.error(res?.message || "Something went wrong. Please try again.");
-    }
+    if (res?.success) { toast.success("Saved"); router.push("/addresses"); }
   };
 
   return (
-    <div className="space-y-10">
-      <header className="flex items-center gap-4">
-        <button onClick={() => router.push("/addresses")} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-          <ArrowLeft size={20} className="text-slate-600" />
+    <div className="space-y-6">
+      <header className="flex items-center gap-3">
+        <button onClick={() => router.push("/addresses")} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+          <ArrowLeft size={16} className="text-slate-400" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            {editId ? "Edit Address" : "Add New Address"}
-          </h1>
-          <p className="text-slate-500 font-medium">Please enter your delivery details below.</p>
+          <h1 className="text-xl font-black text-slate-900 tracking-tight">{editId ? "Edit" : "New"} Destination</h1>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Configure shipping coordinates</p>
         </div>
       </header>
 
-      <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl shadow-slate-200/50 p-8 sm:p-10">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputGroup label="House / Unit Number" value={formData.house_number} onChange={handleField("house_number")} placeholder="e.g. #34A" />
-            <InputGroup label="Street Name" value={formData.street} onChange={handleField("street")} placeholder="e.g. Street 123" />
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputGroup label="House / Unit" value={formData.house_number} onChange={handleField("house_number")} placeholder="#12A" />
+            <InputGroup label="Street" value={formData.street} onChange={handleField("street")} placeholder="Street 271" />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputGroup label="Commune (Sangkat)" value={formData.commune} onChange={handleField("commune")} placeholder="Enter commune" />
-            <InputGroup label="District (Khan)" value={formData.district} onChange={handleField("district")} placeholder="Enter district" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputGroup label="Commune" value={formData.commune} onChange={handleField("commune")} placeholder="Sangkat..." />
+            <InputGroup label="District" value={formData.district} onChange={handleField("district")} placeholder="Khan..." />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputGroup label="Province / City" value={formData.province} onChange={handleField("province")} placeholder="e.g. Phnom Penh" required />
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Country</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Country</label>
               <div className="relative">
-                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
-                <select
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-5 py-4 text-sm font-bold outline-none focus:border-indigo-600 focus:bg-white transition-all appearance-none"
-                  value={formData.country_id}
-                  onChange={handleField("country_id")}
-                >
-                  {countries.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <select className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold outline-none focus:border-indigo-500 appearance-none" value={formData.country_id} onChange={handleField("country_id")}>
+                  {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
           </div>
 
-          {/* Map Section */}
-          <div className="p-6 bg-slate-50 rounded-[24px] border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${formData.latitude ? 'bg-indigo-600 text-white' : 'bg-white text-slate-300 border border-slate-200'}`}>
-                <MapIcon size={24} />
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${formData.latitude ? 'bg-indigo-600 text-white shadow-md shadow-indigo-100' : 'bg-white text-slate-300 border border-slate-100'}`}>
+                <MapIcon size={16} />
               </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">Map Location</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">
-                  {formData.latitude ? "Location pinned successfully" : "Pin your exact location for easier delivery"}
-                </p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-black text-slate-900 uppercase">Map Pinning</p>
+                <p className="text-[9px] font-bold text-slate-400 truncate">{formData.latitude ? "Coordinates Synchronised" : "Visual placement for logistics"}</p>
               </div>
             </div>
-            <Link
-              href={`/google-map?lat=${formData.latitude || 11.5564}&lng=${formData.longitude || 104.9282}&from=add${editId ? `&editId=${editId}` : ""}`}
-              className="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all text-center shadow-sm"
+            <Link href={`/addresses/google-map?lat=${formData.latitude || 11.5564}&lng=${formData.longitude || 104.9282}&from=add${editId ? `&editId=${editId}` : ""}`}
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm whitespace-nowrap"
             >
-              Open Map
+              Set Pin
             </Link>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button
-              type="button"
-              onClick={() => router.push("/addresses")}
-              className="px-8 py-4 text-slate-500 font-bold text-sm hover:bg-slate-50 rounded-2xl transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-            >
-              {loading ? <Loader2 size={18} className="animate-spin" /> : <><Check size={18} /> {editId ? "Update Address" : "Save Address"}</>}
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-50">
+            <button type="submit" disabled={loading} className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-100 flex items-center justify-center gap-2">
+              {loading ? <Loader2 size={14} className="animate-spin" /> : <><Check size={14} /> {editId ? "Update Endpoint" : "Save Endpoint"}</>}
             </button>
           </div>
         </form>
@@ -354,15 +239,10 @@ function AddressForm({ editId }) {
 
 function InputGroup({ label, value, onChange, placeholder, required = false }) {
   return (
-    <div className="space-y-2">
-      <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-indigo-600 focus:bg-white transition-all text-slate-800 placeholder:text-slate-300 placeholder:font-medium"
+    <div className="space-y-1.5">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <input type="text" value={value} onChange={onChange} placeholder={placeholder} required={required}
+        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-indigo-500 focus:bg-white transition-all text-slate-800 placeholder:text-slate-200"
       />
     </div>
   );

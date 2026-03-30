@@ -1,189 +1,236 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { 
   ChevronLeft, 
-  Package, 
-  Clock, 
   ChevronRight, 
-  Loader2,
-  Search,
-  ShoppingBag,
-  HelpCircle,
-  Inbox
+  Loader2, 
+  Search, 
+  ShoppingBag, 
+  Inbox, 
+  Calendar,
+  Filter
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useShopOrderStore } from "@/app/stores/useShopOrderStore";
 
 export default function OrdersPage() {
   const router = useRouter();
   const { orders, loading, fetchOrders } = useShopOrderStore();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all"); // all, pending, paid, completed
+
+  const itemsPerPage = 8;
+
+  useEffect(() => { fetchOrders(); }, []);
+
+  // Filter Logic
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) => {
+      const matchesSearch = order.id.toString().toLowerCase().includes(searchQuery.toLowerCase());
+      const orderStatus = order.order_status?.status?.toLowerCase() || '';
+      const paymentStatus = order.payment_status?.status?.toLowerCase() || '';
+
+      if (activeFilter === "pending") return matchesSearch && ["pending", "processing", "shipped"].includes(orderStatus);
+      if (activeFilter === "paid") return matchesSearch && (paymentStatus === "paid" || paymentStatus === "success");
+      if (activeFilter === "completed") return matchesSearch && ["completed", "delivered"].includes(orderStatus);
+      
+      return matchesSearch;
+    });
+  }, [orders, searchQuery, activeFilter]);
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const currentOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (loading && !orders.length) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-[500px] gap-4">
-        <Loader2 className="h-8 w-8 text-indigo-600 animate-spin" />
-        <p className="text-sm font-medium text-slate-500">Loading your orders...</p>
+      <div className="flex flex-col justify-center items-center min-h-[400px] gap-2">
+        <Loader2 className="h-5 w-5 text-indigo-600 animate-spin" />
+        <p className="text-xs text-slate-500 font-medium">Loading orders...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 sm:p-10 max-w-5xl mx-auto pb-24">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto pb-16 font-sans">
       
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div className="space-y-2">
+      {/* 1. Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
           <button 
-            onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors text-sm font-semibold mb-4"
+            onClick={() => router.back()} 
+            className="flex items-center gap-1 text-slate-400 hover:text-indigo-600 transition-colors text-xs font-medium mb-1"
           >
-            <ChevronLeft size={16} /> Back to Shop
+            <ChevronLeft size={14} />
+            <span>Back to profile</span>
           </button>
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-            Order History
-          </h1>
-          <p className="text-slate-500 font-medium">
-            Track your recent purchases and view order details.
-          </p>
+          <h1 className="text-xl font-bold text-slate-900 leading-tight">Order history</h1>
         </div>
         
-        <div className="relative w-full md:w-72">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <input 
             type="text" 
-            placeholder="Search by order number..." 
-            className="w-full pl-11 pr-6 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+            placeholder="Search order id..." 
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            className="w-full md:w-64 h-9 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 transition-all"
           />
         </div>
       </div>
 
-      {/* Orders List */}
-      {!orders.length ? (
-        <div className="bg-white rounded-[40px] p-16 border border-slate-100 shadow-sm flex flex-col items-center text-center">
-          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
-            <Inbox className="w-10 h-10 text-indigo-200" />
-          </div>
-          <h3 className="text-xl font-bold text-slate-900 mb-2">No orders yet</h3>
-          <p className="text-slate-500 text-sm max-w-xs mb-8">
-            When you buy something from our shop, it will show up here.
-          </p>
-          <Link 
-            href="/products" 
-            className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+      {/* 2. Filter Tabs */}
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1 no-scrollbar">
+        <Filter size={14} className="text-slate-400 mr-1 shrink-0" />
+        {[
+          { id: "all", label: "All orders" },
+          { id: "pending", label: "Pending" },
+          { id: "paid", label: "Paid" },
+          { id: "completed", label: "Completed" }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => { setActiveFilter(tab.id); setCurrentPage(1); }}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold whitespace-nowrap transition-all ${
+              activeFilter === tab.id 
+              ? "bg-slate-900 text-white shadow-sm" 
+              : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
+            }`}
           >
-            Start Shopping
-          </Link>
-        </div>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* 3. Order List */}
+      {filteredOrders.length === 0 ? (
+        <EmptyState hasFilter={activeFilter !== 'all' || searchQuery !== ''} />
       ) : (
-        <div className="space-y-4">
-          {orders.map((order, idx) => (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              key={order.id}
-              className="group bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 hover:border-indigo-600 transition-all hover:shadow-xl hover:shadow-slate-200/50 cursor-pointer"
-              onClick={() => router.push(`/orders/${order.id}`)}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                
-                {/* Order Identity & Status */}
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                    <ShoppingBag size={24} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h4 className="font-bold text-slate-900">Order #{order.id.toString().padStart(6, '0')}</h4>
-                      <StatusBadge status={order.order_status?.status} />
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} /> 
-                        {new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                      <span className="w-1 h-1 bg-slate-300 rounded-full" />
-                      <span>{order.order_lines?.length} {order.order_lines?.length === 1 ? 'Item' : 'Items'}</span>
-                    </div>
-                  </div>
-                </div>
+        <div className="space-y-2">
+          <AnimatePresence mode="popLayout">
+            {currentOrders.map((order) => (
+              <OrderRow key={order.id} order={order} router={router} />
+            ))}
+          </AnimatePresence>
 
-                {/* Items & Price */}
-                <div className="flex items-center justify-between sm:justify-end gap-8 border-t sm:border-t-0 pt-4 sm:pt-0">
-                  {/* Mini Image Stack */}
-                  <div className="flex items-center -space-x-3">
-                    {order.order_lines?.slice(0, 3).map((line, i) => (
-                      <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-slate-100 p-1 ring-1 ring-slate-200/50 relative overflow-hidden">
-                        <img 
-                          src={line.product_item_variant?.product_item?.product?.images?.[0]?.image} 
-                          alt="product" 
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                    ))}
-                    {order.order_lines?.length > 3 && (
-                      <div className="w-10 h-10 rounded-xl border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 ring-1 ring-slate-200/50">
-                        +{order.order_lines.length - 3}
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="text-right min-w-[100px]">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Paid</p>
-                    <p className="text-xl font-extrabold text-slate-900 tracking-tight">
-                      ${Number(order.order_total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                    </p>
-                  </div>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-md disabled:opacity-20 flex items-center gap-1"
+              >
+                <ChevronLeft size={14} /> Previous
+              </button>
+              
+              <span className="text-[11px] text-slate-400 font-bold uppercase tracking-tight">
+                {currentPage} of {totalPages}
+              </span>
 
-                  <div className="hidden sm:flex w-10 h-10 rounded-full bg-slate-50 items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-                    <ChevronRight size={20} />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-md disabled:opacity-20 flex items-center gap-1"
+              >
+                Next <ChevronRight size={14} />
+              </button>
+            </div>
+          )}
         </div>
       )}
-      
-      {/* Friendly Support Section */}
-      <div className="mt-16 p-8 rounded-[32px] bg-white border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-8 shadow-sm">
-        <div className="flex items-center gap-5 text-center sm:text-left">
-          <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
-            <HelpCircle size={24} />
+    </div>
+  );
+}
+
+function OrderRow({ order, router }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={() => router.push(`/orders/${order.id}`)}
+      className="group bg-white rounded-lg border border-slate-100 p-3 flex items-center justify-between hover:border-indigo-200 hover:shadow-sm transition-all cursor-pointer"
+    >
+      <div className="flex items-center gap-4 min-w-0">
+        <div className="w-9 h-9 rounded-md bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors shrink-0">
+          <ShoppingBag size={18} />
+        </div>
+
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-sm font-bold text-slate-900 truncate">Order #{order.id}</span>
+            <StatusBadge status={order.order_status?.status} />
           </div>
-          <div>
-            <h3 className="text-slate-900 font-bold">Have a question about an order?</h3>
-            <p className="text-slate-500 text-sm font-medium">Our friendly support team is here to help you every step of the way.</p>
+          <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+            <span className="flex items-center gap-1 shrink-0">
+              <Calendar size={12} /> 
+              {new Date(order.created_at).toLocaleDateString()}
+            </span>
+            <span className="truncate">{order.order_lines?.length || 0} items</span>
           </div>
         </div>
-        <button className="whitespace-nowrap px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-100">
-          Contact Support
-        </button>
       </div>
+
+      <div className="flex items-center gap-6 shrink-0">
+        <div className="hidden md:flex items-center -space-x-1.5">
+          {order.order_lines?.slice(0, 3).map((line, i) => (
+            <div key={i} className="w-6 h-6 rounded border border-white shadow-sm overflow-hidden bg-slate-100">
+              <img src={line.product_item_variant?.product_item?.product?.images?.[0]?.image} alt="" className="w-full h-full object-cover" />
+            </div>
+          ))}
+        </div>
+
+        <div className="text-right">
+          <p className="text-sm font-bold text-slate-900">${Number(order.order_total).toFixed(2)}</p>
+          <PaymentText status={order.payment_status?.status} />
+        </div>
+
+        <ChevronRight size={16} className="text-slate-300 group-hover:text-indigo-600 transition-all" />
+      </div>
+    </motion.div>
+  );
+}
+
+function EmptyState({ hasFilter }) {
+  return (
+    <div className="py-16 text-center bg-slate-50/50 border border-dashed border-slate-200 rounded-xl">
+      <Inbox className="w-8 h-8 text-slate-200 mx-auto mb-3" />
+      <p className="text-sm font-bold text-slate-800">
+        {hasFilter ? "No matches found" : "No orders yet"}
+      </p>
+      <p className="text-xs text-slate-400 mt-1">
+        {hasFilter ? "Try adjusting your filters or search." : "Your purchase history will appear here."}
+      </p>
     </div>
   );
 }
 
 function StatusBadge({ status }) {
+  const s = status?.toLowerCase();
   const styles = {
-    'Pending': 'bg-amber-50 text-amber-700 border-amber-100',
-    'Completed': 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    'Cancelled': 'bg-rose-50 text-rose-700 border-rose-100',
-    'Processing': 'bg-indigo-50 text-indigo-700 border-indigo-100',
+    pending: "bg-slate-100 text-slate-600",
+    completed: "bg-emerald-50 text-emerald-600",
+    processing: "bg-indigo-50 text-indigo-600",
+    shipped: "bg-blue-50 text-blue-600",
+    delivered: "bg-emerald-50 text-emerald-600",
+    cancelled: "bg-rose-50 text-rose-600",
   };
-
-  const style = styles[status] || 'bg-slate-50 text-slate-600 border-slate-100';
-
   return (
-    <span className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold border ${style}`}>
+    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${styles[s] || 'bg-slate-100 text-slate-600'}`}>
       {status || 'Unknown'}
     </span>
+  );
+}
+
+function PaymentText({ status }) {
+  const s = status?.toLowerCase();
+  const isPaid = s === 'success' || s === 'paid';
+  return (
+    <p className={`text-[10px] font-bold ${isPaid ? 'text-emerald-500' : 'text-amber-500'}`}>
+      {isPaid ? 'Paid' : 'Unpaid'}
+    </p>
   );
 }

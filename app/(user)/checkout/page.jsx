@@ -165,8 +165,11 @@ export default function CheckoutPage() {
       const isBakong = selectedPayment?.account_name?.toLowerCase().includes('bakong') ||
                        selectedPayment?.type_value?.toLowerCase().includes('bakong');
 
+      console.log('Checkout: orderId', orderId, 'isBakong', isBakong, 'payment', selectedPayment);
+
       if (isBakong) {
         const qrResult = await generateBakongQr(orderId, selectedPaymentId, selectedPayment.currency || 'USD');
+        console.log('Checkout: qrResult', qrResult);
         if (qrResult.success) {
           setIsQrModalOpen(true);
           return;
@@ -458,7 +461,7 @@ export default function CheckoutPage() {
         onClose={() => setIsQrModalOpen(false)} 
         qrData={qrData} 
         orderId={currentOrderId} 
-        onPaymentSuccess={() => { toast.success("Success!"); router.push("/orders"); }} 
+        onPaymentSuccess={() => { router.push(`/checkout/success?order_id=${currentOrderId}`); }}  
       />
     </div>
   );

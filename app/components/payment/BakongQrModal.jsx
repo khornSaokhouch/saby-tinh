@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+
 import { Loader2, X, CheckCircle2, AlertCircle, Timer } from 'lucide-react';
 import { usePaymentStore } from '@/app/stores/usePaymentStore';
 
@@ -38,122 +38,63 @@ export default function BakongQrModal({ isOpen, onClose, qrData, orderId, onPaym
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm font-sans">
-      <div className="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm font-sans">
+      <div className="relative w-full max-w-[340px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         
-   {/* CUSTOM KHQR RED HEADER */}
-<div 
-  className="relative bg-red-600 h-28 flex items-center justify-center pt-2"
-  style={{ 
-    // This creates the sharp slanted cut seen in your design
-    clipPath: "polygon(0 0, 100% 0, 100% 68%, 88% 100%, 0 100%)" 
-  }}
->
-  {/* Logo Image (from your image import) */}
-  <img
-    src='/img/header.png'
-    alt="KHQR Logo"
-    className="h-10 w-auto object-contain brightness-0 invert" 
-  />
+        {/* Close Button overlapping the image */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 text-white hover:bg-black/50 transition-colors backdrop-blur-sm"
+        >
+          <X size={18} />
+        </button>
 
-  {/* Close Button */}
-  <button
-    onClick={onClose}
-    className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
-  >
-    <X size={20} />
-  </button>
-</div>
-
-        {/* MERCHANT & AMOUNT INFO */}
-        <div className="px-8 pt-8 pb-4 text-center">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-             Payment to Saby-tinh Store
-          </p>
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center justify-center gap-1.5">
-              <span className="text-3xl font-black text-slate-900 tabular-nums">
-                  {Number(qrData?.amount).toLocaleString()}
-              </span>
-              <span className="text-sm font-bold text-slate-500 uppercase">
-                  {qrData?.currency || 'USD'}
-              </span>
-            </div>
-            
-            {(qrData?.discount_amount > 0) && (
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] font-bold text-slate-400 line-through">
-                  ${Number(qrData?.original_total).toLocaleString()}
-                </span>
-                <span className="px-2 py-0.5 bg-rose-50 text-rose-600 text-[9px] font-black rounded-md uppercase">
-                  -${Number(qrData?.discount_amount).toLocaleString()} OFF
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* DASHED SEPARATOR */}
-        <div className="px-6 py-2">
-           <div className="border-t-2 border-dashed border-slate-100 w-full" />
-        </div>
-
-        {/* QR CODE SECTION */}
-        <div className="p-8 flex flex-col items-center">
+        <div className="flex flex-col items-center w-full relative min-h-[400px] justify-center">
           {status === 'waiting' ? (
             <>
-              <div className="relative p-2 bg-white rounded-2xl shadow-sm border border-slate-50">
-                <QRCodeSVG 
-                    value={qrData?.qr_string || ""} 
-                    size={210} 
-                    level="H" 
-                    imageSettings={{
-                        src: "/img/bakong.png", // Your central Bakong logo
-                        height: 40,
-                        width: 40,
-                        excavate: true,
-                    }}
+              {/* BACKEND TEMPLATE IMAGE */}
+              {qrData?.qr_image ? (
+                <img 
+                  src={qrData.qr_image} 
+                  alt="Bakong KHQR" 
+                  className="w-full h-auto object-contain block"
                 />
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center w-full h-[400px] bg-white">
+                  <Loader2 className="w-8 h-8 animate-spin text-slate-300 mb-4" />
+                  <p className="text-sm font-medium text-slate-500">Generating KHQR...</p>
+                </div>
+              )}
 
-              {/* TIMER */}
-              <div className="mt-8 flex items-center gap-2 px-3.5 py-1.5 bg-slate-50 rounded-full border border-slate-100">
-                <Timer className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-xs font-bold text-slate-600 tabular-nums">
-                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-                </span>
-              </div>
+              {/* TIMER overlay */}
+              {qrData?.qr_image && (
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-sm rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.12)] border border-slate-100/50">
+                  <Timer className="w-4 h-4 text-slate-500" />
+                  <span className="text-sm font-bold text-slate-700 tabular-nums">
+                    {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+              )}
             </>
           ) : (
-            <div className="py-12 text-center animate-in fade-in zoom-in-95">
+            <div className="py-16 px-6 text-center animate-in fade-in zoom-in-95 w-full bg-white h-[400px] flex flex-col justify-center items-center">
               {status === 'success' ? (
                 <>
                   <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 mx-auto">
                     <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                   </div>
                   <h4 className="text-xl font-bold text-slate-900">Paid Successfully</h4>
+                  <p className="mt-2 text-sm text-slate-500">Waiting to redirect...</p>
                 </>
               ) : (
                 <>
                   <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
                   <h4 className="text-lg font-bold text-slate-900">Payment Failed</h4>
+                  <p className="mt-2 text-sm text-slate-500">Please try again or use another payment method.</p>
                 </>
               )}
             </div>
           )}
-        </div>
-
-        {/* FOOTER VERIFICATION */}
-        <div className="bg-slate-50/50 p-6 border-t border-slate-50 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
-              Verifying Transaction
-            </span>
-          </div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">
-            Please scan this QR via your mobile banking app
-          </p>
         </div>
       </div>
     </div>
