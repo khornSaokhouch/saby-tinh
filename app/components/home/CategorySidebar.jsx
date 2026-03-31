@@ -76,7 +76,7 @@ const CategorySidebar = ({ categories = [] }) => {
 
         <div className="p-3 bg-white/30 backdrop-blur-md border-t border-white/40">
           <Link href="/category" className="flex items-center justify-center gap-2 w-full py-2.5 rounded-[14px] bg-white/60 border border-white/80 text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] hover:bg-white hover:text-blue-600 transition-all shadow-sm active:scale-95 group">
-            Explore All Categories 
+            All Categories 
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -132,7 +132,7 @@ const CategorySidebar = ({ categories = [] }) => {
               <div className="mt-auto m-1.5 p-3 bg-slate-900/90 backdrop-blur-2xl rounded-[20px] flex items-center justify-between shadow-2xl">
                 <div className="flex items-center gap-2">
                    <Activity className="w-3.5 h-3.5 text-blue-400" />
-                   <span className="text-[9px] font-black text-white uppercase tracking-widest">Active Categories Types</span>
+                   <span className="text-[9px] font-black text-white uppercase tracking-widest">Categories Types</span>
                 </div>
                 <span className="text-[10px] font-black bg-blue-500 text-white px-2 py-0.5 rounded-lg shadow-lg shadow-blue-500/40">
                     {activeTypes.length}

@@ -45,7 +45,7 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="min-h-screen pb-16 font-sans bg-[#FDFDFD]">
+    <div className="min-h-screen pb-16 font-sans">
       {/* Compact Nav Bar */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 h-12 flex items-center justify-between">
@@ -97,7 +97,7 @@ export default function OrderDetailPage() {
                 {order.order_history?.map((event, idx) => (
                   <div key={event.id} className="flex items-start gap-3 relative z-10">
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border-2 ${
-                      idx === 0 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-100 text-slate-300'
+                      idx === 0 ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-slate-100 text-slate-300'
                     }`}>
                       {idx === 0 ? <CheckCircle2 size={14} /> : <Box size={12} />}
                     </div>
@@ -111,7 +111,7 @@ export default function OrderDetailPage() {
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                        {event.description || "The shipment is currently being processed."}
+                        {event.description || (idx === 0 ? "Your order has been successfully placed." : "The shipment is currently being processed.")}
                       </p>
                     </div>
                   </div>
@@ -184,10 +184,10 @@ export default function OrderDetailPage() {
               <div className="space-y-2 text-[11px] font-medium border-t border-slate-50 pt-3">
                 <div className="flex justify-between text-slate-400"><span>Subtotal</span><span className="text-slate-900">${(Number(order.order_total) - Number(order.shipping_method?.price || 0)).toLocaleString()}</span></div>
                 <div className="flex justify-between text-slate-400"><span>Shipping ({order.shipping_method?.name})</span><span className="text-slate-900">${Number(order.shipping_method?.price || 0).toFixed(2)}</span></div>
-                <div className="flex justify-between items-center pt-2 border-t border-slate-50 mt-1">
-                  <span className="text-xs font-bold text-slate-900">Total settlement</span>
-                  <span className="text-lg font-black text-indigo-600">${Number(order.order_total).toLocaleString()}</span>
-                </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-50 mt-1">
+                    <span className="text-xs font-bold text-slate-900">Total settlement</span>
+                    <span className="text-lg font-bold text-indigo-600">${Number(order.order_total).toLocaleString()}</span>
+                  </div>
               </div>
             </section>
 
@@ -207,11 +207,12 @@ function StatusBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const config = {
     pending: "bg-slate-100 text-slate-600",
-    completed: "bg-emerald-50 text-emerald-600",
-    processing: "bg-indigo-50 text-indigo-600",
-    shipped: "bg-blue-50 text-blue-600",
-    delivered: "bg-emerald-50 text-emerald-600",
-    cancelled: "bg-rose-50 text-rose-600",
+    confirmed: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    completed: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    processing: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    shipped: "bg-blue-50 text-blue-600 border-blue-100",
+    delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    cancelled: "bg-rose-50 text-rose-600 border-rose-100",
   };
   return (
     <span className={`px-2 py-0.5 rounded text-[10px] font-bold border border-transparent ${config[norm] || "bg-slate-100 text-slate-600"}`}>

@@ -107,15 +107,6 @@ export default function VerifyOtpPage() {
 
           {/* ── Header ── */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="mb-4">
-              <Link href="/" className="block">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Saby-Tinh
-                </span>
-              </Link>
-            </div>
-            <div className="w-full h-px bg-slate-100 my-2" />
-            
             {/* Icon + title */}
             <div className="mt-5">
               <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 mb-4 mx-auto shadow-sm">

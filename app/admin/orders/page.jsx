@@ -41,16 +41,16 @@ export default function OrdersPage() {
   const avgValue = orders.length > 0 ? totalValue / orders.length : 0;
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-6xl mx-auto animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Registry Operations', language)}</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t('Registry Operations', language)}</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
             {t('Global', language)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-rose-400">{t('Orders', language)}</span>
           </h1>
           <p className="text-slate-500 text-[12px] font-medium mt-1">
@@ -65,7 +65,7 @@ export default function OrdersPage() {
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95">
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} /> {t('Export Data', language)}
           </button>
         </div>
@@ -117,13 +117,13 @@ export default function OrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Order ID', language)}</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ORDER STATUS', language)}</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Payment', language)}</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Total price', language)}</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('Product Item', language)}</th> 
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
+                <th className="px-5 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Order ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('ORDER STATUS', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Payment', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">{t('Total price', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Product Item', language)}</th> 
+                <th className="px-5 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">{t('Action', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -133,8 +133,8 @@ export default function OrdersPage() {
                 <tr key={order.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-black text-indigo-600 tracking-tight">{t('ORD-', language)}{order.id}</span>
-                      <span className="text-[9px] font-black text-slate-300 uppercase mt-0.5">{new Date(order.created_at).toLocaleDateString()}</span>
+                      <span className="text-xs font-bold text-indigo-600 tracking-tight">{t('ORD-', language)}{order.id}</span>
+                      <span className="text-[9px] font-bold text-slate-300 uppercase mt-0.5">{new Date(order.created_at).toLocaleDateString()}</span>
                     </div>
                   </td>
                   <td className="px-4 py-4">
@@ -149,7 +149,7 @@ export default function OrdersPage() {
                   <td className="px-4 py-4">
                     <PaymentBadge status={order.payment_status?.status || 'Pending'} language={language} />
                   </td>
-                  <td className="px-4 py-4 text-right text-xs font-black text-slate-900">
+                  <td className="px-4 py-4 text-right text-xs font-bold text-slate-900">
                     ${parseFloat(order.order_total).toLocaleString()}
                   </td>
                   <td className="px-4 py-4">
@@ -178,7 +178,7 @@ export default function OrdersPage() {
 
         {/* Footer */}
         <div className="p-3 bg-slate-50/50 border-t border-slate-50 flex justify-between items-center px-6">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{t('Page', language)} 1 {t('of', language)} {Math.ceil(orders.length / 15) || 1} • {filteredOrders.length} {t('Results', language)}</p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{t('Page', language)} 1 {t('of', language)} {Math.ceil(orders.length / 15) || 1} • {filteredOrders.length} {t('Results', language)}</p>
             <div className="flex gap-1">
               <button className="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><ChevronLeft size={12} /></button>
               <button className="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><ChevronRight size={12} /></button>
@@ -206,7 +206,7 @@ function StatCard({ label, value, icon: Icon, color, subText }) {
       <div className="relative z-10">
         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
         <div className="flex items-baseline gap-2">
-          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          <h3 className="text-xl font-bold text-slate-900 tracking-tighter leading-none">{value}</h3>
           {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
         </div>
       </div>
@@ -219,12 +219,13 @@ function StatusBadge({ status, language }) {
   const config = {
     Pending: "bg-orange-50 text-orange-600 border-orange-100",
     Processing: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    Confirmed: "bg-emerald-50 text-emerald-600 border-emerald-100",
     Shipped: "bg-blue-50 text-blue-600 border-blue-100",
     Delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
     Cancelled: "bg-slate-100 text-slate-400 border-slate-200",
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[status] || config.Cancelled}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-bold uppercase tracking-widest ${config[status] || config.Cancelled}`}>
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
       {t(status, language)}
     </span>
@@ -239,7 +240,7 @@ function PaymentBadge({ status, language }) {
     Failed: "text-rose-600 bg-rose-50 border-rose-100",
   };
   return (
-    <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${styles[status] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
+    <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${styles[status] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
       {t(status, language)}
     </span>
   );

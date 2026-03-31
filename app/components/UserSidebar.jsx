@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User, Package, Heart, MapPin, Shield, LogOut, Loader2, MessageCircle, Pencil, Settings, ChevronRight
+  User, ShoppingBag, Bookmark, Map, ShieldCheck, LogOut, Loader2, MessageSquare, Edit3, Settings, ChevronRight, Key
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -70,12 +70,14 @@ export default function UserSidebar() {
 
   const navLinks = [
     { name: "My Profile", href: "/profile", icon: User },
-    { name: "Messages", href: "/chat", icon: MessageCircle },
-    { name: "Edit Details", href: "/edit-profile", icon: Pencil },
-    { name: "Purchase History", href: "/orders", icon: Package },
-    { name: "Saved Items", href: "/favorites", icon: Heart },
-    { name: "My Addresses", href: "/addresses", icon: MapPin },
-    { name: "Privacy & Security", href: "/security", icon: Shield },
+    { name: "Messages", href: "/chat", icon: MessageSquare },
+    { name: "Edit Details", href: "/edit-profile", icon: Edit3 },
+    { name: "Purchase History", href: "/orders", icon: ShoppingBag },
+    { name: "Saved Items", href: "/favorites", icon: Bookmark },
+    { name: "My Addresses", href: "/addresses", icon: Map },
+    { name: "Security", href: "/security", icon: ShieldCheck },
+    { name: "Reset Password", href: "/reset-password", icon: Key },
+    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   if (loading) return (

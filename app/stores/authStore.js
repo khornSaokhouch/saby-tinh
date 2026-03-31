@@ -169,6 +169,38 @@ register: async ({ name, email, password, confirm_password, phone_number }) => {
         }
       },
 
+      updatePassword: async (payload) => {
+        set({ loading: true, error: null });
+        try {
+          const res = await request('/update-password', 'POST', payload, {
+            headers: { Authorization: `Bearer ${get().token}` },
+          });
+          return res;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Failed to update password';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      verifyPassword: async (password) => {
+        set({ loading: true, error: null });
+        try {
+          const res = await request('/verify-password', 'POST', { password }, {
+            headers: { Authorization: `Bearer ${get().token}` },
+          });
+          return res;
+        } catch (err) {
+          const msg = err?.response?.data?.message || err.message || 'Verification failed';
+          set({ error: msg });
+          throw new Error(msg);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       // -------------------------------
       // Login with existing token
       // -------------------------------

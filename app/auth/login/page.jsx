@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
-import { Mail, Lock, Loader2, ArrowRight, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowRight, ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoginPage() {
@@ -51,23 +51,19 @@ export default function LoginPage() {
         transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
         className="w-full max-w-[420px]"
       >
-        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10">
+        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10 relative">
+
+          {/* ── Back Button ── */}
+          <Link href="/" className="absolute top-6 left-6 flex items-center gap-1.5 text-slate-400 hover:text-slate-900 transition-colors group">
+            <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-[11px] font-bold uppercase tracking-widest">Back</span>
+          </Link>
 
           {/* ── Header ── */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="mb-4">
-              <Link href="/" className="block">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Saby-Tinh
-                </span>
-                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mt-0.5">
-                  Management Console
-                </p>
-              </Link>
-            </div>
-            <div className="w-full h-px bg-slate-100 my-2" />
+            {/* <div className="w-full h-px bg-slate-100 my-2" /> */}
             <div className="mt-4">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">Welcome back</h2>
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Welcome back</h2>
               <p className="text-[12px] text-slate-400 font-bold mt-1">Sign in to access your dashboard</p>
             </div>
           </div>
@@ -77,7 +73,7 @@ export default function LoginPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
+              <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
                 Email Address
               </label>
               <div className="relative">
@@ -96,10 +92,10 @@ export default function LoginPage() {
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1.5 ml-1">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                   Password
                 </label>
-                <Link href="/auth/forgot-password" className="text-[9px] font-black text-indigo-500 hover:text-rose-500 transition-colors uppercase tracking-widest">
+                <Link href="/auth/forgot-password" className="text-[9px] font-bold text-indigo-500 hover:text-rose-500 transition-colors uppercase tracking-widest">
                   Forgot-password?
                 </Link>
               </div>
@@ -142,7 +138,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
+              className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={16} />
@@ -158,7 +154,7 @@ export default function LoginPage() {
               <span className="w-full border-t border-slate-100" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-3 text-[9px] font-black uppercase tracking-widest text-slate-300">
+              <span className="bg-white px-3 text-[9px] font-bold uppercase tracking-widest text-slate-300">
                 or continue with
               </span>
             </div>
@@ -167,7 +163,7 @@ export default function LoginPage() {
           {/* Google */}
           <button
             onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/redirect`}
-            className="w-full h-11 bg-white border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2.5 transition-all active:scale-[0.98]"
+            className="w-full h-11 bg-white border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2.5 transition-all active:scale-[0.98]"
           >
             <svg className="w-4 h-4" viewBox="0 0 48 48">
               <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.954,4,4,12.954,4,24s8.954,20,20,20s20-8.954,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
@@ -181,7 +177,7 @@ export default function LoginPage() {
           {/* Footer */}
           <p className="mt-6 text-center text-[10px] font-bold text-slate-400 tracking-wide">
             Don't have an account?{' '}
-            <Link href="/auth/register" className="text-indigo-600 font-black hover:text-rose-500 transition-colors">
+            <Link href="/auth/register" className="text-indigo-600 font-bold hover:text-rose-500 transition-colors">
               Sign up free
             </Link>
           </p>

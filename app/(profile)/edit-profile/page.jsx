@@ -85,88 +85,95 @@ export default function EditProfilePage() {
   if (loading || !user) return <div className="flex justify-center items-center min-h-[300px]"><Loader2 className="animate-spin h-6 w-6 text-indigo-600" /></div>;
 
   return (
-    <>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="font-sans text-slate-900 pb-16">
       <ConfirmationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={handleConfirmUpdate} isSubmitting={isSubmitting} />
       
-      <div className="p-5 sm:p-8 max-w-3xl">
-        <header className="mb-6">
-            <h1 className="text-xl font-black text-slate-900 tracking-tight">Edit Profile</h1>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-tight mt-0.5">Adjust your account identity</p>
-        </header>
-
-        <form onSubmit={(e) => { e.preventDefault(); setIsModalOpen(true); }} className="space-y-6">
-          
-          {/* AVATAR SECTION - SMALLER */}
-          <div className="flex items-center gap-5 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border-2 border-white shadow-md flex items-center justify-center relative">
-                {imagePreview || user.profile_image_url ? (
-                  <Image src={imagePreview || user.profile_image_url} alt="P" fill className="object-cover" />
-                ) : (
-                  <span className="text-2xl font-black text-indigo-600">{user.name?.[0].toUpperCase()}</span>
-                )}
-              </div>
-              <label htmlFor="image-upload" className="absolute -bottom-1 -right-1 flex items-center justify-center w-7 h-7 bg-slate-900 text-white rounded-lg shadow-lg cursor-pointer hover:bg-indigo-600 transition-all active:scale-90">
-                <Camera size={14} />
-                <input id="image-upload" type="file" name="image" accept="image/*" onChange={handleChange} className="hidden" />
-              </label>
-            </div>
-            
-            <div className="space-y-1">
-              <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Avatar Module</h4>
-              <p className="text-[10px] text-slate-400 font-bold uppercase leading-tight">Recommended: 400px JPG/PNG</p>
-              {imagePreview && <span className="text-[9px] font-black text-emerald-500 uppercase">New Image Detected</span>}
-            </div>
+      {/* HEADER */}
+      <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+            <User className="w-5 h-5 text-indigo-600" />
           </div>
+          <div>
+            <h1 className="text-base font-bold text-slate-900">Personal Identity</h1>
+            <p className="text-xs text-slate-500 font-medium">Update your public profile and contact information</p>
+          </div>
+        </div>
+      </div>
 
-          {/* FIELDS - COMPACT */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={(e) => { e.preventDefault(); setIsModalOpen(true); }} className="space-y-4">
+        
+        {/* AVATAR SECTION */}
+        <div className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white rounded-xl border border-slate-100 shadow-sm">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border-4 border-white shadow-xl flex items-center justify-center relative">
+              {imagePreview || user.profile_image_url ? (
+                <Image src={imagePreview || user.profile_image_url} alt="Profile" fill className="object-cover" />
+              ) : (
+                <span className="text-3xl font-black text-indigo-600">{user.name?.[0].toUpperCase()}</span>
+              )}
+            </div>
+            <label htmlFor="image-upload" className="absolute -bottom-1 -right-1 flex items-center justify-center w-8 h-8 bg-slate-900 text-white rounded-lg shadow-lg cursor-pointer hover:bg-indigo-600 transition-all active:scale-90 border-2 border-white">
+              <Camera size={16} />
+              <input id="image-upload" type="file" name="image" accept="image/*" onChange={handleChange} className="hidden" />
+            </label>
+          </div>
+          
+          <div className="text-center sm:text-left space-y-1">
+            <h4 className="text-sm font-bold text-slate-900">Profile Picture</h4>
+            <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-[200px]">A clear photo helps others recognize you. JPG, PNG or WebP permitted.</p>
+            {imagePreview && <div className="mt-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1"><Sparkles size={10} /> Pending Upload</div>}
+          </div>
+        </div>
+
+        {/* FIELDS */}
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 sm:p-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Legal Full Name</label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
                 <input
                   type="text" name="name" value={formData.name} onChange={handleChange} required
-                  className="w-full py-2.5 pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-indigo-500 transition-all"
+                  className="w-full py-2.5 pl-10 pr-4 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-indigo-500 focus:bg-white transition-all"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email (Locked)</label>
-              <div className="relative opacity-50">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Account Email</label>
+              <div className="relative opacity-60">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="email" value={user.email} disabled
-                  className="w-full py-2.5 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 cursor-not-allowed"
+                  className="w-full py-2.5 pl-10 pr-4 bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 cursor-not-allowed"
                 />
               </div>
             </div>
             
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 md:col-span-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
               <div className="relative group">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
                 <input
                   type="tel" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="+000 000 000"
-                  className="w-full py-2.5 pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-indigo-500 transition-all"
+                  className="w-full py-2.5 pl-10 pr-4 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-indigo-500 focus:bg-white transition-all"
                 />
               </div>
             </div>
           </div>
 
-          {/* ACTIONS */}
-          <div className="flex items-center justify-end gap-4 pt-4 border-t border-slate-50">
-            <Link href="/profile" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600">Cancel</Link>
+          <div className="flex items-center justify-end gap-4 pt-6 border-t border-slate-50">
+            <Link href="/profile" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600">Discard Changes</Link>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-slate-100 hover:bg-indigo-600 active:scale-95 transition-all flex items-center gap-2"
+              className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-indigo-600 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-slate-100"
             >
-              <Save size={14} /> Update Info
+              <Save size={16} /> Save Identity
             </button>
           </div>
-        </form>
-      </div>
-    </>
+        </div>
+      </form>
+    </motion.div>
   );
 }

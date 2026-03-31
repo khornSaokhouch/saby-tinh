@@ -20,13 +20,15 @@ const Footer = () => {
           
           {/* Brand and Mission */}
           <div className="col-span-1 lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="text-base font-bold text-slate-900">
-                Saby-Tinh
-              </span>
+            <Link href="/" className="group flex items-center gap-2">
+              <div className="flex flex-col">
+                <span className="text-sm font-black text-slate-900 tracking-tighter leading-none uppercase">
+                  Saby-Tinh
+                </span>
+              </div>
             </Link>
 
-            <p className="text-slate-400 text-[11px] sm:text-xs leading-relaxed max-w-[240px]">
+            <p className="text-slate-400 text-[12px] sm:text-sm leading-relaxed max-w-[240px]">
               Connecting you with the best local stores and premium quality products.
             </p>
 
@@ -40,7 +42,7 @@ const Footer = () => {
 
           {/* Shopping Column */}
           <div className="col-span-1">
-            <h4 className="text-[11px] font-semibold text-slate-900 mb-3">
+            <h4 className="text-[12px] font-semibold text-slate-900 mb-3">
               Shopping
             </h4>
             <ul className="space-y-2">
@@ -53,7 +55,7 @@ const Footer = () => {
 
           {/* Support Column */}
           <div className="col-span-1">
-            <h4 className="text-[11px] font-semibold text-slate-900 mb-3">
+            <h4 className="text-[12px] font-semibold text-slate-900 mb-3">
               Support
             </h4>
             <ul className="space-y-2">
@@ -66,7 +68,7 @@ const Footer = () => {
 
           {/* Corporate Column */}
           <div className="col-span-1 lg:col-span-2 lg:pl-10">
-            <h4 className="text-[11px] font-semibold text-slate-900 mb-3">
+            <h4 className="text-[12px] font-semibold text-slate-900 mb-3">
               Our Company
             </h4>
             <ul className="space-y-2">
@@ -84,17 +86,17 @@ const Footer = () => {
         <div className="max-w-[1400px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           
           <div className="flex items-center gap-3">
-            <span className="text-slate-400 text-[10px]">
+            <span className="text-slate-400 text-[11px]">
               © {new Date().getFullYear()} Saby-Tinh
             </span>
             <span className="text-slate-200">|</span>
-            <span className="text-slate-400 text-[10px]">Reliable Platform</span>
+            <span className="text-slate-400 text-[11px]">Reliable Platform</span>
           </div>
 
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1.5 text-slate-500">
               <ShieldCheck size={12} className="text-indigo-500" />
-              <span className="text-[10px]">Secure Payments</span>
+              <span className="text-[11px]">Secure Payments</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -102,7 +104,7 @@ const Footer = () => {
                 <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative rounded-full h-1 w-1 bg-emerald-500"></span>
               </div>
-              <span className="text-[10px] text-emerald-600">Live</span>
+              <span className="text-[11px] text-emerald-600">Live</span>
             </div>
           </div>
 
@@ -118,7 +120,7 @@ const FooterLink = ({ href, children }) => (
   <li>
     <Link
       href={href}
-      className="text-[12px] text-slate-500 hover:text-indigo-600 transition-colors duration-200"
+      className="text-sm text-slate-500 hover:text-indigo-600 transition-colors duration-200"
     >
       {children}
     </Link>

@@ -13,6 +13,8 @@ import {
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useLanguageStore } from '@/stores/useLanguageStore';
+import { t } from '@/util/translations';
 
 function StoreInvoicesContent() {
   const searchParams = useSearchParams();
@@ -21,6 +23,7 @@ function StoreInvoicesContent() {
   
   const { invoices, meta, loading, fetchInvoices } = useInvoiceStore();
   const { stores, fetchStoreById } = useStore();
+  const { language } = useLanguageStore();
   
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('2');
@@ -65,7 +68,7 @@ function StoreInvoicesContent() {
   const totalValue = paidInvoices.reduce((sum, inv) => sum + parseFloat(inv.total_amount || 0), 0);
 
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-6xl mx-auto animate-in fade-in duration-500">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -79,9 +82,9 @@ function StoreInvoicesContent() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{store?.name || 'Merchant'} Registry</span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">{store?.name || 'Merchant'} Registry</span>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
                 Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
             </h1>
           </div>
@@ -94,7 +97,7 @@ function StoreInvoicesContent() {
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
             Export
           </button>
@@ -146,13 +149,13 @@ function StoreInvoicesContent() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50">
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Transaction ID</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment Status</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Net Amount</th>
-                <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Product Info</th>
-                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Order Status</th>
+                <th className="px-5 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Transaction ID', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Customer', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Date', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Payment Status', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">{t('Net Amount', language)}</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('Product Info', language)}</th>
+                <th className="px-5 py-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">{t('Order Status', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -162,8 +165,8 @@ function StoreInvoicesContent() {
                 <tr key={inv.id} className="hover:bg-slate-50/30 transition-colors group">
                   <td className="px-5 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-black text-indigo-600 tracking-tight">{inv.invoice_number}</span>
-                      <span className="text-[8px] font-black text-slate-300 uppercase">ID: {inv.id}</span>
+                      <span className="text-xs font-bold text-indigo-600 tracking-tight">{inv.invoice_number}</span>
+                      <span className="text-[8px] font-bold text-slate-300 uppercase">ID: {inv.id}</span>
                     </div>
                   </td>
                   <td className="px-4 py-4">
@@ -172,13 +175,13 @@ function StoreInvoicesContent() {
                       <span className="text-[9px] text-slate-400 font-medium truncate max-w-[120px]">{inv.order?.user?.email}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-[10px] font-black text-slate-400 uppercase">
+                  <td className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase">
                     {format(new Date(inv.created_at), 'MMM dd, yyyy')}
                   </td>
                   <td className="px-4 py-4">
                     <PaymentBadge status={inv.payment_status?.status || 'Pending'} />
                   </td>
-                  <td className="px-4 py-4 text-right text-xs font-black text-slate-900">
+                  <td className="px-4 py-4 text-right text-xs font-bold text-slate-900">
                     ${parseFloat(inv.total_amount || 0).toLocaleString()}
                   </td>
                   <td className="px-4 py-4">
@@ -200,7 +203,7 @@ function StoreInvoicesContent() {
 
         {/* Pagination */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Page {currentPage} of {meta.last_page}</span>
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Page {currentPage} of {meta.last_page}</span>
           <div className="flex gap-1">
             <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronLeft size={12} /></button>
             <button onClick={() => setCurrentPage(p => Math.min(meta.last_page, p+1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronRight size={12} /></button>
@@ -235,9 +238,9 @@ function StatCard({ label, value, icon: Icon, color, subText }) {
         <Icon size={14} strokeWidth={3} />
       </div>
       <div className="relative z-10">
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
         <div className="flex items-baseline gap-2">
-          <h3 className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+          <h3 className="text-xl font-bold text-slate-900 tracking-tighter leading-none">{value}</h3>
           {subText && <span className="text-[9px] font-bold text-slate-400">{subText}</span>}
         </div>
       </div>
@@ -250,11 +253,12 @@ function StatusBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const config = {
     delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    confirmed: "bg-emerald-50 text-emerald-600 border-emerald-100",
     shipped: "bg-blue-50 text-blue-600 border-blue-100",
     cancelled: "bg-slate-100 text-slate-400 border-slate-200",
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${config[norm] || "bg-orange-50 text-orange-600 border-orange-100"}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-bold uppercase tracking-widest ${config[norm] || "bg-orange-50 text-orange-600 border-orange-100"}`}>
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
       {status}
     </span>
@@ -269,7 +273,7 @@ function PaymentBadge({ status }) {
     failed: "text-rose-600 bg-rose-50 border-rose-100",
   };
   return (
-    <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${styles[norm] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
+    <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${styles[norm] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
       {status}
     </span>
   );

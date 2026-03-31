@@ -56,16 +56,6 @@ function AuthCallbackPage() {
         transition={{ duration: 0.5 }}
         className="flex flex-col items-center max-w-sm w-full text-center relative z-10 font-sans"
       >
-          <div className="flex flex-col items-center mb-8">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-              Saby-Tinh
-            </span>
-            <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mt-0.5">
-              System Initialization
-            </p>
-          </div>
-          <div className="w-full h-px bg-slate-100 my-2" />
-
         <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10 w-full flex flex-col items-center mt-5">
           <div className="relative mb-6">
             <Loader2 className="animate-spin w-8 h-8 text-indigo-600 relative z-10" />

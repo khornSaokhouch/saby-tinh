@@ -57,4 +57,25 @@ export const useShopOrderStore = create((set, get) => ({
       return { success: false, message: msg };
     }
   },
+
+  confirmOrder: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request(`/orders/${id}/confirm`, "POST");
+      if (res.success) {
+        set((state) => ({
+          orders: state.orders.map((o) => (o.id === id ? { ...o, ...res.data } : o)),
+          loading: false,
+        }));
+        return { success: true, message: res.message };
+      } else {
+        set({ error: res.message, loading: false });
+        return { success: false, message: res.message };
+      }
+    } catch (err) {
+      const msg = err?.response?.data?.message || err.message || "Failed to confirm order";
+      set({ error: msg, loading: false });
+      return { success: false, message: msg };
+    }
+  },
 }));

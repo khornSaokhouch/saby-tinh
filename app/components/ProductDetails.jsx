@@ -85,7 +85,7 @@ export default function ProductDetails({ productSlug }) {
   const currentStock = product?.items?.[0]?.quantity_in_stock || 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen mt-10">
       <main className="max-w-7xl mx-auto px-4">
         
         {/* Top Nav - Slim */}

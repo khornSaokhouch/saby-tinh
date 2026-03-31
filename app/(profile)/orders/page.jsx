@@ -36,7 +36,7 @@ export default function OrdersPage() {
 
       if (activeFilter === "pending") return matchesSearch && ["pending", "processing", "shipped"].includes(orderStatus);
       if (activeFilter === "paid") return matchesSearch && (paymentStatus === "paid" || paymentStatus === "success");
-      if (activeFilter === "completed") return matchesSearch && ["completed", "delivered"].includes(orderStatus);
+      if (activeFilter === "completed") return matchesSearch && ["completed", "confirmed", "delivered"].includes(orderStatus);
       
       return matchesSearch;
     });
@@ -212,6 +212,7 @@ function StatusBadge({ status }) {
   const s = status?.toLowerCase();
   const styles = {
     pending: "bg-slate-100 text-slate-600",
+    confirmed: "bg-emerald-50 text-emerald-600",
     completed: "bg-emerald-50 text-emerald-600",
     processing: "bg-indigo-50 text-indigo-600",
     shipped: "bg-blue-50 text-blue-600",

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, ArrowRight, ArrowLeft, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -40,21 +40,16 @@ export default function ForgotPasswordPage() {
         transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
         className="w-full max-w-[420px]"
       >
-        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10">
+        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10 relative">
+
+          {/* ── Back Button ── */}
+          <Link href="/auth/login" className="absolute top-6 left-6 flex items-center gap-1.5 text-slate-400 hover:text-slate-900 transition-colors group">
+            <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-[11px] font-bold uppercase tracking-widest">Back</span>
+          </Link>
 
           {/* ── Header ── */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="mb-4">
-              <Link href="/" className="block">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Saby-Tinh
-                </span>
-                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mt-0.5">
-                  Management Console
-                </p>
-              </Link>
-            </div>
-            <div className="w-full h-px bg-slate-100 my-2" />
             <div className="mt-5">
               <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 mx-auto mb-4 shadow-sm">
                 <Mail size={24} strokeWidth={2} />

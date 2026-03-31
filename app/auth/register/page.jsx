@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
-import { User, Mail, Lock, Phone, Loader2, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, Phone, Loader2, Eye, EyeOff, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function RegisterPage() {
@@ -48,23 +48,19 @@ export default function RegisterPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-        className="w-full max-w-[440px]"
+        className="w-full max-w-[520px]"
       >
-        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10">
+        <div className="bg-white rounded-[32px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 p-8 md:p-10 relative">
+
+          {/* ── Back Button ── */}
+          <Link href="/" className="absolute top-6 left-6 flex items-center gap-1.5 text-slate-400 hover:text-slate-900 transition-colors group">
+            <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-[11px] font-bold uppercase tracking-widest">Back</span>
+          </Link>
 
           {/* ── Header ── */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="mb-4">
-              <Link href="/" className="block">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Saby-Tinh
-                </span>
-                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mt-0.5">
-                  Join the Console
-                </p>
-              </Link>
-            </div>
-            <div className="w-full h-px bg-slate-100 my-2" />
+         
             <div className="mt-4">
               <h2 className="text-xl font-black text-slate-900 tracking-tight">Create your account</h2>
               <p className="text-[12px] text-slate-400 font-bold mt-1">Fill in your details to get started</p>

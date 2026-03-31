@@ -11,18 +11,33 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
 import { useAuthStore } from '@/app/stores/authStore';
+import { useOrderStatusStore } from '@/app/stores/useOrderStatusStore';
+import { usePaymentStatusStore } from '@/app/stores/usePaymentStatusStore';
 
 export default function OwnerOrdersPage() {
   const { user } = useAuthStore();
-  const { orders, fetchOrders, loading, error } = useShopOrderStore();
+  const { orders, fetchOrders, loading: ordersLoading, error, confirmOrder } = useShopOrderStore();
+  const { orderStatuses, fetchOrderStatuses } = useOrderStatusStore();
+  const { paymentStatuses, fetchPaymentStatuses } = usePaymentStatusStore();
+  
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedDate, setSelectedDate] = useState('All Time');
   const [selectedPayment, setSelectedPayment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchOrders();
-  }, [fetchOrders]);
+    fetchOrderStatuses();
+    fetchPaymentStatuses();
+  }, [fetchOrders, fetchOrderStatuses, fetchPaymentStatuses]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatus, selectedDate, selectedPayment, searchQuery]);
 
   // Filter Logic
   const filteredOrders = useMemo(() => {
@@ -32,15 +47,8 @@ export default function OwnerOrdersPage() {
       const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;
       
       // Payment Filter
-      const paymentStatus = order.payment_status?.status || 'Pending';
-      let matchesPayment = selectedPayment === 'All';
-      if (!matchesPayment) {
-        if (selectedPayment === 'Paid') {
-          matchesPayment = paymentStatus === 'Success';
-        } else if (selectedPayment === 'Unpaid') {
-          matchesPayment = paymentStatus !== 'Success';
-        }
-      }
+      const pStatus = order.payment_status?.status || 'Pending';
+      const matchesPayment = selectedPayment === 'All' || pStatus === selectedPayment;
 
       // Date Filter
       const orderDate = new Date(order.created_at);
@@ -66,6 +74,13 @@ export default function OwnerOrdersPage() {
       return matchesStatus && matchesPayment && matchesDate && matchesSearch;
     });
   }, [orders, selectedStatus, selectedPayment, selectedDate, searchQuery]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredOrders.slice(start, start + itemsPerPage);
+  }, [filteredOrders, currentPage]);
 
   // Metric Calculations
   const metrics = useMemo(() => {
@@ -144,13 +159,13 @@ export default function OwnerOrdersPage() {
             <div className="flex flex-wrap items-center gap-3">
               <FilterSelect 
                 label="Status"
-                options={['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled']} 
+                options={['All', ...orderStatuses.map(s => s.status)]} 
                 value={selectedStatus} 
                 onChange={setSelectedStatus}
               />
               <FilterSelect 
                 label="Payment"
-                options={['All', 'Paid', 'Unpaid']} 
+                options={['All', ...paymentStatuses.map(s => s.status)]} 
                 value={selectedPayment} 
                 onChange={setSelectedPayment}
               />
@@ -185,7 +200,7 @@ export default function OwnerOrdersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {loading && orders.length === 0 ? (
+              {ordersLoading && orders.length === 0 ? (
                 <tr>
                    <td colSpan="7" className="py-20 text-center">
                       <div className="flex flex-col items-center gap-3">
@@ -194,7 +209,7 @@ export default function OwnerOrdersPage() {
                       </div>
                    </td>
                 </tr>
-              ) : filteredOrders.length === 0 ? (
+              ) : paginatedOrders.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-20 text-center">
                     <div className="flex flex-col items-center gap-2">
@@ -205,7 +220,7 @@ export default function OwnerOrdersPage() {
                     </div>
                   </td>
                 </tr>
-              ) : filteredOrders.map((order, idx) => (
+              ) : paginatedOrders.map((order, idx) => (
                 <motion.tr 
                   key={idx}
                   initial={{ opacity: 0, y: 10 }}
@@ -254,9 +269,22 @@ export default function OwnerOrdersPage() {
                       >
                         <Eye size={14} strokeWidth={3} />
                       </Link>
-                      <button className="p-1.5 bg-slate-900 text-white hover:bg-black rounded-lg shadow-sm active:scale-95 transition-all">
-                        <MoreHorizontal size={14} strokeWidth={3} />
-                      </button>
+                      
+                      {order.order_status?.status === 'Pending' && (
+                        <button 
+                          onClick={() => confirmOrder(order.id)}
+                          className="px-3 py-1.5 bg-emerald-500 text-white hover:bg-emerald-600 rounded-lg shadow-sm shadow-emerald-100 active:scale-95 transition-all flex items-center gap-1.5"
+                        >
+                          <CheckCircle2 size={12} strokeWidth={3} />
+                          <span className="text-[9px] font-black uppercase tracking-widest">Confirm</span>
+                        </button>
+                      )}
+
+                      {order.order_status?.status !== 'Pending' && (
+                        <button className="p-1.5 bg-slate-50 text-slate-300 rounded-lg border border-slate-100 cursor-not-allowed">
+                          <MoreHorizontal size={14} strokeWidth={3} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </motion.tr>
@@ -268,16 +296,26 @@ export default function OwnerOrdersPage() {
         {/* Footer / Pagination */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/20">
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-            Results: <span className="text-indigo-600">{filteredOrders.length}</span>
+            Results: <span className="text-indigo-600">{filteredOrders.length}</span> (Page {currentPage} of {totalPages || 1})
           </p>
           
           <div className="flex items-center gap-1.5">
-            <button className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-30" disabled>
-              <ChevronLeft size={14} />
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed group"
+            >
+              <ChevronLeft size={14} className="group-active:scale-90 transition-transform" />
             </button>
-            <div className="px-2 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-lg shadow-sm">1</div>
-            <button className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-30" disabled>
-              <ChevronRight size={14} />
+            <div className="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-lg shadow-md shadow-indigo-100">
+              {currentPage}
+            </div>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed group"
+            >
+              <ChevronRight size={14} className="group-active:scale-90 transition-transform" />
             </button>
           </div>
         </div>
@@ -316,6 +354,7 @@ function StatusBadge({ status }) {
     Delivered: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
     Shipped: { icon: Truck, style: "bg-blue-50 text-blue-600 border-blue-100" },
     Processing: { icon: Clock, style: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+    Confirmed: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
     Pending: { icon: Clock, style: "bg-orange-50 text-orange-600 border-orange-100" },
     Cancelled: { icon: XCircle, style: "bg-slate-100 text-slate-400 border-slate-200" },
   };
@@ -331,7 +370,7 @@ function StatusBadge({ status }) {
 }
 
 function PaymentBadge({ status }) {
-  const isPaid = status === 'Success';
+  const isPaid = status === 'Paid' || status === 'Success';
   
   const style = isPaid 
     ? "text-emerald-600 bg-emerald-50 border-emerald-100" 

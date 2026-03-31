@@ -45,10 +45,10 @@ export default function UserReviewFormModal({ isOpen, onClose, orderLine, onSave
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden border border-slate-100"
+          className="bg-white w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden border border-slate-100"
         >
           {/* Header */}
-          <div className="p-8 border-b border-slate-50 flex items-center justify-between relative">
+          <div className="p-6 border-b border-slate-50 flex items-center justify-between relative">
             <div className="flex items-center gap-4">
                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
                   <MessageSquare size={22} />
@@ -66,23 +66,23 @@ export default function UserReviewFormModal({ isOpen, onClose, orderLine, onSave
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-10 space-y-10">
+          <form onSubmit={handleSubmit} className="p-7 space-y-7">
             {/* Product Summary */}
-            <div className="flex items-center gap-5 p-4 bg-slate-50 rounded-3xl border border-slate-100">
-               <div className="w-16 h-16 bg-white rounded-xl border border-slate-100 p-2 shrink-0">
+            <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+               <div className="w-12 h-12 bg-white rounded-lg border border-slate-100 p-1.5 shrink-0">
                   <img src={prod.images?.[0]?.image || "/placeholder.svg"} alt={prod.name} className="w-full h-full object-contain" />
                </div>
                <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900 truncate">{prod.name}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                    {orderLine.product_item_variant?.color?.name} / {orderLine.product_item_variant?.size?.name}
+                  <p className="text-xs font-bold text-slate-900 truncate mb-1">{prod.name}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                    {orderLine.product_item_variant?.variant_name || "Standard Flavor"}
                   </p>
                </div>
             </div>
 
             {/* Star Interaction */}
             <div className="flex flex-col items-center">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Select Rating</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">How was the product?</p>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -94,7 +94,7 @@ export default function UserReviewFormModal({ isOpen, onClose, orderLine, onSave
                     className="group transition-all active:scale-90"
                   >
                     <Star 
-                      size={42} 
+                      size={32} 
                       className={`transition-all duration-300 ${
                         (hoverRating || rating) >= star 
                           ? 'fill-amber-400 stroke-amber-400 scale-110' 
@@ -104,19 +104,19 @@ export default function UserReviewFormModal({ isOpen, onClose, orderLine, onSave
                   </button>
                 ))}
               </div>
-              <p className="mt-4 text-xs font-black text-indigo-600 uppercase tracking-widest">
+              <p className="mt-4 text-xs font-bold text-emerald-600 uppercase tracking-widest">
                 {rating === 5 ? 'Excellent' : rating === 4 ? 'Very Good' : rating === 3 ? 'Good' : rating === 2 ? 'Fair' : rating === 1 ? 'Poor' : 'Rating Required'}
               </p>
             </div>
 
             {/* Text Area */}
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Your Hardware Experience</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Write your review</label>
               <textarea
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 placeholder="Share your technical findings with the community..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-[28px] py-5 px-6 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 transition-all outline-none min-h-[140px] resize-none"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl py-3.5 px-4 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-indigo-500 transition-all outline-none min-h-[100px] resize-none"
               />
             </div>
 
@@ -124,13 +124,13 @@ export default function UserReviewFormModal({ isOpen, onClose, orderLine, onSave
             <button
               type="submit"
               disabled={loading || rating === 0}
-              className="w-full py-5 bg-slate-900 text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-indigo-600 transition-all flex items-center justify-center gap-3 disabled:opacity-40 active:scale-[0.98] group"
+              className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-md hover:bg-indigo-600 transition-all flex items-center justify-center gap-3 disabled:opacity-40 active:scale-[0.98] group"
             >
               {loading ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
                 <>
-                  Transmit Feedback <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  Submit Review <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </>
               )}
             </button>
