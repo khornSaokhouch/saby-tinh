@@ -8,10 +8,8 @@ import {
   Layers, Calendar, ChevronDown, Image as ImageIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useShopOrderStore } from '@/stores/useShopOrderStore';
-import { useProductStore } from '@/stores/useProductStore';
+import { useReportByStore } from '@/stores/useReportByStore';
 import { useStore } from '@/stores/useStore';
-import { useUserStore } from '@/stores/userStore';
 
 // --- HELPERS ---
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -75,137 +73,94 @@ function HBarChart({ data, max }) {
 }
 
 export default function OwnerAnalyticsPage() {
-  const { orders, loading: ordersLoading, fetchOrders } = useShopOrderStore();
-  const { products, loading: productsLoading, fetchProducts } = useProductStore();
+  const { analytics, loading: analyticsLoading, fetchAnalytics } = useReportByStore();
   const { stores, fetchStores } = useStore();
-  const { user, fetchProfile } = useUserStore();
 
   const [period, setPeriod] = useState('This Year');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const activeStore = stores?.[0]; // Assuming owner has one store
+
   useEffect(() => {
-    fetchProfile();
-    fetchOrders();
-    fetchProducts();
     fetchStores();
-  }, [fetchProfile, fetchOrders, fetchProducts, fetchStores]);
+  }, [fetchStores]);
+
+  useEffect(() => {
+    if (activeStore?.id) {
+      const rangeMap = {
+        'Last 7 Days': '7days',
+        'Last 30 Days': '30days',
+        'This Month': 'thisMonth',
+        'This Year': 'thisYear'
+      };
+      fetchAnalytics(activeStore.id, rangeMap[period] || 'thisYear');
+    }
+  }, [activeStore?.id, period, fetchAnalytics]);
 
   const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await Promise.all([fetchOrders(), fetchProducts()]);
-    setIsRefreshing(false);
+    if (activeStore?.id) {
+        setIsRefreshing(true);
+        const rangeMap = {
+            'Last 7 Days': '7days',
+            'Last 30 Days': '30days',
+            'This Month': 'thisMonth',
+            'This Year': 'thisYear'
+        };
+        await fetchAnalytics(activeStore.id, rangeMap[period] || 'thisYear');
+        setIsRefreshing(false);
+    }
   };
 
-  const loading = ordersLoading || productsLoading;
-
-  // --- Filter orders by period ---
-  const filteredOrders = useMemo(() => {
-    const now = new Date();
-    return orders.filter(o => {
-      const d = new Date(o.order_date || o.created_at);
-      if (isNaN(d)) return true;
-      if (period === 'This Month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-      if (period === 'Last 30 Days') return (now - d) / 86400000 <= 30;
-      if (period === 'Last 7 Days') return (now - d) / 86400000 <= 7;
-      return d.getFullYear() === now.getFullYear(); // This Year
-    });
-  }, [orders, period]);
+  const loading = analyticsLoading;
 
   // --- Core KPIs ---
   const kpis = useMemo(() => {
-    const revenue = filteredOrders.reduce((a, o) => a + parseFloat(o.order_total || 0), 0);
-    const count   = filteredOrders.length;
-    const avg     = count > 0 ? revenue / count : 0;
-    const paid    = filteredOrders.filter(o => (o.payment_status?.status || '').toLowerCase().includes('success')).length;
-    const pending = filteredOrders.filter(o => (o.order_status?.status || '').toLowerCase().includes('pending')).length;
-    return { revenue, count, avg, paid, pending };
-  }, [filteredOrders]);
+    if (!analytics?.kpis) return { revenue: 0, count: 0, avg: 0, paid: 0, pending: 0 };
+    return { 
+        revenue: analytics.kpis.revenue, 
+        count: analytics.kpis.orders, 
+        avg: analytics.kpis.avg, 
+        paid: analytics.kpis.paid, 
+        pending: analytics.kpis.pending 
+    };
+  }, [analytics]);
 
   // --- Monthly Revenue Chart ---
-  const monthlyRevenue = useMemo(() => {
-    const buckets = Array(12).fill(0);
-    filteredOrders.forEach(o => {
-      const d = new Date(o.order_date || o.created_at);
-      if (!isNaN(d)) buckets[d.getMonth()] += parseFloat(o.order_total || 0);
-    });
-    return buckets;
-  }, [filteredOrders]);
-
+  const monthlyRevenue = useMemo(() => analytics?.monthly_revenue || Array(12).fill(0), [analytics]);
   const maxMonthRev = Math.max(...monthlyRevenue, 1);
 
   // --- Monthly Order Count ---
-  const monthlyOrders = useMemo(() => {
-    const buckets = Array(12).fill(0);
-    filteredOrders.forEach(o => {
-      const d = new Date(o.order_date || o.created_at);
-      if (!isNaN(d)) buckets[d.getMonth()]++;
-    });
-    return buckets;
-  }, [filteredOrders]);
-
+  const monthlyOrders = useMemo(() => analytics?.monthly_orders || Array(12).fill(0), [analytics]);
   const maxMonthOrd = Math.max(...monthlyOrders, 1);
 
   // --- Order Status Breakdown ---
   const statusBreakdown = useMemo(() => {
-    const map = {};
-    filteredOrders.forEach(o => {
-      const s = o.order_status?.status || 'Pending';
-      map[s] = (map[s] || 0) + 1;
-    });
+    const data = analytics?.status_breakdown || [];
     const colors = { Pending: 'bg-amber-400', Processing: 'bg-indigo-400', Shipped: 'bg-blue-400', Delivered: 'bg-emerald-400', Cancelled: 'bg-slate-300' };
-    return Object.entries(map)
-      .sort((a, b) => b[1] - a[1])
-      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-200' }));
-  }, [filteredOrders]);
+    return data.map(item => ({ ...item, color: colors[item.label] || 'bg-slate-200' }));
+  }, [analytics]);
 
   const maxStatus = Math.max(...statusBreakdown.map(s => s.value), 1);
 
   // --- Payment Breakdown ---
   const paymentBreakdown = useMemo(() => {
-    const map = {};
-    filteredOrders.forEach(o => {
-      const s = o.payment_status?.status || 'Pending';
-      map[s] = (map[s] || 0) + 1;
-    });
-    const colors = { Success: 'bg-emerald-400', Pending: 'bg-amber-400', Failed: 'bg-rose-400', Refunded: 'bg-slate-300' };
-    return Object.entries(map)
-      .sort((a, b) => b[1] - a[1])
-      .map(([label, value]) => ({ label, value, color: colors[label] || 'bg-slate-200' }));
-  }, [filteredOrders]);
+    const data = analytics?.payment_breakdown || [];
+    const colors = { Paid: 'bg-emerald-400', Pending: 'bg-amber-400', Failed: 'bg-rose-400', Refunded: 'bg-slate-300' };
+    return data.map(item => ({ ...item, color: colors[item.label] || 'bg-slate-200' }));
+  }, [analytics]);
 
   const maxPayment = Math.max(...paymentBreakdown.map(p => p.value), 1);
 
-  // --- Top Products by Revenue ---
-  const topProducts = useMemo(() => {
-    const map = {};
-    filteredOrders.forEach(o => {
-      (o.order_lines || []).forEach(line => {
-        const product = line?.product_item_variant?.product_item?.product;
-        if (!product) return;
-        const id = product.id;
-        if (!map[id]) map[id] = { product, revenue: 0, units: 0 };
-        map[id].revenue += parseFloat(line.price || 0) * parseInt(line.quantity || 1);
-        map[id].units += parseInt(line.quantity || 1);
-      });
-    });
-    return Object.values(map).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-  }, [filteredOrders]);
-
+  // --- Top Products ---
+  const topProducts = useMemo(() => analytics?.top_products || [], [analytics]);
   const maxProductRev = Math.max(...topProducts.map(p => p.revenue), 1);
 
   // --- Category Breakdown ---
   const categoryBreakdown = useMemo(() => {
-    const map = {};
-    products.forEach(p => {
-      const cat = p.category?.name || 'Uncategorized';
-      map[cat] = (map[cat] || 0) + 1;
-    });
+    const data = analytics?.category_breakdown || [];
     const palette = ['bg-indigo-500','bg-rose-500','bg-amber-500','bg-emerald-500','bg-blue-500'];
-    return Object.entries(map)
-      .sort((a,b) => b[1]-a[1])
-      .slice(0,5)
-      .map(([label, value], i) => ({ label, value, color: palette[i % palette.length] }));
-  }, [products]);
+    return data.map((item, i) => ({ ...item, color: palette[i % palette.length] }));
+  }, [analytics]);
 
   const maxCat = Math.max(...categoryBreakdown.map(c => c.value), 1);
 
@@ -380,7 +335,7 @@ export default function OwnerAnalyticsPage() {
                     <p className="text-[8px] font-black text-slate-300 mt-1 uppercase tracking-tighter">Volume by category</p>
                 </div>
             </div>
-            {productsLoading ? (
+            {loading ? (
                 <div className="space-y-2">{[...Array(4)].map((_,i) => <div key={i} className="h-3 bg-slate-50 rounded animate-pulse" />)}</div>
             ) : categoryBreakdown.length > 0 ? (
                 <HBarChart data={categoryBreakdown} max={maxCat} />
@@ -414,12 +369,11 @@ export default function OwnerAnalyticsPage() {
                 [...Array(3)].map((_, i) => (
                   <tr key={i}><td colSpan={4} className="px-6 py-4"><div className="h-10 bg-slate-50 rounded-xl animate-pulse" /></td></tr>
                 ))
-              ) : topProducts.length > 0 ? topProducts.map(({ product, revenue, units }, i) => {
-                const img = product?.images?.find(x => x.is_primary === 1)?.image || product?.images?.[0]?.image;
+              ) : topProducts.length > 0 ? topProducts.map(({ id, name, category, image, revenue, units }, i) => {
                 const pct = Math.round((revenue / maxProductRev) * 100);
                 return (
                   <motion.tr
-                    key={product.id}
+                    key={id}
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
@@ -428,11 +382,11 @@ export default function OwnerAnalyticsPage() {
                     <td className="px-6 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                          {img ? <img src={img} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-slate-200" />}
+                          {image ? <img src={image} alt={name} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-slate-200" />}
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <p className="text-[11px] font-black text-slate-900 truncate tracking-tight uppercase leading-tight">{product.name}</p>
-                          <p className="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">{product.category?.name || 'GENERIC'}</p>
+                          <p className="text-[11px] font-black text-slate-900 truncate tracking-tight uppercase leading-tight">{name}</p>
+                          <p className="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">{category || 'GENERIC'}</p>
                         </div>
                       </div>
                     </td>

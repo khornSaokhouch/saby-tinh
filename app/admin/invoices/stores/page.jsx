@@ -1,35 +1,55 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import useInvoiceStore from '@/stores/useInvoiceStore';
 import { useStore } from '@/stores/useStore';
-import { 
-  Search, Filter, Download, Eye, MoreHorizontal, 
-  CheckCircle2, Clock, Truck, XCircle, ChevronLeft, 
-  ChevronRight, Calendar, ChevronDown, ShoppingBag, 
-  DollarSign, Activity, Loader2, AlertCircle, RefreshCw
+import usePayoutStore from '@/stores/usePayoutStore';
+import {
+  Search, Download, Eye, CheckCircle2, Clock, Truck, XCircle,
+  ChevronLeft, ChevronRight, ShoppingBag, DollarSign, Activity,
+  Loader2, AlertCircle, RefreshCw, ChevronDown, Banknote, X,
+  ArrowUpRight, ListChecks, Wallet
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 import { t } from '@/util/translations';
+import PayoutModal from '@/app/components/payment/PayoutModal';
 
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+const STATUS_MAP = { All: '', Paid: '2', Pending: '1', Cancelled: '3' };
+const REVERSE_STATUS = Object.fromEntries(Object.entries(STATUS_MAP).map(([k, v]) => [v, k]));
+
+// ---------------------------------------------------------------------------
+// Main content
+// ---------------------------------------------------------------------------
 function StoreInvoicesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const storeId = searchParams.get('store_id');
-  
+
   const { invoices, meta, loading, fetchInvoices } = useInvoiceStore();
   const { stores, fetchStoreById } = useStore();
   const { language } = useLanguageStore();
-  
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('2');
   const [currentPage, setCurrentPage] = useState(1);
-  
-  const store = stores.find(s => s.id == storeId);
+
+  // Payout modal state
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+
+  const store = stores.find((s) => s.id == storeId);
+
+  const loadInvoices = useCallback(() => {
+    const params = { store_id: storeId, page: currentPage, per_page: 15, search };
+    if (statusFilter) params.status = statusFilter;
+    fetchInvoices(params);
+  }, [storeId, currentPage, statusFilter, search]);
 
   useEffect(() => {
     if (storeId) {
@@ -38,68 +58,87 @@ function StoreInvoicesContent() {
     }
   }, [storeId, currentPage, statusFilter]);
 
-  const loadInvoices = () => {
-    const params = {
-      store_id: storeId,
-      page: currentPage,
-      per_page: 15,
-      search: search,
-    };
-    if (statusFilter) params.status = statusFilter;
-    fetchInvoices(params);
-  };
-
   if (!storeId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
         <div className="text-center">
-            <AlertCircle className="mx-auto text-rose-500 mb-4" size={48} />
-            <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Invalid Access</h2>
-            <Link href="/admin/invoices" className="text-[10px] font-black uppercase text-indigo-600 border-b border-indigo-200 pb-0.5">Return to Registry</Link>
+          <AlertCircle className="mx-auto text-rose-500 mb-4" size={48} />
+          <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Invalid Access</h2>
+          <Link href="/admin/invoices" className="text-[10px] font-black uppercase text-indigo-600 border-b border-indigo-200 pb-0.5">
+            Return to Registry
+          </Link>
         </div>
       </div>
     );
   }
 
-  const paidInvoices = invoices.filter(inv => {
+  // Derived KPIs
+  const paidInvoices = invoices.filter((inv) => {
     const s = inv.payment_status?.status?.toLowerCase();
     return s === 'paid' || s === 'success';
   });
   const totalValue = paidInvoices.reduce((sum, inv) => sum + parseFloat(inv.total_amount || 0), 0);
 
+  // Payout: eligible = paid AND confirmed invoices on current page
+  const eligibleForPayout = invoices.filter((inv) => {
+    const pStatus = inv.payment_status?.status?.toLowerCase();
+    const oStatus = inv.order?.order_status?.status?.toLowerCase();
+    return (pStatus === 'paid' || pStatus === 'success') && oStatus === 'confirmed';
+  });
+  const payoutTotal = eligibleForPayout.reduce((sum, inv) => sum + parseFloat(inv.total_amount || 0), 0);
+  const hasEligible = eligibleForPayout.length > 0;
+
   return (
     <div className="space-y-5 pb-8 font-sans max-w-6xl mx-auto animate-in fade-in duration-500">
-      
+
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <button 
-              onClick={() => router.back()}
-              className="p-2 border border-slate-200 rounded-lg hover:bg-white text-slate-500 transition-all active:scale-95 shadow-sm"
+          <button
+            onClick={() => router.back()}
+            className="p-2 border border-slate-200 rounded-lg hover:bg-white text-slate-500 transition-all active:scale-95 shadow-sm"
           >
-              <ChevronLeft size={14} strokeWidth={3} />
+            <ChevronLeft size={14} strokeWidth={3} />
           </button>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">{store?.name || 'Merchant'} Registry</span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                {store?.name || 'Merchant'} Registry
+              </span>
             </div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
-                Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
+              Store <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">Payments</span>
             </h1>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={loadInvoices}
             className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-slate-800 transition-all shadow-md uppercase tracking-widest active:scale-95">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold hover:bg-slate-50 text-slate-600 transition-all shadow-sm uppercase tracking-widest active:scale-95">
             <Download size={14} strokeWidth={3} />
             Export
+          </button>
+          {/* ── PAYOUT BUTTON ── */}
+          <button
+            onClick={() => setShowPayoutModal(true)}
+            disabled={!hasEligible}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md ${
+              hasEligible
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:opacity-90'
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <Wallet size={14} strokeWidth={3} />
+            Payout
+            {hasEligible && (
+              <span className="ml-1 bg-white/20 rounded px-1 text-[9px]">{eligibleForPayout.length}</span>
+            )}
           </button>
         </div>
       </div>
@@ -108,20 +147,51 @@ function StoreInvoicesContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Orders" value={meta.total.toLocaleString()} icon={ShoppingBag} color="indigo" subText="Transactions" />
         <StatCard label="Status" value={paidInvoices.length.toString()} icon={CheckCircle2} color="emerald" subText="Completed" />
-        <StatCard label="Earnings" value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} icon={DollarSign} color="rose" subText="Net Profit" />
+        <StatCard
+          label="Earnings"
+          value={`$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          icon={DollarSign}
+          color="rose"
+          subText="Net Profit"
+        />
         <StatCard label="Volume" value="Live" icon={Activity} color="blue" subText="Real-time" />
       </div>
 
+      {/* --- PAYOUT SUMMARY BANNER (when paid invoices exist) --- */}
+      {hasEligible && (
+        <div className="flex items-center justify-between bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl px-5 py-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow">
+              <Banknote size={15} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Payout Eligible</p>
+              <p className="text-sm font-bold text-slate-900">
+                {eligibleForPayout.length} invoice{eligibleForPayout.length > 1 ? 's' : ''}
+                <span className="mx-2 text-slate-300">·</span>
+                <span className="text-emerald-600">${payoutTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD</span>
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowPayoutModal(true)}
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors"
+          >
+            Process <ArrowUpRight size={12} />
+          </button>
+        </div>
+      )}
+
       {/* --- TABLE CONTAINER --- */}
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-        
+
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row gap-3 justify-between items-center">
           <div className="relative w-full sm:w-64 group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={13} />
-            <input 
-              type="text" 
-              placeholder="Invoice #..." 
+            <input
+              type="text"
+              placeholder="Invoice #..."
               className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-transparent rounded-lg text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-100 transition-all placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -130,17 +200,13 @@ function StoreInvoicesContent() {
           </div>
 
           <div className="flex items-center gap-2">
-             <FilterSelect 
-               options={['All', 'Paid', 'Pending', 'Cancelled']} 
-               value={statusFilter === '2' ? 'Paid' : statusFilter === '1' ? 'Pending' : statusFilter === '3' ? 'Cancelled' : 'All'} 
-               onChange={(val) => {
-                  const mapping = { 'All': '', 'Paid': '2', 'Pending': '1', 'Cancelled': '3' };
-                  setStatusFilter(mapping[val] || '');
-                  setCurrentPage(1);
-               }}
-             />
-             <div className="h-4 w-px bg-slate-200 mx-1"></div>
-             <FilterSelect options={['Last 30 Days', 'This Year']} value="Last 30 Days" onChange={() => {}} />
+            <FilterSelect
+              options={['All', 'Paid', 'Pending', 'Cancelled']}
+              value={REVERSE_STATUS[statusFilter] || 'All'}
+              onChange={(val) => { setStatusFilter(STATUS_MAP[val] ?? ''); setCurrentPage(1); }}
+            />
+            <div className="h-4 w-px bg-slate-200 mx-1" />
+            <FilterSelect options={['Last 30 Days', 'This Year']} value="Last 30 Days" onChange={() => {}} />
           </div>
         </div>
 
@@ -160,77 +226,130 @@ function StoreInvoicesContent() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">Syncing Registry...</td></tr>
-              ) : invoices.map((inv, idx) => (
-                <tr key={inv.id} className="hover:bg-slate-50/30 transition-colors group">
-                  <td className="px-5 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-indigo-600 tracking-tight">{inv.invoice_number}</span>
-                      <span className="text-[8px] font-bold text-slate-300 uppercase">ID: {inv.id}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-700">{inv.order?.user?.name || 'Guest'}</span>
-                      <span className="text-[9px] text-slate-400 font-medium truncate max-w-[120px]">{inv.order?.user?.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase">
-                    {format(new Date(inv.created_at), 'MMM dd, yyyy')}
-                  </td>
-                  <td className="px-4 py-4">
-                    <PaymentBadge status={inv.payment_status?.status || 'Pending'} />
-                  </td>
-                  <td className="px-4 py-4 text-right text-xs font-bold text-slate-900">
-                    ${parseFloat(inv.total_amount || 0).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-2 max-w-[180px]">
-                      <div className="w-8 h-8 rounded-lg border border-slate-100 bg-slate-50 shrink-0 overflow-hidden">
-                        <img src={inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.images?.[0]?.image || '/placeholder.png'} className="w-full h-full object-cover" />
-                      </div>
-                      <span className="text-[10px] font-bold text-slate-500 truncate">{inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.name || 'Item'}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <StatusBadge status={inv.order?.order_status?.status || 'Processing'} />
+                <tr>
+                  <td colSpan="7" className="py-20 text-center text-[10px] font-black text-slate-400 uppercase animate-pulse">
+                    Syncing Registry...
                   </td>
                 </tr>
-              ))}
+              ) : invoices.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="py-16 text-center text-[10px] font-bold text-slate-400 uppercase">
+                    No invoices found.
+                  </td>
+                </tr>
+              ) : (
+                invoices.map((inv) => {
+                  const isPaid = ['paid', 'success'].includes(inv.payment_status?.status?.toLowerCase());
+                  return (
+                    <tr key={inv.id} className={`hover:bg-slate-50/30 transition-colors group ${isPaid ? 'bg-emerald-50/10' : ''}`}>
+                      <td className="px-5 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-indigo-600 tracking-tight">{inv.invoice_number}</span>
+                          <span className="text-[8px] font-bold text-slate-300 uppercase">ID: {inv.id}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-700">{inv.order?.user?.name || 'Guest'}</span>
+                          <span className="text-[9px] text-slate-400 font-medium truncate max-w-[120px]">{inv.order?.user?.email}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase">
+                        {format(new Date(inv.created_at), 'MMM dd, yyyy')}
+                      </td>
+                      <td className="px-4 py-4">
+                        <PaymentBadge status={inv.payment_status?.status || 'Pending'} />
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <span className={`text-xs font-bold ${isPaid ? 'text-emerald-700' : 'text-slate-900'}`}>
+                          ${parseFloat(inv.total_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-2 max-w-[180px]">
+                          <div className="w-8 h-8 rounded-lg border border-slate-100 bg-slate-50 shrink-0 overflow-hidden">
+                            <img
+                              src={inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.images?.[0]?.image || '/placeholder.png'}
+                              className="w-full h-full object-cover"
+                              alt=""
+                            />
+                          </div>
+                          <span className="text-[10px] font-bold text-slate-500 truncate">
+                            {inv.order?.order_lines?.[0]?.product_item_variant?.product_item?.product?.name || 'Item'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <StatusBadge status={inv.order?.order_status?.status || 'Processing'} />
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
-          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Page {currentPage} of {meta.last_page}</span>
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+            Page {currentPage} of {meta.last_page}
+          </span>
           <div className="flex gap-1">
-            <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronLeft size={12} /></button>
-            <button onClick={() => setCurrentPage(p => Math.min(meta.last_page, p+1))} className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all"><ChevronRight size={12} /></button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+              className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all disabled:opacity-40"
+            >
+              <ChevronLeft size={12} />
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(meta.last_page, p + 1))}
+              disabled={currentPage >= meta.last_page}
+              className="p-1.5 border border-slate-200 rounded-md hover:bg-white transition-all disabled:opacity-40"
+            >
+              <ChevronRight size={12} />
+            </button>
           </div>
         </div>
-
       </div>
+
+      {/* --- PAYOUT MODAL --- */}
+      <AnimatePresence>
+        {showPayoutModal && (
+          <PayoutModal
+            store={store}
+            invoices={eligibleForPayout}
+            totalAmount={payoutTotal}
+            onSuccess={() => { loadInvoices(); }}
+            onClose={() => setShowPayoutModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Page wrapper
+// ---------------------------------------------------------------------------
 export default function OrderByStore() {
-    return (
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-indigo-600" /></div>}>
-        <StoreInvoicesContent />
-      </Suspense>
-    );
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-indigo-600" /></div>}>
+      <StoreInvoicesContent />
+    </Suspense>
+  );
 }
 
-// --- REFINED SUB-COMPONENTS ---
-
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
 function StatCard({ label, value, icon: Icon, color, subText }) {
   const themes = {
-    indigo: "bg-indigo-600 shadow-indigo-100",
-    rose: "bg-rose-500 shadow-rose-100",
-    emerald: "bg-emerald-500 shadow-emerald-100",
-    blue: "bg-blue-600 shadow-blue-100",
+    indigo: 'bg-indigo-600 shadow-indigo-100',
+    rose: 'bg-rose-500 shadow-rose-100',
+    emerald: 'bg-emerald-500 shadow-emerald-100',
+    blue: 'bg-blue-600 shadow-blue-100',
   };
   return (
     <div className="bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
@@ -252,13 +371,13 @@ function StatCard({ label, value, icon: Icon, color, subText }) {
 function StatusBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const config = {
-    delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    confirmed: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    shipped: "bg-blue-50 text-blue-600 border-blue-100",
-    cancelled: "bg-slate-100 text-slate-400 border-slate-200",
+    delivered: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    confirmed: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    shipped: 'bg-blue-50 text-blue-600 border-blue-100',
+    cancelled: 'bg-slate-100 text-slate-400 border-slate-200',
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-bold uppercase tracking-widest ${config[norm] || "bg-orange-50 text-orange-600 border-orange-100"}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-bold uppercase tracking-widest ${config[norm] || 'bg-orange-50 text-orange-600 border-orange-100'}`}>
       <span className="w-1 h-1 rounded-full bg-current mr-1.5 animate-pulse" />
       {status}
     </span>
@@ -268,12 +387,12 @@ function StatusBadge({ status }) {
 function PaymentBadge({ status }) {
   const norm = status?.toLowerCase() || '';
   const styles = {
-    paid: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    success: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    failed: "text-rose-600 bg-rose-50 border-rose-100",
+    paid: 'text-emerald-600 bg-emerald-50 border-emerald-100',
+    success: 'text-emerald-600 bg-emerald-50 border-emerald-100',
+    failed: 'text-rose-600 bg-rose-50 border-rose-100',
   };
   return (
-    <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${styles[norm] || "text-orange-600 bg-orange-50 border-orange-100"}`}>
+    <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${styles[norm] || 'text-orange-600 bg-orange-50 border-orange-100'}`}>
       {status}
     </span>
   );
@@ -282,12 +401,12 @@ function PaymentBadge({ status }) {
 function FilterSelect({ options, value, onChange }) {
   return (
     <div className="relative">
-      <select 
+      <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="appearance-none bg-white border border-slate-100 rounded-lg pl-3 pr-8 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-600 outline-none transition-all cursor-pointer shadow-sm"
       >
-        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
       </select>
       <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
     </div>

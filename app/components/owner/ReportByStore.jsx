@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   BarChart3, TrendingUp, DollarSign, Package, Calendar, 
-  ArrowUpRight, ArrowDownRight, Loader2
+  ArrowUpRight, ArrowDownRight, Loader2, CheckCircle2, Clock, Truck, XCircle,
+  Users, Mail, Layers, ShoppingCart, User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
@@ -28,6 +29,7 @@ export default function ReportByStore() {
         stats, 
         recentOrders, 
         topProducts, 
+        topCustomers,
         loading, 
         error, 
         fetchReports 
@@ -178,133 +180,235 @@ export default function ReportByStore() {
                             ))}
                         </div>
 
-                        {/* --- CONTENT AREA (Grid) --- */}
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                            
-                            {/* Main Table: Recent Orders */}
-                            <div className="lg:col-span-2 bg-white rounded-[20px] border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
-                                <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Calendar className="text-slate-400" size={16} />
-                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Recent Transactions', language)}</h2>
-                                    </div>
-                                    <button className="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 flex items-center gap-1">
-                                        {t('View All', language)} <ArrowUpRight size={12} />
-                                    </button>
-                                </div>
-                                
-                                <div className="overflow-x-auto no-scrollbar flex-1">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-slate-50/50">
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Order ID', language)}</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Customer', language)}</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Date', language)}</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Status', language)}</th>
-                                                <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">{t('Amount', language)}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-50 relative">
-                                            {recentOrders.length > 0 ? recentOrders.map((order, idx) => (
-                                                <motion.tr 
-                                                    key={order.id}
-                                                    initial={{ opacity: 0, y: 5 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.05 }}
-                                                    className="group hover:bg-slate-50/30 transition-colors cursor-pointer"
-                                                >
-                                                    <td className="px-5 py-4">
-                                                        <span className="text-[11px] font-black text-indigo-600 uppercase tracking-wider">{order.id}</span>
-                                                        <div className="text-[9px] font-bold text-slate-400 mt-0.5">{order.items} {t('items', language)}</div>
-                                                    </td>
- Kinder
-                                                    <td className="px-5 py-4 min-w-[120px]">
-                                                        <span className="text-[11px] font-bold text-slate-800">{order.customer}</span>
-                                                    </td>
-                                                    <td className="px-5 py-4 whitespace-nowrap">
-                                                        <span className="text-[10px] font-medium text-slate-500">{order.date}</span>
-                                                    </td>
-                                                    <td className="px-5 py-4">
-                                                        <div className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest
-                                                            ${order.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                                                            ['Processing', 'Pending'].includes(order.status) ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 
-                                                            'bg-rose-50 text-rose-500 border-rose-100'}`}>
-                                                            {t(order.status, language)}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-5 py-4 text-right">
-                                                        <span className="text-[12px] font-black text-slate-900 tracking-tight">${Number(order.amount).toFixed(2)}</span>
-                                                    </td>
-                                                </motion.tr>
-                                            )) : (
-                                                <tr>
-                                                    <td colSpan="5" className="px-8 py-20 text-center">
-                                                        <div className="flex flex-col items-center gap-2">
-                                                            <Package size={32} className="text-slate-200" />
-                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{t('No recent orders.', language)}</p>
-                                                        </div>
-
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* Right sidebar: Top Products */}
-                            <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
-                                <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUp className="text-slate-400" size={16} />
-                                        <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Top Products', language)}</h2>
-                                    </div>
-
-                                </div>
-                                
-                                <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
-                                    {topProducts.length > 0 ? topProducts.map((product, idx) => (
-                                        <motion.div 
-                                            key={product.id}
-                                            initial={{ opacity: 0, x: 10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: idx * 0.1 }}
-                                            className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-indigo-100 hover:shadow-sm transition-all group"
-                                        >
-                                            <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 transition-colors">
-                                                <Package size={16} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                        {/* --- CONTENT AREA (Conditional) --- */}
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'Overview' && (
+                                <motion.div 
+                                    key="overview"
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    className="grid grid-cols-1 lg:grid-cols-3 gap-5"
+                                >
+                                    {/* Main Table: Recent Orders */}
+                                    <div className="lg:col-span-2 bg-white rounded-[20px] border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
+                                        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="text-slate-400" size={16} />
+                                                <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Recent Transactions', language)}</h2>
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="text-[11px] font-black text-slate-900 truncate" title={product.name}>{product.name}</h4>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="text-[9px] font-bold text-slate-400 max-w-[80px] truncate">{t(product.category, language)}</span>
-                                                    <span className="text-slate-300">•</span>
-                                                    <span className="text-[9px] font-black text-indigo-600 whitespace-nowrap">{product.sales} {t('sold', language)}</span>
-                                                </div>
-
-                                            </div>
-                                            <div className="text-right shrink-0">
-                                                <div className="text-[11px] font-black text-slate-900">${Number(product.revenue).toLocaleString()}</div>
-                                                <div className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${product.inventory > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                                    {product.inventory > 0 ? `${product.inventory} ${t('in stock', language)}` : t('Out of stock', language)}
-                                                </div>
-
-                                            </div>
-                                        </motion.div>
-                                    )) : (
-                                        <div className="flex flex-col items-center justify-center p-12 h-full gap-2">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mt-8">{t('Not enough data.', language)}</p>
+                                            <button className="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 flex items-center gap-1">
+                                                {t('View All', language)} <ArrowUpRight size={12} />
+                                            </button>
                                         </div>
+                                        
+                                        <div className="overflow-x-auto no-scrollbar flex-1">
+                                            <table className="w-full text-left border-collapse">
+                                                <thead>
+                                                    <tr className="bg-slate-50/50">
+                                                        <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Order ID', language)}</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Customer', language)}</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Status', language)}</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">{t('Amount', language)}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-50 relative">
+                                                    {recentOrders.length > 0 ? recentOrders.map((order, idx) => (
+                                                        <tr key={order.id} className="group hover:bg-slate-50/30 transition-colors cursor-pointer">
+                                                            <td className="px-5 py-4">
+                                                                <span className="text-[11px] font-black text-indigo-600 uppercase tracking-wider">{order.id}</span>
+                                                                <div className="text-[9px] font-bold text-slate-400 mt-0.5">{order.items} {t('items', language)}</div>
+                                                            </td>
+                                                            <td className="px-5 py-4">
+                                                                <span className="text-[11px] font-bold text-slate-800">{order.customer}</span>
+                                                            </td>
+                                                            <td className="px-5 py-4">
+                                                                <StatusBadge status={order.status} />
+                                                            </td>
+                                                            <td className="px-5 py-4 text-right">
+                                                                <span className="text-[12px] font-black text-slate-900 tracking-tight">${Number(order.amount).toFixed(2)}</span>
+                                                            </td>
+                                                        </tr>
+                                                    )) : (
+                                                        <tr>
+                                                            <td colSpan="4" className="px-8 py-20 text-center text-slate-400 text-[10px] uppercase font-black">{t('No orders found.', language)}</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
 
-                                    )}
-                                </div>
-                            </div>
+                                    {/* Sidebar: Top Products */}
+                                    <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
+                                        <div className="p-4 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <TrendingUp className="text-slate-400" size={16} />
+                                                <h2 className="text-[12px] font-black text-slate-800 uppercase tracking-widest">{t('Top Products', language)}</h2>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 p-4 space-y-4">
+                                            {topProducts.slice(0, 5).map((product) => (
+                                                <div key={product.id} className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                                                        <Package size={16} className="text-slate-300" />
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <h4 className="text-[11px] font-black text-slate-900 truncate">{product.name}</h4>
+                                                        <p className="text-[9px] font-bold text-emerald-600">{product.sales} {t('Sold', language)}</p>
+                                                    </div>
+                                                    <span className="text-[11px] font-black text-slate-900">${product.revenue.toLocaleString()}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
 
-                        </div>
+                            {activeTab === 'Sales by Product' && (
+                                <motion.div 
+                                    key="products"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden"
+                                >
+                                    <div className="p-6 border-b border-slate-50 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                            <Layers size={18} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t('Product Performance', language)}</h2>
+                                            <p className="text-[10px] font-medium text-slate-500">{t('Detailed breakdown of sales per product.', language)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="bg-slate-50/50">
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Product', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Category', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-center">{t('Sales Qty', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-center">{t('Inventory', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">{t('Revenue', language)}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {topProducts.map((p) => (
+                                                    <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-6 py-5">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center"><Package size={16} className="text-slate-300" /></div>
+                                                                <span className="text-[12px] font-black text-slate-900">{p.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-5">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t(p.category, language)}</span>
+                                                        </td>
+                                                        <td className="px-6 py-5 text-center">
+                                                            <span className="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-widest">{p.sales}</span>
+                                                        </td>
+                                                        <td className="px-6 py-5 text-center">
+                                                             <span className={`text-[10px] font-black uppercase tracking-widest ${p.inventory > 10 ? 'text-slate-400' : 'text-rose-500'}`}>
+                                                                {p.inventory} {t('units', language)}
+                                                             </span>
+                                                        </td>
+                                                        <td className="px-6 py-5 text-right font-black text-slate-900 text-sm">
+                                                            ${p.revenue.toLocaleString()}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {activeTab === 'Customer Insights' && (
+                                <motion.div 
+                                    key="customers"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden"
+                                >
+                                    <div className="p-6 border-b border-slate-50 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                                            <Users size={18} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t('Top Customers', language)}</h2>
+                                            <p className="text-[10px] font-medium text-slate-500">{t('Identify your most loyal and high-spending customers.', language)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="bg-slate-50/50">
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{t('Customer', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-center">{t('Orders', language)}</th>
+                                                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">{t('Total Spent', language)}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {topCustomers.map((c) => (
+                                                    <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-6 py-5">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 overflow-hidden shrink-0">
+                                                                    <img 
+                                                                        src={c.profile_image || 'https://via.placeholder.com/50'} 
+                                                                        alt={c.name}
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <h4 className="text-[12px] font-black text-slate-900">{c.name}</h4>
+                                                                    <div className="flex items-center gap-1 text-[9px] font-medium text-slate-400">
+                                                                        <Mail size={10} /> {c.email}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-5 text-center font-black text-slate-900 text-sm">
+                                                            {c.total_orders}
+                                                        </td>
+                                                        <td className="px-6 py-5 text-right font-black text-emerald-600 text-base tracking-tighter">
+                                                            ${Number(c.total_spent).toLocaleString()}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </motion.div>
                 </AnimatePresence>
             )}
         </div>
+    );
+}
+
+function StatusBadge({ status }) {
+    const config = {
+      Delivered: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+      Completed: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+      Shipped: { icon: Truck, style: "bg-blue-50 text-blue-600 border-blue-100" },
+      Processing: { icon: Clock, style: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+      Confirmed: { icon: CheckCircle2, style: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+      Pending: { icon: Clock, style: "bg-orange-50 text-orange-600 border-orange-100" },
+      Cancelled: { icon: XCircle, style: "bg-slate-100 text-slate-400 border-slate-200" },
+    };
+  
+    const { icon: Icon, style } = config[status] || config.Cancelled;
+  
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-widest ${style}`}>
+        <Icon size={10} strokeWidth={3} />
+        {status}
+      </span>
     );
 }
 

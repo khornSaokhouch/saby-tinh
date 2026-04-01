@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ShoppingBag, Settings, 
   LogOut, Sparkles, ChevronRight, BarChart3, Package, ShieldCheck, LayoutGrid, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
-  Ticket , FileText, MapPin
+  Ticket , FileText, MapPin, Wallet
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSellerStore } from '@/stores/useSellerStore';
@@ -76,6 +76,7 @@ const menuGroups = [
     title: "Finance",
     items: [
       { name: 'Payments', href: '/admin/payment-account', icon: CreditCard },
+      { name: 'Payouts', href: '/admin/payouts', icon: Wallet },
     ]
   },
   {

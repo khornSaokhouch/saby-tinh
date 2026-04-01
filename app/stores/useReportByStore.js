@@ -1,36 +1,64 @@
 import { create } from 'zustand';
 import { request } from '@/util/request';
 
-export const useReportByStore = create((set, get) => ({
-    stats: null,
+const useReportByStore = create((set) => ({
     recentOrders: [],
     topProducts: [],
+    topCustomers: [],
+    analytics: null, // New comprehensive analytics state
+    dashboardData: null, // New dashboard pulse state
     loading: false,
     error: null,
+
+    fetchDashboardData: async (storeId) => {
+        set({ loading: true, error: null });
+        try {
+            const res = await request(`/reports/dashboard?store_id=${storeId}`, 'GET');
+            if (res.success) {
+                set({ dashboardData: res.data, loading: false });
+            } else {
+                set({ error: res.message, loading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, loading: false });
+        }
+    },
+
+    fetchAnalytics: async (storeId, range = 'thisYear') => {
+        set({ loading: true, error: null });
+        try {
+            const res = await request(`/reports/analytics?store_id=${storeId}&range=${range}`, 'GET');
+            if (res.success) {
+                set({ analytics: res.data, loading: false });
+            } else {
+                set({ error: res.message, loading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, loading: false });
+        }
+    },
 
     fetchReports: async (storeId, dateRange) => {
         if (!storeId) return;
 
         set({ loading: true, error: null });
         try {
-            const [statsRes, ordersRes, productsRes] = await Promise.all([
-                request(`/reports/stats?store_id=${storeId}&range=${dateRange}`, 'GET'),
-                request(`/reports/recent-orders?store_id=${storeId}&limit=5`, 'GET'),
-                request(`/reports/top-products?store_id=${storeId}&limit=5`, 'GET')
+            const [recentRes, topProductsRes, topCustomersRes] = await Promise.all([
+                request(`/reports/recent-orders?store_id=${storeId}`, 'GET'),
+                request(`/reports/top-products?store_id=${storeId}`, 'GET'),
+                request(`/reports/top-customers?store_id=${storeId}`, 'GET')
             ]);
 
             set({
-                stats: statsRes.data,
-                recentOrders: ordersRes.data || [],
-                topProducts: productsRes.data || [],
+                recentOrders: recentRes.data || [],
+                topProducts: topProductsRes.data || [],
+                topCustomers: topCustomersRes.data || [],
                 loading: false
             });
-        } catch (e) {
-            console.error('Failed to fetch reports:', e);
-            set({
-                error: e.response?.data?.message || e.message || 'Unable to load reporting data.',
-                loading: false
-            });
+        } catch (err) {
+            set({ error: err.message, loading: false });
         }
-    },
+    }
 }));
+
+export { useReportByStore };

@@ -320,14 +320,26 @@ function OrderDetailsContent() {
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Method</span>
                         <span className="text-sm font-bold text-slate-900 tracking-tight">{order.payment_method?.account_name || "Direct Settlement"}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transaction ID</span>
-                        <span className="text-[10px] font-mono font-bold text-indigo-600 px-2 py-1 bg-indigo-50 border border-indigo-100 rounded-lg tracking-tighter truncate max-w-[160px] shadow-sm">
-                          {order.user_payments?.length > 0 
-                            ? `#${order.user_payments[0].transaction_id.toString().toUpperCase()}` 
-                            : "N/A"}
-                        </span>
-                      </div>
+                        <div className="flex items-center justify-between">
+      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        Transaction ID
+      </span>
+
+      <div className="flex flex-wrap gap-1 max-w-[160px]">
+        {order.user_payments?.length > 0 ? (
+          order.user_payments.map((payment, index) => (
+            <span
+              key={index}
+              className="text-[10px] font-mono font-bold text-indigo-600 px-2 py-1 bg-indigo-50 border border-indigo-100 rounded-lg tracking-tighter shadow-sm"
+            >
+              {payment.transaction_id?.toString().toUpperCase()}
+            </span>
+          ))
+        ) : (
+          <span className="text-[10px] text-gray-400">N/A</span>
+        )}
+      </div>
+    </div>
                     </div>
                   </div>
                   
