@@ -29,8 +29,8 @@ export default function OwnerStoresPage() {
 
   // Enhanced filtering: search + ownership enforcement
   const filteredStores = stores.filter(s => {
-    const isOwner = user?.id && String(s.user_id) === String(user.id);
-    if (!isOwner) return false;
+    const hasAccess = (user?.accessible_store?.id === s.id) || (user?.id && String(s.user_id) === String(user.id));
+    if (!hasAccess) return false;
 
     const name = s.name || "";
     return name.toLowerCase().includes(searchTerm.toLowerCase()) ||

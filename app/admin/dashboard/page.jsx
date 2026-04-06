@@ -37,7 +37,7 @@ export default function AdminDashboard() {
         <div className="text-left">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Live System Status', language)}</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('System Status', language)}</span>
           </div>
           
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       {/* --- STATS GRID (Reduced Height/Padding) --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
-          title={t('Gross Revenue', language)} 
+          title={t('Total Revenue', language)} 
           value={totals?.revenue?.value || "$0.00"} 
           trend={totals?.revenue?.trend || "0%"} 
           isPositive={totals?.revenue?.isPositive ?? true} 
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
           language={language}
         />
         <StatCard 
-          title={t('Total Orders', language)} 
+          title={t('Orders', language)} 
           value={totals?.orders?.value || "0"} 
           trend={totals?.orders?.trend || "0%"} 
           isPositive={totals?.orders?.isPositive ?? true} 
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
           language={language}
         />
         <StatCard 
-          title={t('Customer Growth', language)} 
+          title={t('Customers', language)} 
           value={totals?.customers?.value || "0"} 
           trend={totals?.customers?.trend || "0%"} 
           isPositive={totals?.customers?.isPositive ?? true} 
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
           language={language}
         />
         <StatCard 
-          title={t('Inventory Sold', language)} 
+          title={t('Sales', language)} 
           value={totals?.products_sold?.value || "0"} 
           trend={totals?.products_sold?.trend || "0%"} 
           isPositive={totals?.products_sold?.isPositive ?? false} 
@@ -109,8 +109,8 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Performance', language)}</h3>
-              <p className="text-md font-black text-slate-900">{t('Revenue Overview', language)}</p>
+              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Trends', language)}</h3>
+              <p className="text-md font-black text-slate-900">{t('Sales Overview', language)}</p>
             </div>
             <div className="flex bg-slate-50 p-1 rounded-md">
               <button className="px-2 py-1 text-[9px] font-black rounded bg-white shadow-sm text-indigo-600 uppercase">{t('Monthly', language)}</button>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
         {/* ALERTS */}
         <div className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col h-[300px]">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Notifications', language)}</h3>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Alerts', language)}</h3>
             {alerts?.length > 0 && (
               <span className="bg-rose-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full animate-pulse">{alerts.length} {t('NEW', language)}</span>
             )}
@@ -169,8 +169,8 @@ export default function AdminDashboard() {
       <div className="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 flex items-center justify-between gap-4">
           <div>
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Registry', language)}</h3>
-            <p className="text-md font-black text-slate-900">{t('Recent Transactions', language)}</p>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('Transactions', language)}</h3>
+            <p className="text-md font-black text-slate-900">{t('Recent Activity', language)}</p>
           </div>
           
           <div className="relative group">

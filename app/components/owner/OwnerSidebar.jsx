@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ShoppingBag, Settings, 
   LogOut, Sparkles, ChevronRight, BarChart3, Package, Building2, MapPin, Boxes, Tag, Palette, Ruler, CreditCard, Truck, Store, Building,
-  NotebookIcon, FileText, Layers, Ticket, Wallet
+  NotebookIcon, FileText, Layers, Ticket, Wallet, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
@@ -40,6 +40,7 @@ const menuGroups = [
     title: "Management",
     items: [
       { name: 'My Store', href: '/owner/stores', icon: Store },
+      { name: 'Team Members', href: '/owner/team-members', icon: Users },
       { name: 'My Company', href: '/owner/company', icon: Building2 },
       { name: 'Products', href: '/owner/products', icon: Package },
       { name: 'Stock', href: '/owner/stocks', icon: Boxes },
@@ -58,7 +59,10 @@ const menuGroups = [
     title: "System",
     items: [
       { name: 'Settings', href: '/owner/settings', icon: Settings },
+      { name: 'Account', href: '/owner/account', icon: Users },
+      { name: 'Reset Password', href: '/owner/account/reset-password', icon: ShieldCheck },
     ]
+
   }
 ];
 

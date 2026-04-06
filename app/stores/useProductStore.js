@@ -11,7 +11,7 @@ export const useProductStore = create(
       error: null,
 
       // Fetch all products
-      fetchProducts: async (limit = null) => {
+      fetchProducts: async (limit = null, context = null) => {
         // SWR pattern
         if (get().products.length === 0) {
           set({ loading: true });
@@ -19,7 +19,8 @@ export const useProductStore = create(
         set({ error: null });
         
         try {
-          const url = limit ? `/products?limit=${limit}` : '/products';
+          let url = limit ? `/products?limit=${limit}` : '/products';
+          if (context) url += (url.includes('?') ? '&' : '?') + `context=${context}`;
           const res = await request(url, 'GET');
           set({ products: res.data || [], loading: false });
         } catch (err) {

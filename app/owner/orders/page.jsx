@@ -6,7 +6,8 @@ import {
   Search, Filter, Download, Eye, MoreHorizontal, 
   ArrowUpDown, CheckCircle2, Clock, Truck, XCircle, 
   ChevronLeft, ChevronRight, Calendar, ShoppingBag,
-  RefreshCw, DollarSign, Package, TrendingUp, SlidersHorizontal, ArrowUpRight
+  RefreshCw, DollarSign, Package, TrendingUp, SlidersHorizontal, ArrowUpRight,
+  Trash2, Loader2, Check, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShopOrderStore } from '@/stores/useShopOrderStore';
@@ -16,7 +17,7 @@ import { usePaymentStatusStore } from '@/app/stores/usePaymentStatusStore';
 
 export default function OwnerOrdersPage() {
   const { user } = useAuthStore();
-  const { orders, fetchOrders, loading: ordersLoading, error, confirmOrder } = useShopOrderStore();
+  const { orders, fetchOrders, loading: ordersLoading, error, confirmOrder, deleteOrder, deleteMultipleOrders } = useShopOrderStore();
   const { orderStatuses, fetchOrderStatuses } = useOrderStatusStore();
   const { paymentStatuses, fetchPaymentStatuses } = usePaymentStatusStore();
   
@@ -27,6 +28,11 @@ export default function OwnerOrdersPage() {
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // --- Selection & Action States ---
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isActionLoading, setIsActionLoading] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -96,8 +102,79 @@ export default function OwnerOrdersPage() {
     };
   }, [filteredOrders]);
 
+  // --- Handlers ---
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedOrders.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedOrders.map(o => o.id));
+    }
+  };
+
+  const toggleSelectId = (id) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} orders?`)) {
+      setIsActionLoading(true);
+      const res = await deleteMultipleOrders(selectedIds);
+      if (res?.success) {
+        setSelectedIds([]);
+      }
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleDeleteConfirm = async (id) => {
+    if (!id) return;
+    setIsActionLoading(true);
+    const res = await deleteOrder(id);
+    if (res?.success) {
+      setConfirmDeleteId(null);
+    }
+    setIsActionLoading(false);
+  };
+
   return (
-    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-5 pb-8 font-sans max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+      
+      {/* --- BATCH ACTIONS BAR --- */}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-6"
+          >
+            <div className="flex items-center gap-3 border-r border-slate-700 pr-6">
+              <div className="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black">
+                {selectedIds.length}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Selected Orders</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBatchDelete}
+                disabled={isActionLoading}
+                className="flex items-center gap-2 px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} strokeWidth={3} />}
+                Delete Selected
+              </button>
+              <button
+                onClick={() => setSelectedIds([])}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -190,6 +267,18 @@ export default function OwnerOrdersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50">
+                <th className="pl-6 w-10 py-3 text-left">
+                  <div
+                    onClick={handleSelectAll}
+                    className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                      selectedIds.length === paginatedOrders.length && paginatedOrders.length > 0
+                        ? 'bg-indigo-600 border-indigo-600'
+                        : 'bg-white border-slate-200 hover:border-indigo-400'
+                    }`}
+                  >
+                    {selectedIds.length === paginatedOrders.length && paginatedOrders.length > 0 && <Check size={10} className="text-white" strokeWidth={5} />}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Products</th>
                 <th className="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Customer info</th>
@@ -226,8 +315,20 @@ export default function OwnerOrdersPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
-                  className="hover:bg-slate-50/30 transition-colors group"
+                  className={`hover:bg-slate-50/30 transition-colors group ${selectedIds.includes(order.id) ? 'bg-indigo-50/40' : ''}`}
                 >
+                  <td className="pl-6 py-3.5">
+                    <div
+                      onClick={() => toggleSelectId(order.id)}
+                      className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-all ${
+                        selectedIds.includes(order.id)
+                          ? 'bg-indigo-600 border-indigo-600'
+                          : 'bg-white border-slate-200 group-hover:border-indigo-300'
+                      }`}
+                    >
+                      {selectedIds.includes(order.id) && <Check size={10} className="text-white" strokeWidth={5} />}
+                    </div>
+                  </td>
                   <td className="px-6 py-3.5">
                     <div className="flex flex-col">
                       <span className="text-[11px] font-black text-indigo-600">#ORD-{order.id}</span>
@@ -285,6 +386,39 @@ export default function OwnerOrdersPage() {
                           <MoreHorizontal size={14} strokeWidth={3} />
                         </button>
                       )}
+
+                      <AnimatePresence mode="wait" initial={false}>
+                          {confirmDeleteId === order.id ? (
+                              <motion.div
+                                  key="confirm"
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  exit={{ opacity: 0, scale: 0.8 }}
+                                  className="flex items-center gap-1"
+                              >
+                                  <button
+                                      onClick={() => handleDeleteConfirm(order.id)}
+                                      disabled={isActionLoading}
+                                      className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 shadow-sm"
+                                  >
+                                      {isActionLoading ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} strokeWidth={3} />}
+                                  </button>
+                                  <button
+                                      onClick={() => setConfirmDeleteId(null)}
+                                      className="p-1.5 bg-slate-100 text-slate-400 rounded-lg"
+                                  >
+                                      <X size={12} strokeWidth={3} />
+                                  </button>
+                              </motion.div>
+                          ) : (
+                              <button
+                                  onClick={() => setConfirmDeleteId(order.id)}
+                                  className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
+                              >
+                                  <Trash2 size={14} strokeWidth={3} />
+                              </button>
+                          )}
+                      </AnimatePresence>
                     </div>
                   </td>
                 </motion.tr>

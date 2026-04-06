@@ -46,7 +46,7 @@ function StoreInvoicesContent() {
   const store = stores.find((s) => s.id == storeId);
 
   const loadInvoices = useCallback(() => {
-    const params = { store_id: storeId, page: currentPage, per_page: 15, search };
+    const params = { store_id: storeId, page: currentPage, per_page: 15, search, exclude_payouts: 1 };
     if (statusFilter) params.status = statusFilter;
     fetchInvoices(params);
   }, [storeId, currentPage, statusFilter, search]);

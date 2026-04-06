@@ -67,10 +67,12 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
   }, [fetchCategories, fetchBrands, fetchTypes, fetchStores, fetchColors, fetchSizes, fetchUser, user]);
 
   // --- Auto-assign store from logged in user ---
-  const filteredStores = useMemo(() => 
-    stores.filter(s => user?.id && String(s.user_id) === String(user.id)),
-    [stores, user?.id]
-  );
+  const filteredStores = useMemo(() => {
+    if (user?.accessible_store?.id) {
+        return stores.filter(s => String(s.id) === String(user.accessible_store.id));
+    }
+    return stores.filter(s => user?.id && String(s.user_id) === String(user.id));
+  }, [stores, user]);
 
   // Auto-set store_id when user's store is loaded
   useEffect(() => {
@@ -221,7 +223,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
               <div className="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-5"></div>
             </div>
             <span className={`text-[9px] font-black uppercase tracking-widest transition-colors ${formData.status ? 'text-emerald-600' : 'text-slate-400'}`}>
-              {formData.status ? 'Live Catalog' : 'Draft Mode'}
+              {formData.status ? 'Active' : 'Inactive'}
             </span>
           </label>
         </div>
@@ -413,7 +415,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
               type="button" onClick={() => router.back()}
               className="text-[10px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all py-3 px-6 active:scale-95"
             >
-              Discard
+              Cancel
             </button>
             <motion.button 
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -428,7 +430,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
               ) : (
                 <>
                   <CheckCircle2 size={13} strokeWidth={3} />
-                  {mode === 'edit' ? 'Save Changes' : 'Publish Product'}
+                  {mode === 'edit' ? 'Save Changes' : 'Create Product'}
                 </>
               )}
             </motion.button>

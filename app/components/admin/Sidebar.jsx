@@ -84,6 +84,8 @@ const menuGroups = [
     items: [
       { name: 'Security', href: '/admin/security', icon: ShieldCheck },
       { name: 'Settings', href: '/admin/settings', icon: Settings },
+      { name: 'Account', href: '/admin/account', icon: Users },
+      { name: 'Reset Password', href: '/admin/account/reset-password', icon: ShieldCheck },
     ]
   }
 ];

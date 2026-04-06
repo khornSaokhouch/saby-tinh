@@ -17,9 +17,9 @@ export default function OwnerAddressesPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchUserAddresses();
+    fetchUserAddresses('dashboard');
     const interval = setInterval(() => {
-      fetchUserAddresses();
+      fetchUserAddresses('dashboard');
     }, 60000);
     return () => clearInterval(interval);
   }, [fetchUserAddresses]);
@@ -60,7 +60,7 @@ export default function OwnerAddressesPage() {
 
         <div className="flex items-center gap-2">
           <button 
-            onClick={() => fetchUserAddresses()}
+            onClick={() => fetchUserAddresses('dashboard')}
             className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />

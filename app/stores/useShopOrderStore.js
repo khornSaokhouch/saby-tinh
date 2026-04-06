@@ -78,4 +78,46 @@ export const useShopOrderStore = create((set, get) => ({
       return { success: false, message: msg };
     }
   },
+
+  deleteOrder: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request(`/orders/${id}`, "DELETE");
+      if (res.success) {
+        set((state) => ({
+          orders: state.orders.filter((o) => o.id !== id),
+          loading: false,
+        }));
+        return { success: true, message: res.message };
+      } else {
+        set({ error: res.message, loading: false });
+        return { success: false, message: res.message };
+      }
+    } catch (err) {
+      const msg = err?.response?.data?.message || err.message || "Failed to delete order";
+      set({ error: msg, loading: false });
+      return { success: false, message: msg };
+    }
+  },
+
+  deleteMultipleOrders: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request("/orders/batch-delete", "POST", { ids });
+      if (res.success) {
+        set((state) => ({
+          orders: state.orders.filter((o) => !ids.includes(o.id)),
+          loading: false,
+        }));
+        return { success: true, message: res.message };
+      } else {
+        set({ error: res.message, loading: false });
+        return { success: false, message: res.message };
+      }
+    } catch (err) {
+      const msg = err?.response?.data?.message || err.message || "Failed to delete orders";
+      set({ error: msg, loading: false });
+      return { success: false, message: msg };
+    }
+  },
 }));

@@ -9,10 +9,11 @@ export const useAddressStore = create((set, get) => ({
   loading: false,
   error: null,
 
-  fetchUserAddresses: async () => {
+  fetchUserAddresses: async (context = '') => {
     set({ loading: true, error: null });
     try {
-      const res = await request("/user-addresses", "GET");
+      const url = context ? `/user-addresses?context=${context}` : "/user-addresses";
+      const res = await request(url, "GET");
       if (res.success) {
         set({
           userAddresses: res.data || [],

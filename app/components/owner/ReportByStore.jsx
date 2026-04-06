@@ -35,11 +35,19 @@ export default function ReportByStore() {
         fetchReports 
     } = useReportByStore();
 
-    // Derived user's store
+    // Derived user's store.
+    // Priority 1: user.accessible_store is populated by backend for both owners AND team members.
+    // Priority 2: Fallback search via stores list (owner-only, for safety).
     const userStoreId = useMemo(() => {
-        if (!user || !stores.length) return null;
-        const myStore = stores.find(s => String(s.user_id) === String(user.id));
-        return myStore ? myStore.id : null;
+        if (!user) return null;
+        // Backend returns accessible_store for both owners and members
+        if (user.accessible_store?.id) return user.accessible_store.id;
+        // Fallback: search stores list by owner relationship
+        if (stores.length) {
+            const myStore = stores.find(s => String(s.user_id) === String(user.id));
+            if (myStore) return myStore.id;
+        }
+        return null;
     }, [user, stores]);
 
     useEffect(() => {

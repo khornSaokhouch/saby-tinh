@@ -29,7 +29,7 @@ export default function OwnerProductsPage() {
 
     useEffect(() => {
         fetchProfile();
-        fetchProducts();
+        fetchProducts(null, 'dashboard');
     }, [fetchProfile, fetchProducts]);
 
     // Reset selection on search
@@ -153,7 +153,7 @@ export default function OwnerProductsPage() {
 
                 <div className="flex items-center gap-2">
                     <button 
-                        onClick={() => fetchProducts()}
+                        onClick={() => fetchProducts(null, 'dashboard')}
                         className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 transition-all shadow-sm"
                     >
                         <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />

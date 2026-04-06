@@ -8,7 +8,7 @@ import {
    ShieldCheck, Calendar, ArrowUpRight , Building, ShieldAlert,
   CreditCard, Store, PieChart, Activity,
   Info, CheckCircle2, AlertCircle, Bookmark,
-  TrendingUp, Wallet, DollarSign, Fingerprint
+  TrendingUp, Wallet, DollarSign, Fingerprint, Users, Shield
 } from 'lucide-react';
 import { useCompanyStore } from '@/stores/useCompanyStore';
 import { useUserStore } from '@/stores/userStore';
@@ -36,19 +36,30 @@ function PartnerDetailsContent() {
   const router = useRouter();
   
   const { companies, fetchCompanies, loading: companyLoading } = useCompanyStore();
-  const { fetchUserById, loading: userLoading } = useUserStore();
+  const { fetchUserById, fetchStoreMembers, loading: userLoading } = useUserStore();
   const [partner, setPartner] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [teamLoading, setTeamLoading] = useState(false);
 
   useEffect(() => {
     fetchCompanies();
     const loadPartner = async () => {
       if (userId) {
         const res = await fetchUserById(userId);
-        if (res?.success) setPartner(res.data);
+        if (res?.success) {
+            setPartner(res.data);
+            // If user has a store, fetch its members
+            if (res.data.store?.id) {
+                setTeamLoading(true);
+                const teamRes = await fetchStoreMembers(res.data.store.id);
+                if (teamRes?.success) setTeamMembers(teamRes.data);
+                setTeamLoading(false);
+            }
+        }
       }
     };
     loadPartner();
-  }, [fetchCompanies, fetchUserById, userId]);
+  }, [fetchCompanies, fetchUserById, fetchStoreMembers, userId]);
 
   const company = useMemo(() => companies.find(c => String(c.user_id) === userId), [companies, userId]);
 
@@ -103,7 +114,7 @@ function PartnerDetailsContent() {
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
               {partner.name.split(' ').map((word, i, arr) => (
                 <span key={i} className={i === arr.length - 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500" : ""}>
-                  {word}{' '}
+                   {word}{' '}
                 </span>
               ))}
             </h1>
@@ -247,11 +258,10 @@ function PartnerDetailsContent() {
             </div>
           </section>
 
-          {/* Section 2: Financial & Operational Infrastructure */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              
              {/* Store Asset */}
-             <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
+             <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group text-left">
                 <div className="flex items-center justify-between mb-6">
                    <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
                       <Store size={18} strokeWidth={3} />
@@ -282,7 +292,7 @@ function PartnerDetailsContent() {
              </div>
 
              {/* Financial Assets */}
-             <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
+             <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group text-left">
                 <div className="flex items-center justify-between mb-6">
                    <div className="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
                       <Wallet size={18} strokeWidth={3} />
@@ -315,8 +325,63 @@ function PartnerDetailsContent() {
              </div>
           </div>
 
+          {/* Section 3: Team Registry (NEW) */}
+          <section className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden text-left">
+              <div className="flex items-center justify-between mb-8">
+                 <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                       <Users size={16} className="text-indigo-600" />
+                       <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Workforce Registry</h3>
+                    </div>
+                    <h2 className="text-xl font-black text-slate-900 tracking-tighter">Team Members</h2>
+                 </div>
+                 <div className="px-3 py-1 bg-slate-50 rounded-xl text-[8px] font-black text-slate-400 uppercase tracking-widest border border-slate-100">
+                    {teamMembers.length} Accounts Registered
+                 </div>
+              </div>
+
+              {teamLoading ? (
+                  <div className="py-12 flex flex-col items-center justify-center gap-3">
+                      <Loader2 className="animate-spin text-indigo-500" size={24} />
+                      <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest tracking-[0.2em]">Syncing Team Data...</span>
+                  </div>
+              ) : teamMembers.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {teamMembers.map((member, idx) => (
+                           <div key={member.id} className="flex items-center justify-between p-3.5 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-md hover:border-indigo-100 transition-all group/member">
+                               <div className="flex items-center gap-3 min-w-0">
+                                   <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden relative shadow-sm shrink-0">
+                                       {member.profile?.image_profile ? (
+                                           <Image src={getCleanImageUrl(member.profile.image_profile)} alt={member.name} fill className="object-cover" />
+                                       ) : (
+                                           <span className="text-xs font-black text-slate-300 uppercase">{member.name.charAt(0)}</span>
+                                       )}
+                                   </div>
+                                   <div className="flex flex-col min-w-0">
+                                       <span className="text-[11px] font-black text-slate-900 group-hover/member:text-indigo-600 transition-colors truncate tracking-tighter leading-none mb-1">{member.name}</span>
+                                       <div className="flex items-center gap-1.5 opacity-60">
+                                            <Shield size={9} className="text-indigo-500" />
+                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate">{member.role || 'Member'}</span>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div className="flex flex-col items-end shrink-0 gap-1">
+                                   <span className="text-[9px] font-black text-slate-900 tabular-nums">#{member.id.toString().padStart(4, '0')}</span>
+                                   <div className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded-md text-[7px] font-black uppercase tracking-tighter">Verified</div>
+                               </div>
+                           </div>
+                      ))}
+                  </div>
+              ) : (
+                  <div className="py-12 text-center border-2 border-dashed border-slate-50 rounded-[24px] flex flex-col items-center gap-3">
+                      <Users size={32} className="text-slate-100" />
+                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No Team Members Linked</p>
+                  </div>
+              )}
+          </section>
+
           {/* Internal Metadata */}
-          <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-10">
+          <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
              <StatBox label="Live Status" value="Active" icon={Activity} />
              <StatBox label="Protection" value="System" icon={ShieldCheck} success />
              <StatBox label="Membership" value="Partner" icon={Building} />

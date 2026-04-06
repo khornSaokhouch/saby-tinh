@@ -215,6 +215,80 @@ export const useUserStore = create((set, get) => ({
   },
 
   // -------------------------------
+  // Owner: Team Management
+  // -------------------------------
+  fetchTeamMembers: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request('/owner/team', 'GET');
+      // res is { success: true, data: [...], ... }
+      set({ users: res.data || [], loading: false });
+      return res.data;
+    } catch (err) {
+      set({ loading: false, error: err.message });
+      return [];
+    }
+  },
+
+  fetchStoreMembers: async (storeId) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request(`/admin/stores/${storeId}/members`, 'GET');
+      // We return this specifically so the caller can manage local state if needed
+      set({ loading: false });
+      return res;
+    } catch (err) {
+      set({ loading: false, error: err.message });
+      return { success: false, message: err.message };
+    }
+  },
+
+  addTeamMember: async (memberData) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request('/owner/team/add', 'POST', memberData);
+      set((state) => ({
+        users: [...state.users, res.data],
+        loading: false
+      }));
+      return res;
+    } catch (err) {
+      set({ loading: false, error: err.message });
+      throw err;
+    }
+  },
+
+  updateTeamMember: async (id, memberData) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request(`/owner/team/update/${id}`, 'POST', memberData);
+      set((state) => ({
+        users: state.users.map((u) => (u.id === id ? res.data : u)),
+        loading: false
+      }));
+      return res;
+    } catch (err) {
+      set({ loading: false, error: err.message });
+      throw err;
+    }
+  },
+
+  batchDeleteTeamMembers: async (ids) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await request('/owner/team/batch-delete', 'POST', { ids });
+      set((state) => ({
+        users: state.users.filter((u) => !ids.includes(u.id)),
+        loading: false
+      }));
+      return res;
+    } catch (err) {
+      set({ loading: false, error: err.message });
+      throw err;
+    }
+  },
+
+  // -------------------------------
   // Clear state
   // -------------------------------
   clearUser: () => set({ user: null, loading: false, error: null }),
