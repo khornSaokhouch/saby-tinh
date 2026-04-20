@@ -24,7 +24,7 @@ export const useUserStore = create((set, get) => ({
       set({ user: res.data, loading: false });
       return res.data;
     } catch (err) {
-      console.error("[userStore] fetchUser failed:", err.response?.data || err.message);
+      // console.error("[userStore] fetchUser failed:", err.response?.data || err.message);
       if (err.response?.status === 401) {
         useAuthStore.setState({ token: null, user: null });
       }

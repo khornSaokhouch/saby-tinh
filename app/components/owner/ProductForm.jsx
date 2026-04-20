@@ -194,7 +194,7 @@ export default function ProductForm({ initialData = null, mode = 'create' }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 font-sans">
+    <div className="max-w-6xl mx-auto px-4 py-6 font-sans">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">

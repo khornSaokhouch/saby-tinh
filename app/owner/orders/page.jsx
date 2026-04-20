@@ -48,6 +48,9 @@ export default function OwnerOrdersPage() {
   // Filter Logic
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
+      // Exclude orders that have already been paid out
+      if (order.invoice?.payout) return false;
+
       // Status Filter
       const statusName = order.order_status?.status || 'Pending';
       const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;

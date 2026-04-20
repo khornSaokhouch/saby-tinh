@@ -44,7 +44,7 @@ export default function EditProductPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50/50">
+    <main className="min-h-screen">
       <ProductForm mode="edit" initialData={product} />
     </main>
   );

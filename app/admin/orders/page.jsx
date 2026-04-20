@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, Filter, Download, Eye, MoreHorizontal, 
-  ArrowUpDown, CheckCircle2, Clock, Truck, XCircle, 
+  ArrowUpDown, CheckCircle2, Clock, Truck, XCircle, X,
   ChevronLeft, ChevronRight, Calendar, ChevronDown,
   ShoppingBag, DollarSign, Activity, RefreshCw, ArrowUpRight
 } from 'lucide-react';
@@ -15,8 +15,10 @@ import { t } from '@/util/translations';
 export default function OrdersPage() {
   const { orders, fetchOrders, loading, error } = useShopOrderStore();
   const { language } = useLanguageStore();
-  const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState(t('All', language));
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRange, setSelectedRange] = useState(t('All Time', language));
+  const [showExportModal, setShowExportModal] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -24,21 +26,92 @@ export default function OrdersPage() {
 
   // Filter Logic
   const filteredOrders = orders.filter(order => {
+    // Exclude orders that have already been paid out
+    if (order.invoice?.payout) return false;
+
     const statusName = order.order_status?.status || 'Pending';
-    const matchesStatus = selectedStatus === 'All' || statusName === selectedStatus;
+    const matchesStatus = 
+      selectedStatus === 'All' || 
+      selectedStatus === t('All', language) ||
+      statusName === selectedStatus || 
+      t(statusName, language) === selectedStatus;
+
     const customerName = order.user?.name || 'Unknown';
     const orderId = `#ORD-${order.id}`;
     
     const matchesSearch = 
       orderId.toLowerCase().includes(searchQuery.toLowerCase()) || 
       customerName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Date Filter Logic
+    const orderDate = new Date(order.created_at);
+    const now = new Date();
+    let matchesDate = true;
+
+    const range1Week = t('1 Week', language);
+    const range15Days = t('15 Days', language);
+    const range1Month = t('1 Month', language);
+
+    if (selectedRange === range1Week) {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 7);
+      matchesDate = orderDate >= cutoff;
+    } else if (selectedRange === range15Days) {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 15);
+      matchesDate = orderDate >= cutoff;
+    } else if (selectedRange === range1Month) {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 30);
+      matchesDate = orderDate >= cutoff;
+    }
       
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesSearch && matchesDate;
   });
 
   const totalValue = orders.reduce((sum, order) => sum + parseFloat(order.order_total || 0), 0);
   const pendingCount = orders.filter(o => o.order_status?.status === 'Pending' || o.order_status?.status === 'Processing').length;
   const avgValue = orders.length > 0 ? totalValue / orders.length : 0;
+
+  const handleExport = (range) => {
+    const now = new Date();
+    let cutoff = new Date();
+    
+    if (range === '1 Week') cutoff.setDate(now.getDate() - 7);
+    else if (range === '15 Days') cutoff.setDate(now.getDate() - 15);
+    else if (range === '1 Month') cutoff.setDate(now.getDate() - 30);
+    else cutoff = new Date(0);
+
+    const filtered = orders.filter(o => new Date(o.created_at) >= cutoff);
+
+    if (filtered.length === 0) {
+      alert(t('No data found for this range', language));
+      return;
+    }
+
+    const headers = ['Order ID', 'Customer', 'Email', 'Status', 'Total', 'Date'];
+    const csvContent = [
+      headers.join(','),
+      ...filtered.map(o => [
+        `ORD-${o.id}`,
+        o.user?.name || 'Guest',
+        o.user?.email || '',
+        o.order_status?.status || 'Pending',
+        o.order_total,
+        new Date(o.created_at).toLocaleDateString()
+      ].map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `orders_${range.toLowerCase().replace(' ', '_')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-5 pb-8 font-sans max-w-6xl mx-auto animate-in fade-in duration-500">
@@ -65,7 +138,10 @@ export default function OrdersPage() {
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} strokeWidth={3} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95">
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 uppercase tracking-widest active:scale-95"
+          >
             <Download size={14} strokeWidth={3} /> {t('Export Data', language)}
           </button>
         </div>
@@ -104,9 +180,9 @@ export default function OrdersPage() {
              />
              <div className="h-4 w-px bg-slate-200 mx-1"></div>
              <FilterSelect 
-                options={[t('Last 30 Days', language), t('This Year', language)]} 
-                value={t('Last 30 Days', language)} 
-                onChange={() => {}} 
+                options={['All Time', '1 Week', '15 Days', '1 Month'].map(opt => t(opt, language))} 
+                value={selectedRange} 
+                onChange={setSelectedRange} 
                 language={language}
              />
           </div>
@@ -185,9 +261,21 @@ export default function OrdersPage() {
             </div>
         </div>
       </div>
+
+      <ExportModal 
+        isOpen={showExportModal} 
+        onClose={() => setShowExportModal(false)} 
+        onExport={(range) => {
+          handleExport(range);
+          setShowExportModal(false);
+        }}
+        language={language}
+      />
     </div>
   );
 }
+
+// --- LOGIC HELPERS --- (Removed redundant handleExport)
 
 // --- SUB-COMPONENTS (Dashboard/Registry Pattern) ---
 
@@ -257,6 +345,65 @@ function FilterSelect({ options, value, onChange, language }) {
         {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
       <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+    </div>
+  );
+}
+
+function ExportModal({ isOpen, onClose, onExport, language }) {
+  if (!isOpen) return null;
+
+  const ranges = [
+    { label: '1 Week', icon: Calendar },
+    { label: '15 Days', icon: Clock },
+    { label: '1 Month', icon: ShoppingBag },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-sm overflow-hidden relative"
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-6 right-6 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all z-10"
+        >
+          <X size={18} strokeWidth={2.5} />
+        </button>
+
+        <div className="p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+              <Download size={20} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">{t('Export Data', language)}</h3>
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">{t('Select range for registry download', language)}</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {ranges.map((range) => (
+              <button
+                key={range.label}
+                onClick={() => onExport(range.label)}
+                className="w-full flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all group active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-colors">
+                    <range.icon size={14} />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{t(range.label, language)}</span>
+                </div>
+                <div className="w-5 h-5 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                  <ChevronRight size={12} strokeWidth={3} />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

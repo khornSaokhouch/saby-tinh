@@ -2,18 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import {
-  User,
-  Mail,
-  Phone,
-  Building2,
-  MapPin,
-  Globe,
-  FileText,
-  ShieldCheck,
-  ChevronRight,
-  Loader2,
-  CheckCircle2,
-  UploadCloud
+  User, Mail, Phone, Building2, MapPin, Globe,
+  FileText, ShieldCheck, Loader2, CheckCircle2,
+  UploadCloud, ChevronDown, Sparkles
 } from "lucide-react";
 import { useSellerStore } from "@/stores/useSellerStore";
 import { useRouter } from "next/navigation";
@@ -27,24 +18,13 @@ const cambodianProvinces = [
 ];
 
 export default function BecomeCompanyForm() {
-  const {
-    form,
-    loading,
-    error,
-    success,
-    handleChange,
-    handleFileChange,
-    submitForm
-  } = useSellerStore();
-
+  const { form, loading, error, success, handleChange, handleFileChange, submitForm } = useSellerStore();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const filteredProvinces = form.countryRegion
-    ? cambodianProvinces.filter((p) =>
-        p.toLowerCase().includes(form.countryRegion.toLowerCase())
-      )
+    ? cambodianProvinces.filter((p) => p.toLowerCase().includes(form.countryRegion.toLowerCase()))
     : cambodianProvinces;
 
   const handleProvinceSelect = (province) => {
@@ -59,8 +39,7 @@ export default function BecomeCompanyForm() {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -69,81 +48,67 @@ export default function BecomeCompanyForm() {
   }, [error, success, router]);
 
   return (
-    <div className="min-h-screen px-4 font-sans">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 py-10 px-4 font-sans">
+      <div className="max-w-2xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-12 font-sans">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border border-blue-100">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-3 border border-blue-100">
             <ShieldCheck className="w-3 h-3" />
-            Registry
+            Seller Registry
           </div>
-
-          <h1 className="text-4xl lg:text-5xl font-bold text-slate-900 tracking-tighter uppercase mb-4">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-1">
             Become a <span className="text-blue-600">Seller</span>
           </h1>
-
-          <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
-            Register your business identity within the global Saby-Tinh
-            registry.
+          <p className="text-slate-400 text-xs font-medium leading-relaxed max-w-sm mx-auto">
+            Register your business and start selling on the Saby-Tinh platform.
           </p>
         </div>
 
-        {/* Form */}
-        <div className="bg-white rounded-[32px] sm:rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 p-8 lg:p-12 font-sans">
+        {/* Main Card */}
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 space-y-6">
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitForm();
-            }}
-            className="space-y-10"
+            onSubmit={(e) => { e.preventDefault(); submitForm(); }}
+            className="space-y-6"
           >
-            {/* HUB LOCATION */}
-            <div>
-              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2 font-sans">
-                <MapPin className="w-3.5 h-3.5" />
-                Business Location
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <StyledInput
+            {/* LOCATION SECTION */}
+            <section>
+              <SectionHeader icon={MapPin} label="Business Location" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                <CompactInput
                   label="Street Address"
                   icon={MapPin}
                   name="streetAddress"
                   value={form.streetAddress}
                   onChange={handleChange}
-                  placeholder="e.g. 123 Business Street"
+                  placeholder="e.g. 123 Main Street"
                 />
-
-                <div className="relative font-sans" ref={dropdownRef}>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                {/* Province Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-0.5">
                     Province / City
                   </label>
-
                   <div className="relative group">
-                    <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
                     <input
                       type="text"
                       name="countryRegion"
                       value={form.countryRegion}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setIsDropdownOpen(true);
-                      }}
+                      onChange={(e) => { handleChange(e); setIsDropdownOpen(true); }}
                       onFocus={() => setIsDropdownOpen(true)}
                       required
-                      placeholder="Search Hub..."
-                      className="w-full py-4 pl-12 pr-4 font-sans bg-slate-50 border border-transparent rounded-2xl text-sm font-medium text-slate-800 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all outline-none"
+                      placeholder="Search province..."
+                      className="w-full py-2.5 pl-9 pr-8 bg-slate-50 border border-transparent rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-200 focus:ring-2 focus:ring-blue-500/10 transition-all outline-none"
                     />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-300" />
                   </div>
-
                   {isDropdownOpen && (
-                    <ul className="absolute z-20 w-full mt-2 bg-white border border-slate-100 rounded-[24px] shadow-2xl max-h-60 overflow-y-auto p-2 font-sans">
+                    <ul className="absolute z-20 w-full mt-1.5 bg-white border border-slate-100 rounded-2xl shadow-xl max-h-48 overflow-y-auto p-1.5">
                       {filteredProvinces.map((province) => (
                         <li
                           key={province}
                           onClick={() => handleProvinceSelect(province)}
-                          className="px-4 py-3 text-xs font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl cursor-pointer transition-colors"
+                          className="px-3 py-2 text-[11px] font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg cursor-pointer transition-colors"
                         >
                           {province}
                         </li>
@@ -152,69 +117,54 @@ export default function BecomeCompanyForm() {
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="h-px bg-slate-50 w-full" />
+            <div className="h-px bg-slate-50" />
 
-            {/* ORGANIZATION */}
-            <div>
-              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2 font-sans">
-                <Building2 className="w-3.5 h-3.5" />
-                Business Identity
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <StyledInput label="Admin Full Name" icon={User} name="fullName" value={form.fullName} onChange={handleChange} required />
-                <StyledInput label="Official Company Name" icon={Building2} name="companyName" value={form.companyName} onChange={handleChange} required />
-                <StyledInput label="Secure Contact Email" icon={Mail} name="email" type="email" value={form.email} onChange={handleChange} required />
-                <StyledInput label="Communication Node" icon={Phone} name="phoneNumber" type="tel" value={form.phoneNumber} onChange={handleChange} />
+            {/* IDENTITY SECTION */}
+            <section>
+              <SectionHeader icon={Building2} label="Business Identity" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                <CompactInput label="Full Name" icon={User} name="fullName" value={form.fullName} onChange={handleChange} required placeholder="Your full name" />
+                <CompactInput label="Company Name" icon={Building2} name="companyName" value={form.companyName} onChange={handleChange} required placeholder="Official business name" />
+                <CompactInput label="Email" icon={Mail} name="email" type="email" value={form.email} onChange={handleChange} required placeholder="contact@company.com" />
+                <CompactInput label="Phone" icon={Phone} name="phoneNumber" type="tel" value={form.phoneNumber} onChange={handleChange} placeholder="+855 ..." />
               </div>
-            </div>
+            </section>
 
-            {/* DOCUMENT */}
-            <div className="p-8 bg-slate-50/50 rounded-[32px] border border-slate-100 font-sans">
-              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                <FileText className="w-3.5 h-3.5" />
-                Business Verification Data
-              </h3>
+            <div className="h-px bg-slate-50" />
 
-              <label className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-[24px] bg-white cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all group">
-                <UploadCloud className="w-8 h-8 text-slate-300 group-hover:text-blue-500 mb-2 transition-colors" />
-                <p className="text-[10px] font-bold font-sans text-slate-400 uppercase tracking-widest group-hover:text-blue-600 px-4 text-center">
-                  {form.document
-                    ? form.document.name
-                    : "Transmit Business License (PDF / DOCX)"}
+            {/* DOCUMENT SECTION */}
+            <section>
+              <SectionHeader icon={FileText} label="Business Verification" />
+              <label className="mt-3 relative flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50 cursor-pointer hover:border-blue-400 hover:bg-blue-50/20 transition-all group">
+                <UploadCloud className="w-6 h-6 text-slate-300 group-hover:text-blue-500 mb-1.5 transition-colors" />
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-600 px-4 text-center">
+                  {form.document ? form.document.name : "Upload Business License (PDF / DOCX)"}
                 </p>
-                <input
-                  type="file"
-                  name="document"
-                  accept=".pdf,.doc,.docx"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
+                <input type="file" name="document" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" />
               </label>
-            </div>
+            </section>
 
-            {/* ACTION */}
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-16 bg-slate-900 text-white rounded-[24px] font-sans shadow-xl flex items-center justify-center"
+              className="w-full py-3.5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
             >
               {loading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <span className="text-[11px] font-bold uppercase tracking-[0.25em]">
-                  Submit
-                </span>
+                <>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Submit Application
+                </>
               )}
             </button>
 
-            <div className="flex justify-center gap-2 opacity-40 font-sans">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-[9px] font-bold uppercase tracking-widest">
-                AES-256 Protocol Enabled
-              </span>
+            <div className="flex justify-center items-center gap-1.5 opacity-40">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              <span className="text-[8px] font-black uppercase tracking-widest">AES-256 Encrypted</span>
             </div>
           </form>
         </div>
@@ -223,17 +173,27 @@ export default function BecomeCompanyForm() {
   );
 }
 
-/* Styled Input */
-const StyledInput = ({ label, icon: Icon, ...props }) => (
-  <div className="space-y-2 font-sans">
-    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+function SectionHeader({ icon: Icon, label }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-5 h-5 rounded-lg bg-blue-50 flex items-center justify-center">
+        <Icon className="w-3 h-3 text-blue-500" />
+      </div>
+      <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em]">{label}</span>
+    </div>
+  );
+}
+
+const CompactInput = ({ label, icon: Icon, ...props }) => (
+  <div>
+    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-0.5">
       {label} {props.required && <span className="text-blue-500">*</span>}
     </label>
     <div className="relative group">
-      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600" />
+      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
       <input
         {...props}
-        className="w-full py-4 pl-12 pr-4 font-sans bg-slate-50 border border-transparent rounded-2xl text-sm font-medium text-slate-800 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all outline-none"
+        className="w-full py-2.5 pl-9 pr-4 bg-slate-50 border border-transparent rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-200 focus:ring-2 focus:ring-blue-500/10 transition-all outline-none placeholder:text-slate-300"
       />
     </div>
   </div>
