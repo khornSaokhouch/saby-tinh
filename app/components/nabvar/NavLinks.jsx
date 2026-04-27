@@ -133,9 +133,9 @@ export default function NavLinks({ categories, brands, stores, isScrolled }) {
               {brands?.slice(0, 9).map(brand => (
                 <Link key={brand.id} href={`/brands/${slugify(brand.name)}`} className="group/item flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
                   <div className="relative w-10 h-10 shrink-0 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center">
-                    {brand.image ? (
+                    {brand.brand_image ? (
                       <Image 
-                        src={brand.image} 
+                        src={brand.brand_image} 
                         alt={brand.name} 
                         fill 
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

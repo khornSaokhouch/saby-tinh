@@ -14,6 +14,7 @@ import NotificationSection from './NotificationSection';
 import AppearanceSection from './AppearanceSection';
 import RegionalSection from './RegionalSection';
 import AccountRoleSection from './AccountRoleSection';
+import PlatformFeeSection from './PlatformFeeSection';
 
 export default function SettingsPage() {
   const { language } = useLanguageStore();
@@ -124,6 +125,7 @@ export default function SettingsPage() {
           <AppearanceSection />
           <RegionalSection />
           <AccountRoleSection role={user?.role} />
+          {user?.role === 'admin' && <PlatformFeeSection />}
         </div>
 
       </div>

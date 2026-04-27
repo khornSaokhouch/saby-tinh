@@ -743,6 +743,10 @@ export const en = {
   'Geographic Link': 'Address Link',
   'Unset': 'Not set',
   'Endpoints': 'results',
+  'Platform Fee': 'Platform Fee',
+  'Commission Percentage': 'Commission Percentage',
+  'Admin Commission': 'Admin Commission',
+  'Update Fee': 'Update Fee',
 };
 
 

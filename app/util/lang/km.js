@@ -798,6 +798,10 @@ export const km = {
   'No usages found': 'មិនមានប្រវត្តិប្រើប្រាស់ទេ',
   'Unknown User': 'អតិថិជន',
   'Showing:': 'បង្ហាញ',
+  'Platform Fee': 'កម្រៃសេវាប្រព័ន្ធ',
+  'Commission Percentage': 'ភាគរយនៃកម្រៃជើងសារ',
+  'Admin Commission': 'កម្រៃជើងសារអ្នកគ្រប់គ្រង',
+  'Update Fee': 'ធ្វើបច្ចុប្បន្នភាពកម្រៃ',
   'Usages': 'លទ្ធផល',
 
   // Stores Page
