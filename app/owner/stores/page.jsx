@@ -146,7 +146,7 @@ export default function OwnerStoresPage() {
             <tbody className="divide-y divide-slate-50">
               {filteredStores.length > 0 ? filteredStores.map((store, idx) => (
                 <motion.tr 
-                  key={store.id}
+                  key={store.id || idx}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
@@ -201,7 +201,7 @@ export default function OwnerStoresPage() {
                         <AnimatePresence mode="wait" initial={false}>
                             {confirmDeleteId === store.id ? (
                                 <motion.div
-                                    key="confirm"
+                                    key={`confirm-${store.id}`}
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.8 }}
@@ -222,6 +222,7 @@ export default function OwnerStoresPage() {
                                 </motion.div>
                             ) : (
                                 <button
+                                    key={`delete-${store.id}`}
                                     onClick={() => setConfirmDeleteId(store.id)}
                                     className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg shadow-sm transition-all active:scale-95"
                                 >

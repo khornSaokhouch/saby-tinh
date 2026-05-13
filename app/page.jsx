@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState  } from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/nabvar/Navbar';
 import Footer from "@/components/nabvar/Footer";
-import { ChevronRight, ArrowRight, Zap, Star, LayoutGrid, Sparkles } from 'lucide-react';
+import { ArrowRight, Zap, LayoutGrid, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 import { useEventStore } from '@/stores/useEventStore';
@@ -14,7 +14,6 @@ import BannerSwiper from '@/components/home/BannerSwiper';
 import ProductCard from '@/components/card/ProductCard';
 import PartnerLogoBanner from '@/components/home/PartnerLogoBanner';
 import BecomeSellerButton from '@/components/ui/BecomeSellerButton';
-import SectionHeader from '@/components/ui/SectionHeader';
 
 export default function HomePage() {
     const { categories, fetchCategories } = useCategoryStore();
@@ -36,13 +35,9 @@ export default function HomePage() {
     const promotionalProducts = products?.filter(p => {
         return (p.category?.promotions || []).some(promo => {
             if (promo.status !== 1) return false;
-            
-            // Basic hasPromotion logic alignment
             const discountType = promo.discount_type || 'none';
             const discountValue = parseFloat(promo.discount_value || 0);
             if (discountType === 'none' || discountValue <= 0) return false;
-
-            // Date validation (if available from backend)
             const now = new Date();
             const start = promo.start_date ? new Date(promo.start_date) : null;
             const end = promo.end_date ? new Date(promo.end_date) : null;
@@ -51,98 +46,128 @@ export default function HomePage() {
     }) || [];
 
     return (
-        <div className="min-h-screen bg-slate-50/30 font-sans text-slate-900">
+        <div className="min-h-screen bg-white font-sans text-slate-900">
             <Navbar />
 
-            {/* HERO SECTION - Refined Spacing */}
-            <main className="max-w-[1400px] mx-auto px-4 pt-20 pb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:h-[450px]">
-                    {/* Sidebar: Hidden on mobile, 3 cols on desktop */}
+            {/* HERO */}
+            <main className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-20 pb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:h-[440px]">
                     <div className="lg:col-span-3 hidden lg:block h-full">
                         <CategorySidebar categories={categories} />
                     </div>
-                    
-                    {/* Banner: Full width on mobile, 9 cols on desktop */}
-                    <div className="lg:col-span-9 w-full h-[350px] sm:h-[400px] lg:h-full">
+                    <div className="lg:col-span-9 w-full h-[320px] sm:h-[380px] lg:h-full">
                         <BannerSwiper events={events} />
                     </div>
                 </div>
             </main>
 
-            <div className="max-w-[1400px] mx-auto px-4 space-y-16 pb-20">
-                
-                {/* 1. PROMOTIONAL - High Visibility */}
+            {/* MAIN CONTENT */}
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 space-y-14 pb-20">
+
+                {/* FLASH DEALS */}
                 {promotionalProducts.length > 0 && (
-                   <section>
-                        <SectionHeader 
-                            title="Flash Deals" 
-                            subtitle="Limited time offers from our top merchants" 
-                            icon={Zap} 
-                            color="text-rose-500 bg-rose-50"
+                    <section>
+                        <SectionLabel
+                            icon={<Zap size={14} className="text-rose-500" />}
+                            badge="bg-rose-50 text-rose-500"
+                            title="Flash Deals"
+                            subtitle="Limited time offers from our top merchants"
                             count={promotionalProducts.length}
-                            deadline={promotionalProducts.reduce((acc, p) => {
-                                const end = (p.category?.promotions || []).find(pr => pr.status === 1)?.end_date;
-                                if (!end) return acc;
-                                const date = new Date(end);
-                                if (!acc || date < acc) return date;
-                                return acc;
-                            }, null)}
                         />
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                            {promotionalProducts.slice(0, 6).map((product) => (
+                            {promotionalProducts.slice(0, 6).map(product => (
                                 <ProductCard key={`promo-${product.id}`} product={product} />
                             ))}
                         </div>
                     </section>
                 )}
 
-                {/* 2. NEW ARRIVALS */}
+                {/* NEW ARRIVALS */}
                 {newArrivals.length > 0 && (
                     <section>
-                        <SectionHeader 
-                            title="New Arrivals" 
-                            subtitle="Just landed in our global catalog" 
-                            icon={Sparkles} 
-                            color="text-indigo-600 bg-indigo-50"
-                            link="/new-arrivals"
+                        <SectionLabel
+                            icon={<Sparkles size={14} className="text-indigo-500" />}
+                            badge="bg-indigo-50 text-indigo-500"
+                            title="New Arrivals"
+                            subtitle="Just landed in our catalog"
                             count={newArrivals.length}
+                            link="/new-arrivals"
                         />
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                            {newArrivals.slice(0, 6).map((product) => (
+                            {newArrivals.slice(0, 6).map(product => (
                                 <ProductCard key={`new-${product.id}`} product={product} />
                             ))}
                         </div>
                     </section>
                 )}
+                
 
-                {/* 3. MAIN EXPLORATION */}
+                {/* EXPLORE */}
                 <section>
-                    <SectionHeader 
-                        title="Explore Collection" 
-                        subtitle="Curated hardware and premium accessories" 
-                        icon={LayoutGrid} 
-                        color="text-slate-600 bg-slate-100"
-                        link="/store"
+                    <SectionLabel
+                        icon={<LayoutGrid size={14} className="text-slate-500" />}
+                        badge="bg-slate-100 text-slate-500"
+                        title="Explore Collection"
+                        subtitle="Hardware, accessories and more"
                         count={products?.length}
+                        link="/store"
                     />
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {products?.slice(0, 12).map((product) => (
+                        {products?.slice(0, 12).map(product => (
                             <ProductCard key={`all-${product.id}`} product={product} />
                         ))}
                     </div>
-                    
-                    <div className="mt-12 text-center">
-                        <Link href="/store" className="inline-flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:border-indigo-600 transition-all shadow-sm">
-                            Browse Entire Registry <ArrowRight size={14} />
+
+                    <div className="mt-10 flex justify-center">
+                        <Link
+                            href="/store"
+                            className="group inline-flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm active:scale-95"
+                        >
+                            Browse All Products
+                            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                         </Link>
                     </div>
                 </section>
-
             </div>
 
             <PartnerLogoBanner />
             <Footer />
             <BecomeSellerButton />
+        </div>
+    );
+}
+
+/* ────────────────────────────────────────────────── */
+/* Clean Section Label                               */
+/* ────────────────────────────────────────────────── */
+function SectionLabel({ icon, badge, title, subtitle, count, link }) {
+    return (
+        <div className="flex items-end justify-between gap-4 mb-7">
+            <div className="flex items-start gap-3">
+                <div className={`mt-0.5 w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${badge}`}>
+                    {icon}
+                </div>
+                <div>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-lg font-black text-slate-900 tracking-tight">{title}</h2>
+                        {count !== undefined && (
+                            <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                                {count}
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-[12px] text-slate-400 font-medium mt-0.5">{subtitle}</p>
+                </div>
+            </div>
+
+            {link && (
+                <Link
+                    href={link}
+                    className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                    View all <ArrowRight size={13} />
+                </Link>
+            )}
         </div>
     );
 }

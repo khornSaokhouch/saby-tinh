@@ -158,16 +158,15 @@ export default function ProductDetails({ productSlug }) {
               </div>
 
               {/* Meta Grid */}
-              <div className="grid grid-cols-2 gap-y-2 py-4 border-y border-gray-50">
+              <div className="grid grid-cols-2 gap-y-3 py-5 border-y border-slate-50">
                 <MetaItem label="Brand" value={product.brand?.name} />
                 <MetaItem label="SKU" value={product?.items?.[0]?.sku || "N/A"} />
                 <MetaItem label="Availability" value={currentStock > 0 ? "In Stock" : "Out of Stock"} isStock />
               </div>
 
-
               <div className="pt-2">
-                <span className="text-[11px] font-bold uppercase text-gray-400">Description</span>
-                <p className="text-[13px] text-gray-600 leading-relaxed mt-1">
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</span>
+                <p className="text-[14px] text-slate-600 leading-relaxed mt-1.5">
                   {product.description || "No description available."}
                 </p>
               </div>
@@ -175,16 +174,16 @@ export default function ProductDetails({ productSlug }) {
               {/* Actions Area */}
               <div className="pt-6 space-y-3 mt-auto">
                 <div className="flex gap-2">
-                  <div className="flex items-center border border-gray-200 rounded-lg h-10">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 flex justify-center text-gray-400 hover:text-black"><Minus size={14}/></button>
-                    <span className="w-8 text-center text-xs font-bold">{quantity}</span>
-                    <button onClick={() => setQuantity(quantity + 1)} className="w-8 flex justify-center text-gray-400 hover:text-black"><Plus size={14}/></button>
+                  <div className="flex items-center border border-slate-200 rounded-xl h-11 px-1">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"><Minus size={14} strokeWidth={3} /></button>
+                    <span className="w-8 text-center text-[13px] font-black text-slate-900 tabular-nums">{quantity}</span>
+                    <button onClick={() => setQuantity(quantity + 1)} className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"><Plus size={14} strokeWidth={3} /></button>
                   </div>
                   <button 
                     onClick={() => toggleFavorite(product)}
-                    className={`h-10 w-10 flex items-center justify-center rounded-lg border transition-all ${favorited ? 'bg-rose-50 border-rose-100 text-rose-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50'}`}
+                    className={`h-11 w-11 flex items-center justify-center rounded-xl border transition-all ${favorited ? 'bg-rose-500 border-rose-500 text-white shadow-md' : 'bg-white border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-100'}`}
                   >
-                    <Heart size={18} className={favorited ? "fill-current" : ""} />
+                    <Heart size={18} strokeWidth={2.5} className={favorited ? "fill-current" : ""} />
                   </button>
                 </div>
 
@@ -192,7 +191,6 @@ export default function ProductDetails({ productSlug }) {
                   onClick={async () => {
                     if (!userId) {
                       toast.error("Please login to add to cart");
-                      // router.push("/auth/login");
                       return;
                     }
                     try {
@@ -203,20 +201,20 @@ export default function ProductDetails({ productSlug }) {
                     }
                   }}
                   disabled={currentStock <= 0}
-                  className="w-full h-12 bg-black text-white rounded-lg flex items-center justify-center gap-2 font-bold text-sm hover:opacity-90 transition-all disabled:opacity-30 active:scale-[0.99]"
+                  className="group w-full h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all disabled:opacity-30 active:scale-[0.98] shadow-sm"
                 >
-                  <ShoppingCart size={16} /> Add to Cart
+                  <ShoppingCart size={16} strokeWidth={2.5} /> Add to Cart
                 </button>
 
                 <StoreLocations userId={product?.user_id || product?.store?.user_id} variant="sidebar" />
 
-                <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
-                    <Truck size={12} /> Free Shipping
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
+                    <Truck size={13} className="text-indigo-500" /> Free Shipping
                   </div>
                   {product.store && (
-                    <Link href={`/store/${slugify(product.store.name)}`} className="text-[11px] text-gray-400 flex items-center gap-1 hover:text-black">
-                      <Store size={12} /> Sold by <span className="font-bold text-gray-900 underline">{product.store.name}</span>
+                    <Link href={`/store/${slugify(product.store.name)}`} className="text-[11px] font-bold text-slate-400 flex items-center gap-1 hover:text-slate-900 transition-colors">
+                      <Store size={13} className="text-slate-300" /> Sold by <span className="text-slate-900 underline underline-offset-4 decoration-slate-200">{product.store.name}</span>
                     </Link>
                   )}
                 </div>
@@ -226,26 +224,44 @@ export default function ProductDetails({ productSlug }) {
         </div>
 
         {/* Supplementary */}
-        <div className="mt-12 space-y-12">
-           <UserReviews userId={userId} orderProductId={product?.id} />
-        
-           {hasPromotion && <ProductDiscountSection />}
+        <div className="mt-16 space-y-16">
+          <UserReviews userId={userId} orderProductId={product?.id} />
 
-           <section className="mt-16 mb-4">
-              <SectionHeader 
-                title="Discover More" 
-                subtitle="Continue exploring our hardware and accessories" 
-                icon={LayoutGrid} 
-                color="text-slate-600 bg-slate-100"
-                count={products?.length}
-                link="/store"
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                 {(products || []).slice(0, 12).map((p) => (
-                   <ProductCard key={`discover-${p.id}`} product={p} />
-                 ))}
+          <ProductDiscountSection />
+
+          <section className="mb-20">
+            <div className="flex items-end justify-between gap-4 mb-7">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                  <LayoutGrid size={14} className="text-slate-500" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-black text-slate-900 tracking-tight">Discover More</h2>
+                    {products?.length > 0 && (
+                      <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                        {products.length}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-slate-400 font-medium mt-0.5">Continue exploring our hardware and accessories</p>
+                </div>
               </div>
-           </section>
+
+              <Link
+                href="/store"
+                className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+              >
+                View all <ChevronLeft className="rotate-180 w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {(products || []).slice(0, 12).map((p) => (
+                <ProductCard key={`discover-${p.id}`} product={p} />
+              ))}
+            </div>
+          </section>
         </div>
       </main>
     </div>

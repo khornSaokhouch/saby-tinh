@@ -1,25 +1,24 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Link from 'next/link';
 import { useProductStore } from '@/stores/useProductStore';
-import { Loader2, Package, Zap } from 'lucide-react';
-import SectionHeader from '@/components/ui/SectionHeader';
+import { Loader2, Zap, ArrowRight, Tag, Package } from 'lucide-react';
+
+const slugify = (text) => text?.toString().toLowerCase().trim()
+  .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-') || "";
 
 const ProductDiscountSection = () => {
   const { products, fetchProductsByFilters, loading } = useProductStore();
   const [promotedProducts, setPromotedProducts] = useState([]);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const loadData = async () => {
-      await fetchProductsByFilters({ hasPromotion: true, silent: true });
-    };
-    loadData();
+    fetchProductsByFilters({ hasPromotion: true, silent: true });
   }, [fetchProductsByFilters]);
 
-  // Sync internal state when store products change
   useEffect(() => {
-    const promoted = (products || []).filter(p => 
+    const promoted = (products || []).filter(p =>
       (p.category?.promotions || []).some(promo => promo.status === 1)
     );
     setPromotedProducts(promoted);
@@ -28,37 +27,33 @@ const ProductDiscountSection = () => {
   const mainProduct = promotedProducts[0];
   const sideProducts = promotedProducts.slice(1, 4);
 
-  // Active promotion for the main product
-  const activePromotion = useMemo(() => {
-    return (mainProduct?.category?.promotions || []).find(p => p.status === 1);
-  }, [mainProduct]);
+  const activePromotion = useMemo(() =>
+    (mainProduct?.category?.promotions || []).find(p => p.status === 1),
+    [mainProduct]
+  );
 
+  // Countdown
   useEffect(() => {
     if (!activePromotion?.end_date) return;
-
     const timer = setInterval(() => {
-      const difference = +new Date(activePromotion.end_date) - +new Date();
-      if (difference > 0) {
+      const diff = +new Date(activePromotion.end_date) - +new Date();
+      if (diff > 0) {
         setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / 1000 / 60) % 60),
+          seconds: Math.floor((diff / 1000) % 60),
         });
       } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         clearInterval(timer);
       }
     }, 1000);
-
     return () => clearInterval(timer);
   }, [activePromotion]);
 
   if (loading && promotedProducts.length === 0) {
     return (
-      <div className="py-20 text-center">
-        <Loader2 className="w-8 h-8 text-rose-500 animate-spin mx-auto mb-4" />
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Searching for deals...</p>
+      <div className="py-10 text-center">
+        <Loader2 className="w-6 h-6 text-indigo-400 animate-spin mx-auto" />
       </div>
     );
   }
@@ -68,131 +63,139 @@ const ProductDiscountSection = () => {
   const originalPrice = Number(mainProduct?.price || 0);
   const discountValue = parseFloat(activePromotion?.discount_value || 0);
   const discountType = activePromotion?.discount_type || 'none';
-  
   let discountedPrice = originalPrice;
-  if (discountType === 'percentage') {
-    discountedPrice = originalPrice - (originalPrice * discountValue) / 100;
-  } else if (discountType === 'fixed') {
-    discountedPrice = Math.max(0, originalPrice - discountValue);
-  }
+  if (discountType === 'percentage') discountedPrice = originalPrice - (originalPrice * discountValue) / 100;
+  else if (discountType === 'fixed') discountedPrice = Math.max(0, originalPrice - discountValue);
+  const discountBadge = discountType === 'percentage' ? `-${discountValue}%` : discountType === 'fixed' ? `-$${discountValue}` : '';
+
+  const primaryImage = mainProduct?.images?.find(i => i.is_primary)?.image || mainProduct?.images?.[0]?.image || '/placeholder.svg';
+  const productHref = `/category/${slugify(mainProduct?.category?.name || 'catalog')}/${slugify(mainProduct?.name)}`;
 
   return (
-    <div className="font-sans">
-      <div className="max-w-8xl mx-auto">
-        {/* Header Bar - Harmonized with Home Page */}
-        <SectionHeader 
-          title="Flash Deals" 
-          subtitle="Limited time offers from our top merchants" 
-          icon={Zap} 
-          color="text-rose-500 bg-rose-50"
-          count={promotedProducts.length}
-          deadline={activePromotion?.end_date}
-          link="/store" 
-        />
+    <section className="font-sans">
+      {/* Header */}
+      <div className="flex items-end justify-between mb-6">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
+            <Zap size={14} className="text-rose-500" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-black text-slate-900 tracking-tight">Deal of the Day</h2>
+              {discountBadge && (
+                <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">
+                  {discountBadge}
+                </span>
+              )}
+            </div>
+            <p className="text-[12px] text-slate-400 font-medium mt-0.5">
+              Ends in &nbsp;
+              <span className="font-bold text-slate-700 tabular-nums">
+                {String(timeLeft.hours).padStart(2,'0')}:{String(timeLeft.minutes).padStart(2,'0')}:{String(timeLeft.seconds).padStart(2,'0')}
+              </span>
+            </p>
+          </div>
+        </div>
+        <Link href="/store" className="flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+          View all <ArrowRight size={13} />
+        </Link>
+      </div>
 
-        {/* Main Content Area (Old UI - Featured Layout) */}
-        <main className="flex flex-col lg:flex-row gap-6">
-          {/* Left Column: Main Product Card */}
-          <div className="flex-[3] bg-white p-6 rounded-lg shadow-sm flex flex-col md:flex-row gap-8 border border-gray-100">
-            {/* Image Gallery */}
-            <div className="flex gap-4 flex-1">
-              <div className="flex flex-col gap-3">
-                {(mainProduct?.images || []).slice(0, 4).map((img, i) => (
-                  <div key={i} className={`w-16 h-16 border rounded-md cursor-pointer flex items-center justify-center p-1 ${i === 0 ? 'border-indigo-500' : 'border-gray-100'}`}>
-                    <img src={img.image} alt="Thumbnail" className="max-w-full max-h-full object-contain" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex-grow flex items-center justify-center">
-                <img 
-                   src={mainProduct?.images?.[0]?.image || "/placeholder.svg"} 
-                   alt={mainProduct?.name} 
-                   className="max-h-[400px] object-contain transition-transform hover:scale-105 duration-500" 
-                />
-              </div>
+      {/* Layout */}
+      <div className="flex flex-col lg:flex-row gap-4">
+
+        {/* Main Product */}
+        <Link href={productHref} className="group flex-[2] bg-white border border-slate-100 rounded-2xl p-5 flex flex-col sm:flex-row gap-5 hover:border-slate-200 hover:shadow-md transition-all">
+          {/* Image */}
+          <div className="w-full sm:w-44 shrink-0 aspect-square bg-slate-50 rounded-xl flex items-center justify-center overflow-hidden">
+            <img
+              src={primaryImage}
+              alt={mainProduct?.name}
+              className="w-full h-full object-contain transition-transform group-hover:scale-105 duration-500"
+            />
+          </div>
+
+          {/* Info */}
+          <div className="flex flex-col justify-between flex-1 min-w-0">
+            <div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {mainProduct?.category?.name || 'General'}
+              </span>
+              <h3 className="text-base font-black text-slate-900 tracking-tight leading-snug line-clamp-2 mt-1 group-hover:text-indigo-600 transition-colors">
+                {mainProduct?.name}
+              </h3>
+              <p className="text-[12px] text-slate-400 line-clamp-2 mt-2 leading-relaxed">
+                {mainProduct?.description}
+              </p>
             </div>
 
-            {/* Product Details */}
-            <div className="flex-1 flex flex-col gap-4">
-              <h3 className="text-xl font-bold text-gray-800 leading-tight line-clamp-2 uppercase tracking-tight">{mainProduct?.name}</h3>
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-black text-rose-600">${discountedPrice.toLocaleString()}</span>
-                {discountValue > 0 && (
-                  <span className="text-lg text-gray-400 line-through font-bold">${originalPrice.toLocaleString()}</span>
+            <div>
+              {/* Badges */}
+              <div className="flex gap-2 mt-3">
+                <span className="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-lg uppercase tracking-wider">Free Shipping</span>
+                {activePromotion?.name && (
+                  <span className="text-[9px] font-black bg-rose-50 text-rose-500 px-2 py-0.5 rounded-lg uppercase tracking-wider">{activePromotion.name}</span>
                 )}
               </div>
-              
-              <div className="text-[13px] text-gray-600 leading-relaxed border-l-2 border-indigo-500 pl-4 py-1 italic line-clamp-3">
-                {mainProduct?.description}
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2 mt-3">
+                <span className="text-2xl font-black text-slate-900">
+                  ${discountedPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+                {discountValue > 0 && (
+                  <span className="text-sm text-slate-400 line-through font-medium">${originalPrice.toFixed(2)}</span>
+                )}
               </div>
 
-              <div className="flex gap-3">
-                <span className="bg-green-100 text-green-700 text-[10px] font-black py-1 px-3 rounded uppercase tracking-widest">Free Shipping</span>
-                <span className="bg-rose-100 text-rose-700 text-[10px] font-black py-1 px-3 rounded uppercase tracking-widest">{activePromotion?.name || "Flash Sale"}</span>
-              </div>
-
-              <div className="space-y-3 pt-4 border-t border-gray-50">
-                <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest leading-none">
-                  Hurry Up! Promotion expires in:
-                </p>
-                <div className="flex gap-4 items-center">
-                  <CountdownItem value={timeLeft.days} label="d" />
-                  <CountdownItem value={timeLeft.hours} label="h" />
-                  <CountdownItem value={timeLeft.minutes} label="m" />
-                  <CountdownItem value={timeLeft.seconds} label="s" />
+              {/* Stock bar */}
+              <div className="mt-3">
+                <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-1">
+                  <span>Stock remaining</span>
+                  <span>{mainProduct?.items?.[0]?.quantity_in_stock || 0} left</span>
                 </div>
-              </div>
-              
-              <div className="mt-auto pt-4">
-                <div className="flex justify-between text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">
-                   <span>Availability</span>
-                   <span>{mainProduct?.items?.[0]?.quantity_in_stock || 0} left</span>
-                </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                   <div 
-                     className="h-full bg-indigo-500 transition-all duration-1000" 
-                     style={{ width: `${Math.min(100, (mainProduct?.items?.[0]?.quantity_in_stock / 100) * 100)}%` }} 
-                   />
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full transition-all"
+                    style={{ width: `${Math.min(100, (mainProduct?.items?.[0]?.quantity_in_stock / 50) * 100)}%` }}
+                  />
                 </div>
               </div>
             </div>
           </div>
+        </Link>
 
-          {/* Right Column: Ad Sidebar */}
-          <aside className="lg:w-80 flex flex-col gap-4">
-            {sideProducts.length > 0 ? (
-              sideProducts.map((p) => (
-                <div key={p.id} className="group relative rounded-xl overflow-hidden shadow-sm border border-gray-100 bg-white aspect-[5/4]">
-                  <img 
-                    src={p.images?.[0]?.image || "/placeholder.svg"} 
-                    alt={p.name} 
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-                     <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Limited Deal</span>
-                     <h4 className="text-white font-bold text-xs truncate uppercase tracking-tight">{p.name}</h4>
-                     <p className="text-white/60 text-[10px] font-bold">${p.price}</p>
+        {/* Side products */}
+        {sideProducts.length > 0 && (
+          <div className="lg:w-64 flex flex-row lg:flex-col gap-3">
+            {sideProducts.map(p => {
+              const img = p.images?.find(i => i.is_primary)?.image || p.images?.[0]?.image || '/placeholder.svg';
+              const href = `/category/${slugify(p.category?.name || 'catalog')}/${slugify(p.name)}`;
+              return (
+                <Link
+                  key={p.id}
+                  href={href}
+                  className="group flex items-center gap-3 bg-white border border-slate-100 rounded-2xl p-3 hover:border-slate-200 hover:shadow-sm transition-all flex-1 lg:flex-initial"
+                >
+                  <div className="w-14 h-14 shrink-0 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center">
+                    <img src={img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   </div>
-                </div>
-              ))
-            ) : (
-                <div className="flex-1 rounded-xl bg-gray-50 border border-dashed border-gray-200 flex flex-col items-center justify-center p-8 text-center">
-                   <Package className="w-8 h-8 text-gray-200 mb-2" />
-                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">More deals coming soon</p>
-                </div>
-            )}
-          </aside>
-        </main>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <Tag size={9} className="text-rose-400 shrink-0" />
+                      <span className="text-[9px] font-bold text-rose-400 uppercase tracking-wider">Deal</span>
+                    </div>
+                    <p className="text-[12px] font-semibold text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">{p.name}</p>
+                    <p className="text-sm font-black text-slate-900 mt-0.5">${Number(p.price).toFixed(2)}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
-
-const CountdownItem = ({ value, label }) => (
-  <div className="flex flex-col items-center min-w-[40px]">
-    <span className="text-2xl font-black text-gray-900 leading-none">{String(value).padStart(2, '0')}</span>
-    <span className="text-[10px] font-black text-gray-400 uppercase mt-1">{label}</span>
-  </div>
-);
 
 export default ProductDiscountSection;

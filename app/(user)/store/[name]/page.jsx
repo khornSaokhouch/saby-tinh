@@ -69,124 +69,123 @@ export default function StoreProductsPage() {
   if (error || (!store && !storeLoading)) return <NotFoundState error={error} />;
 
   return (
-    <div className="min-h-screen">
-      {/* 1. HEADER SECTION - Clean & Inviting */}
-      <section className="relative pt-8 pb-20 overflow-hidden bg-slate-900">
-        {store?.store_image && (
-          <div 
-            className="absolute inset-0 z-0 bg-cover bg-center blur-2xl opacity-40 scale-110"
-            style={{ backgroundImage: `url(${store.store_image})` }}
-          />
-        )}
-        <div className="absolute inset-0 bg-slate-900/60 z-0" />
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_0%,#6366f1_0%,transparent_70%)] z-0" />
+    <div className="min-h-screen bg-slate-50/50">
+      {/* 1. HEADER SECTION - Premium & Focused */}
+      <section className="relative pt-10 pb-24 overflow-hidden bg-white border-b border-slate-100">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-indigo-50/50 blur-[120px] -z-10 rounded-full" />
         
-        <div className="max-w-[1400px] mx-auto px-6 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <Link
             href="/store"
-            className="mb-8 inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest group"
+            className="mb-10 inline-flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-all text-[10px] font-black uppercase tracking-widest group"
           >
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-            Back
+            Store Directory
           </Link>
 
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row items-center lg:items-end gap-10 lg:gap-14">
             {/* Logo Frame */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }} 
-              animate={{ opacity: 1, scale: 1 }}
-              className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-[32px] overflow-hidden bg-white p-4 shadow-2xl shrink-0 flex items-center justify-center border-4 border-slate-800"
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="relative w-36 h-36 lg:w-48 lg:h-48 rounded-[40px] overflow-hidden bg-white p-5 shadow-2xl shadow-slate-200/50 shrink-0 flex items-center justify-center border border-slate-100"
             >
               {store?.store_image ? (
-                  <img src={store.store_image} alt={store.name} className="object-contain w-full h-full" />
+                  <img src={store.store_image} alt={store.name} className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500" />
               ) : (
-                  <span className="text-4xl font-black text-slate-900">{store?.name?.charAt(0)}</span>
+                  <span className="text-5xl font-black text-slate-200">{store?.name?.charAt(0)}</span>
               )}
-              <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
+              <div className="absolute top-4 right-4 w-3.5 h-3.5 bg-emerald-500 rounded-full border-4 border-white shadow-sm" />
             </motion.div>
 
             {/* Store Branding */}
-            <div className="text-center lg:text-left flex-1">
-              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">
-                  <ShieldCheck className="w-3 h-3 inline mr-1" /> Verified Merchant
+            <div className="text-center lg:text-left flex-1 pb-2">
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-5">
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-indigo-100/50">
+                  <ShieldCheck className="w-3.5 h-3.5 inline mr-1.5 mb-0.5" /> Verified Partner
                 </span>
                 <Link 
-                  href={`/chat?vendorId=${store?.id}`}
-                  className="px-4 py-1 bg-white/5 hover:bg-white/10 text-white rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10 transition-all"
+                  href={`/chat?receiverId=${store?.user_id}&name=${encodeURIComponent(store?.name || '')}`}
+                  className="px-4 py-1.5 bg-slate-900 hover:bg-indigo-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shadow-lg shadow-slate-200/50"
                 >
-                  <MessageCircle className="w-3 h-3 inline mr-1 text-indigo-400" /> Send Message
+                  <MessageCircle className="w-3.5 h-3.5 inline mr-1.5 mb-0.5" /> Direct Contact
                 </Link>
               </div>
 
-              <h1 className="text-4xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none mb-4">
+              <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9] mb-5">
                 {store?.name}
               </h1>
 
-              <p className="text-slate-400 text-sm max-w-xl leading-relaxed mx-auto lg:mx-0 font-medium">
-                {store?.user?.company_info?.description || store?.description || "Welcome to our store. We are dedicated to providing you with the best hardware and service."}
+              <p className="text-slate-400 text-[15px] max-w-xl leading-relaxed mx-auto lg:mx-0 font-medium italic">
+                "{store?.user?.company_info?.description || store?.description || "A premier destination for professional hardware and enterprise-grade tools."}"
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. QUICK INFO BAR - Replaces 'Telemetry' */}
-      <div className="max-w-[1400px] mx-auto px-6 relative z-20 -mt-8">
-        <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* 2. QUICK INFO BAR - Minimalist Design */}
+      <div className="max-w-7xl mx-auto px-6 relative z-20 -mt-10">
+        <div className="bg-white rounded-[32px] p-2 shadow-2xl shadow-slate-200/30 border border-slate-100/50 flex flex-col md:flex-row gap-2">
           <InfoItem 
             icon={MapPin} 
-            label="Visit Us" 
+            label="Location" 
             value={(() => {
               const addr = store?.user?.company_info?.address;
-              return addr ? `${addr.province || 'Main Office'}` : "Store Location";
+              return addr ? `${addr.province || 'Global Node'}` : "Primary Hub";
             })()} 
           />
+          <div className="hidden md:block w-px h-10 bg-slate-100 self-center" />
           <InfoItem 
             icon={Globe} 
-            label="Website" 
-            value={store?.user?.company_info?.website_url ? "Visit Official Site" : "Online Catalog Only"} 
+            label="Digital Presence" 
+            value={store?.user?.company_info?.website_url ? "Official Website" : "Marketplace Presence"} 
             href={store?.user?.company_info?.website_url} 
             isLink 
           />
+          <div className="hidden md:block w-px h-10 bg-slate-100 self-center" />
           <InfoItem 
             icon={Clock} 
-            label="Store Hours" 
-            value={store?.user?.company_info?.open_time ? `${store.user.company_info.open_time} - ${store.user.company_info.close_time}` : "9:00 AM - 6:00 PM"} 
+            label="Availability" 
+            value={store?.user?.company_info?.open_time ? `${store.user.company_info.open_time} - ${store.user.company_info.close_time}` : "09:00 - 18:00"} 
           />
         </div>
 
         {/* 3. PRODUCTS SECTION */}
-        <section className="mt-16 pb-20">
-          <div className="flex items-center justify-between mb-8 px-2">
+        <section className="mt-20 pb-32">
+          <div className="flex items-center justify-between mb-12 px-2">
             <div>
-              <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Our Collection</h2>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                Browse through {products.length} available items
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <Package size={14} className="text-indigo-600" />
+                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Active Catalog</span>
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Full Collection</h2>
             </div>
-            <div className="h-px flex-1 bg-slate-100 mx-8 hidden sm:block" />
-            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-lg">
-              Partner #{store?.id || '00'}
+            
+            <div className="hidden sm:flex items-center gap-3">
+               <div className="h-px w-20 bg-slate-100" />
+               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-white border border-slate-100 px-4 py-2 rounded-xl">
+                 {products.length} Items Listed
+               </div>
             </div>
           </div>
 
           <AnimatePresence mode="wait">
             {productLoading ? (
-              <div className="py-20 text-center">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mx-auto mb-4" />
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Updating catalog...</p>
+              <div className="py-24 text-center">
+                <Loader2 className="w-10 h-10 text-indigo-200 animate-spin mx-auto mb-4" />
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Syncing Catalog...</p>
               </div>
             ) : products.length === 0 ? (
-              <div className="py-20 bg-white rounded-3xl border border-dashed border-slate-200 text-center">
-                <Package className="w-10 h-10 text-slate-200 mx-auto mb-4" />
-                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">No products listed yet</h4>
+              <div className="py-32 bg-white rounded-[40px] border border-dashed border-slate-100 text-center shadow-inner">
+                <ShoppingBag className="w-12 h-12 text-slate-100 mx-auto mb-4" />
+                <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest">No Active Inventory</h4>
               </div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
               >
                 {products.map((product) => (
                   <ProductCard
@@ -209,12 +208,11 @@ export default function StoreProductsPage() {
 
 function InfoItem({ icon: Icon, label, value, href, isLink }) {
   const content = (
-    <div className="flex items-center gap-4 p-2 group">
-      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-        <Icon size={18} />
+    <div className="flex-1 flex items-center gap-4 p-4 lg:p-5 hover:bg-slate-50 transition-colors rounded-2xl group">
+      <div className="w-11 h-11 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 shadow-sm border border-slate-100/50">
+        <Icon size={18} strokeWidth={2.5} />
       </div>
       <div className="min-w-0">
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
         <p className="font-bold text-slate-900 text-xs truncate uppercase tracking-tight">{value}</p>
       </div>
     </div>

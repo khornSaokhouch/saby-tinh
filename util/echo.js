@@ -68,13 +68,16 @@ if (typeof window !== "undefined") {
 
   echo = new Echo({
     broadcaster: "pusher",
-    key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY, // 'abcdef123456'
-    wsHost: "127.0.0.1",                        // explicitly use localhost
-    wsPort: parseInt(process.env.NEXT_PUBLIC_PUSHER_PORT) || 6001,
-    forceTLS: false,                             // false for local HTTP
-    disableStats: true,
-    cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || "mt1",
-    enabledTransports: ["ws"],                   // only websocket
+    key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+    cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+    forceTLS: true,
+    enabledTransports: ["ws", "wss"],
+    authEndpoint: `${process.env.NEXT_PUBLIC_BACKEND_URL}/broadcasting/auth`,
+    auth: {
+      headers: {
+        Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('token') : ''}`,
+      },
+    },
   });
 }
 

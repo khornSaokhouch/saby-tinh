@@ -26,6 +26,7 @@ const menuGroups = [
     title: "Notification",
     items: [
       { name: 'Orders', href: '/owner/orders', icon: ShoppingBag },
+      { name: 'Messages', href: '/owner/chat', icon: NotebookIcon },
     ]
   },
    {

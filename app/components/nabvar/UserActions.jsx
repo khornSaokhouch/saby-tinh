@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useShoppingCartStore } from '@/stores/useShoppingCart';
 import { useFavoriteStore } from '@/stores/useFavoriteStore';
 import { 
-  Heart, 
+  MessageCircle, 
   ShoppingBag, 
   Home, 
   Store, 
@@ -36,7 +36,7 @@ export default function UserActions({ userProfile }) {
       {/* Desktop-only secondary actions */}
       {userProfile && (
         <div className="hidden md:flex items-center gap-1 sm:gap-2">
-          <NavIconButton icon={Heart} href="/favorites" count={favorites?.length} />
+          <NavIconButton icon={MessageCircle} href="/chat" />
           <NavIconButton icon={ShoppingBag} href="/shopping-cart" count={cartItemCount} />
         </div>
       )}
